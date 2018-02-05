@@ -27,6 +27,7 @@ import tensorflow as tf
 # Initialise global variables
 label_ref = {'agree': 0, 'disagree': 1, 'discuss': 2, 'unrelated': 3}
 label_ref_rev = {0: 'agree', 1: 'disagree', 2: 'discuss', 3: 'unrelated'}
+snli_label_ref_rev = {0: 'contradiction', 1: 'neutral', 2: 'entailment'}
 stop_words = [
         "a", "about", "above", "across", "after", "afterwards", "again", "against", "all", "almost", "alone", "along",
         "already", "also", "although", "always", "am", "among", "amongst", "amoungst", "amount", "an", "and", "another",
@@ -212,6 +213,41 @@ def pipeline_train(train, test, lim_unigram):
 
     return train_set, train_stances, bow_vectorizer, tfreq_vectorizer, tfidf_vectorizer
 
+def snli_pipeline_train(train_s1, train_s2, test_s1, test_s2, lim_unigram):
+    num_train = len(train_s1)
+    print()
+    print("Num training samples", num_train)
+    num_test = len(test_s1)
+
+    bow_vectorizer = CountVectorizer(max_features=lim_unigram, stop_words=stop_words)
+    bow = bow_vectorizer.fit_transform(train_s1 + train_s2)
+
+    tfreq_vectorizer = TfidfTransformer(use_idf=False).fit(bow)
+    tfreq = tfreq_vectorizer.transform(bow).toarray()
+    print("Num lines of text, len bow", len(tfreq), len(tfreq[0]))
+
+    tfidf_vectorizer = TfidfVectorizer(max_features=lim_unigram, stop_words=stop_words).\
+        fit(train_s1 + train_s2 + test_s1 + test_s2)
+
+    train_set = []
+
+    for i in range(num_train):
+        s1_tfidf = tfidf_vectorizer.transform([train_s1[i]]).toarray()
+        s2_tfidf = tfidf_vectorizer.transform([train_s2[i]]).toarray()
+        tfidf_cos = cosine_similarity(s1_tfidf, s2_tfidf)[0].reshape(1, 1)
+
+        s1_tf = tfreq[i].reshape(1, -1)
+        s2_tf = tfreq[i + num_train].reshape(1, -1)
+
+        feat_vec = np.squeeze(np.c_[s1_tf, s2_tf, tfidf_cos])
+        if i % 1000 == 0:
+            print(i, "out of", num_train)
+        train_set.append(feat_vec)
+
+    print("Train set dims", len(train_set), len(train_set[0]))
+
+    return train_set, bow_vectorizer, tfreq_vectorizer, tfidf_vectorizer
+
 
 def pipeline_test(test, bow_vectorizer, tfreq_vectorizer, tfidf_vectorizer):
 
@@ -266,6 +302,27 @@ def pipeline_test(test, bow_vectorizer, tfreq_vectorizer, tfidf_vectorizer):
 
     return test_set
 
+def snli_pipeline_test(test_s1, test_s2, bow_vectorizer, tfreq_vectorizer, tfidf_vectorizer):
+    test_set = []
+    for i in range(len(test_s1)):
+        s1_tfidf = tfidf_vectorizer.transform([test_s1[i]]).toarray().reshape(1, -1)
+        s2_tfidf = tfidf_vectorizer.transform([test_s2[i]]).toarray().reshape(1, -1)
+        tfidf_cos = cosine_similarity(s1_tfidf, s2_tfidf)[0].reshape(1, 1)
+        
+        s1_bow = bow_vectorizer.transform([test_s1[i]]).toarray()
+        s1_tf = tfreq_vectorizer.transform(s1_bow).toarray()[0].reshape(1, -1)
+
+        s2_bow = bow_vectorizer.transform([test_s2[i]]).toarray()
+        s2_tf = tfreq_vectorizer.transform(s2_bow).toarray()[0].reshape(1, -1)
+
+        feat_vec = np.squeeze(np.c_[s1_tf, s2_tf, tfidf_cos])
+        test_set.append(feat_vec)
+    
+    print("Test set dims", len(test_set), len(test_set[0]))
+
+    return test_set
+
+
 
 def load_model(sess):
 
@@ -293,11 +350,13 @@ def save_predictions(pred, file):
         file: str, filename + extension
 
     """
-
+    
     with open(file, 'w') as csvfile:
         fieldnames = ['Stance']
         writer = DictWriter(csvfile, fieldnames=fieldnames)
 
         writer.writeheader()
         for instance in pred:
-            writer.writerow({'Stance': label_ref_rev[instance]})
+            writer.writerow({'Stance': snli_label_ref_rev[instance]})
+
+
