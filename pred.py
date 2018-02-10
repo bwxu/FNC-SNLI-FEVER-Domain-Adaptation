@@ -138,13 +138,14 @@ def main():
         
         test_feed_dict = {features_pl: test_vectors, keep_prob_pl: 1.0}
         n_train = len(train_vectors)
+        best_loss = float('Inf')
         
         # Perform training
         with tf.Session() as sess:
             sess.run(tf.global_variables_initializer())
             
             for epoch in range(EPOCHS):
-                print("EPOCH", epoch)
+                print("  EPOCH", epoch)
 
                 total_loss = 0
                 indices = list(range(n_train))
@@ -159,7 +160,10 @@ def main():
                     _, current_loss = sess.run([opt_op, loss], feed_dict=batch_feed_dict)
                     total_loss += current_loss
 
-                print(" loss =", total_loss)
+                print("    Epoch Loss =", total_loss)
+                if total_loss < best_loss:
+                    best_loss = total_loss
+                    print("    New Best Training Loss")
                 
                 test_pred = sess.run(predict, feed_dict=test_feed_dict)
                 
@@ -182,8 +186,8 @@ def main():
                         if test_labels[i] == test_pred[i]:
                             score += 0.75
 
-                print("Composite Score", score)
-                print("Label Accuracy", [correct[i]/total[i] for i in range(len(total))])
+                print("    Composite Score", score)
+                print("    Label Accuracy", [correct[i]/total[i] for i in range(len(total))])
      
     # Save predictions
     save_predictions(test_pred, test_labels, PREDICTION_FILE)
