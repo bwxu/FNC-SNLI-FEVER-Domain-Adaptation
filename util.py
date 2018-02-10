@@ -55,7 +55,7 @@ def get_snli_examples(jsonl_path, skip_no_majority=True, limit=None):
     examples = []
     with open(jsonl_path) as f:
         for i, line in enumerate(f):
-            if limit and i > limit:
+            if limit is not None and i == limit:
                 break
             data = json.loads(line)
             label = data['gold_label']
@@ -128,7 +128,7 @@ def get_feature_vectors(headlines, bodies, bow_vectorizer, tfreq_vectorizer, tfi
         feature_vector = np.squeeze(np.c_[headline_tf, body_tf, tfidf_cos])
         feature_vectors.append(feature_vector)
     
-    print("    Number of Feature Vectors: ", len(feature_vectors))
+    print("    Number of Feature Vectors:", len(feature_vectors))
 
     return feature_vectors
 

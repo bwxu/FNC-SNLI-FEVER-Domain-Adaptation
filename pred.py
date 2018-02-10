@@ -53,7 +53,7 @@ def main():
     fnc_headlines_train, fnc_bodies_train, fnc_labels_train = get_fnc_data(FNC_TRAIN_STANCES, FNC_TRAIN_BODIES)
     fnc_headlines_test, fnc_bodies_test, fnc_labels_test = get_fnc_data(FNC_TEST_STANCES, FNC_TEST_BODIES)
 
-    snli_s1_train, snli_s2_train, snli_labels_train = get_snli_data(SNLI_TRAIN, limit=1)
+    snli_s1_train, snli_s2_train, snli_labels_train = get_snli_data(SNLI_TRAIN, limit=0)
     snli_s1_val, snli_s2_val, snli_labels_val = get_snli_data(SNLI_VAL)
     snli_s1_test, snli_s2_test, snli_labels_test = get_snli_data(SNLI_TEST)
 
@@ -89,10 +89,6 @@ def main():
     
     # Two BOW representations and single value for TFIDF representation
     FEATURE_VECTOR_SIZE = MAX_FEATURES * 2 + 1
-
-    assert FEATURE_VECTOR_SIZE == len(fnc_train_vectors[0])
-    assert FEATURE_VECTOR_SIZE == len(snli_train_vectors[0])
-    assert FEATURE_VECTOR_SIZE == len(test_vectors[0])
 
     print("Defining Model...")
     # Create placeholders
