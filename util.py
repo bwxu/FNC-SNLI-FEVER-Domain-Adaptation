@@ -12,102 +12,162 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-# Import relevant packages and modules
-from csv import DictReader
-from csv import DictWriter
-import numpy as np
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.feature_extraction.text import TfidfTransformer
-from sklearn.feature_extraction.text import TfidfVectorizer
+from csv import DictReader, DictWriter
+from nltk.corpus import stopwords
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer, TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+
+import json
+import numpy as np
 import tensorflow as tf
 
 
-# Initialise global variables
-label_ref = {'agree': 0, 'disagree': 1, 'discuss': 2, 'unrelated': 3}
-label_ref_rev = {0: 'agree', 1: 'disagree', 2: 'discuss', 3: 'unrelated'}
-snli_label_ref_rev = {0: 'contradiction', 1: 'neutral', 2: 'entailment'}
-stop_words = [
-        "a", "about", "above", "across", "after", "afterwards", "again", "against", "all", "almost", "alone", "along",
-        "already", "also", "although", "always", "am", "among", "amongst", "amoungst", "amount", "an", "and", "another",
-        "any", "anyhow", "anyone", "anything", "anyway", "anywhere", "are", "around", "as", "at", "back", "be",
-        "became", "because", "become", "becomes", "becoming", "been", "before", "beforehand", "behind", "being",
-        "below", "beside", "besides", "between", "beyond", "bill", "both", "bottom", "but", "by", "call", "can", "co",
-        "con", "could", "cry", "de", "describe", "detail", "do", "done", "down", "due", "during", "each", "eg", "eight",
-        "either", "eleven", "else", "elsewhere", "empty", "enough", "etc", "even", "ever", "every", "everyone",
-        "everything", "everywhere", "except", "few", "fifteen", "fifty", "fill", "find", "fire", "first", "five", "for",
-        "former", "formerly", "forty", "found", "four", "from", "front", "full", "further", "get", "give", "go", "had",
-        "has", "have", "he", "hence", "her", "here", "hereafter", "hereby", "herein", "hereupon", "hers", "herself",
-        "him", "himself", "his", "how", "however", "hundred", "i", "ie", "if", "in", "inc", "indeed", "interest",
-        "into", "is", "it", "its", "itself", "keep", "last", "latter", "latterly", "least", "less", "ltd", "made",
-        "many", "may", "me", "meanwhile", "might", "mill", "mine", "more", "moreover", "most", "mostly", "move", "much",
-        "must", "my", "myself", "name", "namely", "neither", "nevertheless", "next", "nine", "nobody", "now", "nowhere",
-        "of", "off", "often", "on", "once", "one", "only", "onto", "or", "other", "others", "otherwise", "our", "ours",
-        "ourselves", "out", "over", "own", "part", "per", "perhaps", "please", "put", "rather", "re", "same", "see",
-        "serious", "several", "she", "should", "show", "side", "since", "sincere", "six", "sixty", "so", "some",
-        "somehow", "someone", "something", "sometime", "sometimes", "somewhere", "still", "such", "system", "take",
-        "ten", "than", "that", "the", "their", "them", "themselves", "then", "thence", "there", "thereafter", "thereby",
-        "therefore", "therein", "thereupon", "these", "they", "thick", "thin", "third", "this", "those", "though",
-        "three", "through", "throughout", "thru", "thus", "to", "together", "too", "top", "toward", "towards", "twelve",
-        "twenty", "two", "un", "under", "until", "up", "upon", "us", "very", "via", "was", "we", "well", "were", "what",
-        "whatever", "when", "whence", "whenever", "where", "whereafter", "whereas", "whereby", "wherein", "whereupon",
-        "wherever", "whether", "which", "while", "whither", "who", "whoever", "whole", "whom", "whose", "why", "will",
-        "with", "within", "without", "would", "yet", "you", "your", "yours", "yourself", "yourselves"
-        ]
+FNC_LABELS = {'agree': 0, 'disagree': 1, 'discuss': 2, 'unrelated': 3}
+FNC_LABELS_REV = {0: 'agree', 1: 'disagree', 2: 'discuss', 3: 'unrelated'}
+SNLI_LABELS = {'entailment': 0, 'contradiction': 1, 'neutral': 2}
+SNLI_LABELS_REV = {0: 'entailment', 1: 'contradiction', 2: 'neutral'}
+STOP_WORDS = set(stopwords.words('english'))
 
 
-# Define data class
-class FNCData:
-
-    """
-
-    Define class for Fake News Challenge data
-
-    """
-
-    def __init__(self, file_instances, file_bodies):
-
-        # Load data
-        self.instances = self.read(file_instances)
-        bodies = self.read(file_bodies)
-        self.heads = {}
-        self.bodies = {}
-
-        # Process instances
-        for instance in self.instances:
-            if instance['Headline'] not in self.heads:
-                head_id = len(self.heads)
-                self.heads[instance['Headline']] = head_id
-            instance['Body ID'] = int(instance['Body ID'])
-
-        # Process bodies
-        for body in bodies:
-            self.bodies[int(body['Body ID'])] = body['articleBody']
-
-    def read(self, filename):
-
-        """
-        Read Fake News Challenge data from CSV file
-
-        Args:
-            filename: str, filename + extension
-
-        Returns:
-            rows: list, of dict per instance
-
-        """
-
-        # Initialise
-        rows = []
-
-        # Process file
-        with open(filename, "r", encoding='utf-8') as table:
-            r = DictReader(table)
-            for line in r:
-                rows.append(line)
-
+def open_csv(path):
+    with open(path, "r", encoding='utf-8') as table:
+        rows = [row for row in DictReader(table)]
         return rows
+
+
+def get_fnc_data(stances_path, bodies_path):
+    stances_file = open_csv(stances_path)
+    bodies_file = open_csv(bodies_path)
+
+    headlines = [row['Headline'] for row in stances_file]
+    body_id_to_article = {int(row['Body ID']): row['articleBody'] for row in bodies_file} 
+    bodies = [body_id_to_article[int(row['Body ID'])] for row in stances_file]
+    labels = [FNC_LABELS[row['Stance']] for row in stances_file]
+    
+    return headlines, bodies, labels
+
+
+def extract_tokens_from_binary_parse(parse):
+    return parse.replace('(', ' ').replace(')', ' ').replace('-LRB-', '(').replace('-RRB-', ')').split()
+
+
+def get_snli_examples(jsonl_path, skip_no_majority=True, limit=None):
+    examples = []
+    with open(jsonl_path) as f:
+        for i, line in enumerate(f):
+            if limit and i > limit:
+                break
+            data = json.loads(line)
+            label = data['gold_label']
+            s1 = ' '.join(extract_tokens_from_binary_parse(data['sentence1_binary_parse']))
+            s2 = ' '.join(extract_tokens_from_binary_parse(data['sentence2_binary_parse']))
+            if skip_no_majority and label == '-':
+                continue
+            examples.append((label, s1, s2))
+    return examples
+
+
+def get_snli_data(jsonl_path, limit=None):
+    data = get_snli_examples(jsonl_path=jsonl_path, limit=limit)
+    left = [s1 for _, s1, _ in data]
+    right = [s2 for _, _, s2 in data]
+    labels = [SNLI_LABELS[l] for l, _, _ in data]
+    return left, right, labels
+
+
+def get_vectorizers(train_data, test_data, MAX_FEATURES):
+    train_data = list(set(train_data))
+    test_data = list(set(test_data))
+    
+    bow_vectorizer = CountVectorizer(max_features=MAX_FEATURES, stop_words=STOP_WORDS)
+    bow = bow_vectorizer.fit_transform(train_data)  # Train set only
+
+    tfreq_vectorizer = TfidfTransformer(use_idf=False).fit(bow)
+
+    tfidf_vectorizer = TfidfVectorizer(max_features=MAX_FEATURES, stop_words=STOP_WORDS).\
+        fit(train_data + test_data)  # Train and test sets
+
+    return bow_vectorizer, tfreq_vectorizer, tfidf_vectorizer
+
+
+def get_feature_vectors(headlines, bodies, bow_vectorizer, tfreq_vectorizer, tfidf_vectorizer, use_cache=True):
+    feature_vectors = []
+    headline_cache = {}
+    body_cache = {}
+
+    for i in range(len(headlines)):
+        if i % 5000 == 0:
+            print("    Processed", i, "out of", len(headlines))
+        
+        headline = headlines[i]
+        body = bodies[i]
+       
+        if use_cache and headline in headline_cache:
+            headline_tf = headline_cache[headline][0]
+            headline_tfidf = headline_cache[headline][1]
+
+        else:
+            headline_bow = bow_vectorizer.transform([headline]).toarray()
+            headline_tf = tfreq_vectorizer.transform(headline_bow).toarray()[0].reshape(1, -1)
+            headline_tfidf = tfidf_vectorizer.transform([headline]).toarray().reshape(1, -1)
+            if use_cache:
+                headline_cache[headline] = (headline_tf, headline_tfidf)
+        
+        if use_cache and body in body_cache:
+            body_tf = body_cache[body][0]
+            body_tfidf = body_cache[body][1]
+        
+        else:
+            body_bow = bow_vectorizer.transform([body]).toarray()
+            body_tf = tfreq_vectorizer.transform(body_bow).toarray()[0].reshape(1, -1)
+            body_tfidf = tfidf_vectorizer.transform([body]).toarray().reshape(1, -1)
+            if use_cache:
+                body_cache[body] = (body_tf, body_tfidf)
+
+        tfidf_cos = cosine_similarity(headline_tfidf, body_tfidf)[0].reshape(1, 1)
+        feature_vector = np.squeeze(np.c_[headline_tf, body_tf, tfidf_cos])
+        feature_vectors.append(feature_vector)
+    
+    print("    Number of Feature Vectors: ", len(feature_vectors))
+
+    return feature_vectors
+
+
+def load_model(sess):
+
+    """
+
+    Load TensorFlow model
+
+    Args:
+        sess: TensorFlow session
+
+    """
+
+    saver = tf.train.Saver()
+    saver.restore(sess, './model/model.checkpoint')
+
+
+def save_predictions(pred, actual, file):
+
+    """
+
+    Save predictions to CSV file
+
+    Args:
+        pred: numpy array, of numeric predictions
+        file: str, filename + extension
+
+    """
+    
+    with open(file, 'w') as csvfile:
+        fieldnames = ['Stance', 'Actual']
+        writer = DictWriter(csvfile, fieldnames=fieldnames)
+
+        writer.writeheader()
+        for i in range(len(pred)):
+            writer.writerow({'Stance': snli_label_ref_rev[pred[i]], 'Actual': snli_label_ref_rev[actual[i]]})
+
 
 
 # Define relevant functions
@@ -324,39 +384,6 @@ def snli_pipeline_test(test_s1, test_s2, bow_vectorizer, tfreq_vectorizer, tfidf
 
 
 
-def load_model(sess):
 
-    """
-
-    Load TensorFlow model
-
-    Args:
-        sess: TensorFlow session
-
-    """
-
-    saver = tf.train.Saver()
-    saver.restore(sess, './model/model.checkpoint')
-
-
-def save_predictions(pred, file):
-
-    """
-
-    Save predictions to CSV file
-
-    Args:
-        pred: numpy array, of numeric predictions
-        file: str, filename + extension
-
-    """
-    
-    with open(file, 'w') as csvfile:
-        fieldnames = ['Stance']
-        writer = DictWriter(csvfile, fieldnames=fieldnames)
-
-        writer.writeheader()
-        for instance in pred:
-            writer.writerow({'Stance': snli_label_ref_rev[instance]})
 
 
