@@ -22,8 +22,14 @@ from util import get_fnc_data, get_snli_data, get_vectorizers, get_feature_vecto
 def main():
     # Mode is either train or load
     MODE = 'train'
-    TRAIN_SETS = ['FNC', 'SNLI']
-
+    
+    # Train and load parameters
+    LOAD_MODEL_PATH = ""
+    SAVE_FOLDER = "models/no_snli/"
+    PREDICTION_FILE = SAVE_FOLDER + "no_snli.csv"
+    SAVE_MODEL_PATH = SAVE_FOLDER + "no_snli"
+    USE_SNLI_DATA = False 
+   
     # File paths
     FNC_TRAIN_STANCES = "fnc_data/train_stances.csv"
     FNC_TRAIN_BODIES = "fnc_data/train_bodies.csv"
@@ -33,8 +39,6 @@ def main():
     SNLI_TRAIN = 'snli_data/snli_1.0_train.jsonl' 
     SNLI_VAL = 'snli_data/snli_1.0_dev.jsonl'
     SNLI_TEST = 'snli_data/snli_1.0_test.jsonl'
-
-    PREDICTION_FILE = 'models/no_snli.csv'
 
     # Model parameters
     r = random.Random()
@@ -46,11 +50,8 @@ def main():
     LEARN_RATE = 0.01
     CLIP_RATIO = 5
     BATCH_SIZE_TRAIN = 500
-    EPOCHS = 30
-    LOAD_MODEL_PATH = ""
-    SAVE_MODEL_PATH = "models/no_snli/no_snli"
-    USE_SNLI_DATA = False
-    
+    EPOCHS = 90
+   
     print("Getting Data...")
 
     fnc_headlines_train, fnc_bodies_train, fnc_labels_train = get_fnc_data(FNC_TRAIN_STANCES, FNC_TRAIN_BODIES)
