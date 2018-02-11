@@ -25,10 +25,11 @@ def main():
     
     # Train and load parameters
     LOAD_MODEL_PATH = ""
-    SAVE_FOLDER = "models/no_snli/"
-    PREDICTION_FILE = SAVE_FOLDER + "no_snli.csv"
-    SAVE_MODEL_PATH = SAVE_FOLDER + "no_snli"
-    USE_SNLI_DATA = False 
+    SAVE_FOLDER = "models/snli/"
+    PREDICTION_FILE = SAVE_FOLDER + "snli.csv"
+    SAVE_MODEL_PATH = SAVE_FOLDER + "snli"
+    USE_SNLI_DATA = True
+    USE_SNLI_NEUTRAL = False
    
     # File paths
     FNC_TRAIN_STANCES = "fnc_data/train_stances.csv"
@@ -62,9 +63,9 @@ def main():
     if not USE_SNLI_DATA:
         limit = 0
 
-    snli_s1_train, snli_s2_train, snli_labels_train = get_snli_data(SNLI_TRAIN, limit=limit)
-    snli_s1_val, snli_s2_val, snli_labels_val = get_snli_data(SNLI_VAL)
-    snli_s1_test, snli_s2_test, snli_labels_test = get_snli_data(SNLI_TEST)
+    snli_s1_train, snli_s2_train, snli_labels_train = get_snli_data(SNLI_TRAIN, limit=limit, use_neutral=USE_SNLI_NEUTRAL)
+    #snli_s1_val, snli_s2_val, snli_labels_val = get_snli_data(SNLI_VAL)
+    #snli_s1_test, snli_s2_test, snli_labels_test = get_snli_data(SNLI_TEST)
 
     train_headlines = fnc_headlines_train + snli_s1_train
     train_bodies = fnc_bodies_train + snli_s2_train

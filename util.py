@@ -24,8 +24,7 @@ import tensorflow as tf
 
 FNC_LABELS = {'agree': 0, 'disagree': 1, 'discuss': 2, 'unrelated': 3}
 FNC_LABELS_REV = {0: 'agree', 1: 'disagree', 2: 'discuss', 3: 'unrelated'}
-SNLI_LABELS = {'entailment': 0, 'contradiction': 1, 'neutral': 2}
-SNLI_LABELS_REV = {0: 'entailment', 1: 'contradiction', 2: 'neutral'}
+SNLI_LABELS = {'entailment': 0, 'contradiction': 1}
 STOP_WORDS = set(stopwords.words('english'))
 
 
@@ -51,7 +50,7 @@ def extract_tokens_from_binary_parse(parse):
     return parse.replace('(', ' ').replace(')', ' ').replace('-LRB-', '(').replace('-RRB-', ')').split()
 
 
-def get_snli_examples(jsonl_path, skip_no_majority=True, limit=None):
+def get_snli_examples(jsonl_path, skip_no_majority=True, limit=None, use_neutral=True):
     examples = []
     with open(jsonl_path) as f:
         for i, line in enumerate(f):
@@ -59,6 +58,8 @@ def get_snli_examples(jsonl_path, skip_no_majority=True, limit=None):
                 break
             data = json.loads(line)
             label = data['gold_label']
+            if label == "neutral" and not use_neutral:
+                continue
             s1 = ' '.join(extract_tokens_from_binary_parse(data['sentence1_binary_parse']))
             s2 = ' '.join(extract_tokens_from_binary_parse(data['sentence2_binary_parse']))
             if skip_no_majority and label == '-':
@@ -67,8 +68,8 @@ def get_snli_examples(jsonl_path, skip_no_majority=True, limit=None):
     return examples
 
 
-def get_snli_data(jsonl_path, limit=None):
-    data = get_snli_examples(jsonl_path=jsonl_path, limit=limit)
+def get_snli_data(jsonl_path, limit=None, use_neutral=True):
+    data = get_snli_examples(jsonl_path=jsonl_path, limit=limit, use_neutral=use_neutral)
     left = [s1 for _, s1, _ in data]
     right = [s2 for _, _, s2 in data]
     labels = [SNLI_LABELS[l] for l, _, _ in data]
