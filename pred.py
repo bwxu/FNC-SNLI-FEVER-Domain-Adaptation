@@ -17,6 +17,7 @@ import tensorflow as tf
 from keras.utils import np_utils
 import numpy as np
 
+from flip_gradient import flip_gradient 
 from util import get_fnc_data, get_snli_data, get_vectorizers, get_feature_vectors, save_predictions  
 
 def main():
@@ -101,6 +102,9 @@ def main():
     FEATURE_VECTOR_SIZE = MAX_FEATURES * 2 + 1
 
     print("Defining Model...")
+    
+    ### Feature Extraction ###
+
     # Create placeholders
     features_pl = tf.placeholder(tf.float32, [None, FEATURE_VECTOR_SIZE], 'features')
     stances_pl = tf.placeholder(tf.int64, [None], 'stances')
@@ -111,6 +115,9 @@ def main():
 
     # Define multi-layer perceptron
     hidden_layer = tf.nn.dropout(tf.nn.relu(tf.contrib.layers.linear(features_pl, HIDDEN_SIZE)), keep_prob=keep_prob_pl)
+
+    ### Label Prediction ###
+
     logits_flat = tf.nn.dropout(tf.contrib.layers.linear(hidden_layer, TARGET_SIZE), keep_prob=keep_prob_pl)
     logits = tf.reshape(logits_flat, [batch_size, TARGET_SIZE])
 
@@ -124,6 +131,8 @@ def main():
     # Define prediction
     softmaxed_logits = tf.nn.softmax(logits)
     predict = tf.argmax(softmaxed_logits, axis=1)
+
+    ### Domain Prediction ###
 
     # Load model
     if MODE == 'load':
