@@ -34,7 +34,7 @@ def main():
     SNLI_VAL = 'snli_data/snli_1.0_dev.jsonl'
     SNLI_TEST = 'snli_data/snli_1.0_test.jsonl'
 
-    PREDICTION_FILE = 'test_preds.csv'
+    PREDICTION_FILE = 'models/no_snli.csv'
 
     # Model parameters
     r = random.Random()
@@ -47,13 +47,21 @@ def main():
     CLIP_RATIO = 5
     BATCH_SIZE_TRAIN = 500
     EPOCHS = 50
+    LOAD_MODEL_PATH = ""
+    SAVE_MODEL_PATH = "models/no_snli"
+    USE_SNLI_DATA = False
     
     print("Getting Data...")
 
     fnc_headlines_train, fnc_bodies_train, fnc_labels_train = get_fnc_data(FNC_TRAIN_STANCES, FNC_TRAIN_BODIES)
     fnc_headlines_test, fnc_bodies_test, fnc_labels_test = get_fnc_data(FNC_TEST_STANCES, FNC_TEST_BODIES)
 
-    snli_s1_train, snli_s2_train, snli_labels_train = get_snli_data(SNLI_TRAIN, limit=0)
+    # Control whether to use SNLI training data
+    limit = None
+    if not USE_SNLI_DATA:
+        limit = 0
+
+    snli_s1_train, snli_s2_train, snli_labels_train = get_snli_data(SNLI_TRAIN, limit=limit)
     snli_s1_val, snli_s2_val, snli_labels_val = get_snli_data(SNLI_VAL)
     snli_s1_test, snli_s2_test, snli_labels_test = get_snli_data(SNLI_TEST)
 
@@ -118,8 +126,8 @@ def main():
     # Load model
     if MODE == 'load':
         with tf.Session() as sess:
-            load_model(sess)
-
+            saver = tf.train.Saver()
+            saver.restore(sess, LOAD_MODEL_PATH)
 
             # Predict
             test_feed_dict = {features_pl: test_set, keep_prob_pl: 1.0}
@@ -161,6 +169,7 @@ def main():
                     total_loss += current_loss
 
                 print("    Epoch Loss =", total_loss)
+                
                 if total_loss < best_loss:
                     best_loss = total_loss
                     print("    New Best Training Loss")
@@ -188,7 +197,10 @@ def main():
 
                 print("    Composite Score", score)
                 print("    Label Accuracy", [correct[i]/total[i] for i in range(len(total))])
-     
+            
+            saver = tf.train.Saver()
+            saver.save(sess, SAVE_MODEL_PATH)
+
     # Save predictions
     save_predictions(test_pred, test_labels, PREDICTION_FILE)
 

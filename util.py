@@ -132,22 +132,6 @@ def get_feature_vectors(headlines, bodies, bow_vectorizer, tfreq_vectorizer, tfi
 
     return feature_vectors
 
-
-def load_model(sess):
-
-    """
-
-    Load TensorFlow model
-
-    Args:
-        sess: TensorFlow session
-
-    """
-
-    saver = tf.train.Saver()
-    saver.restore(sess, './model/model.checkpoint')
-
-
 def save_predictions(pred, actual, file):
 
     """
