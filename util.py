@@ -150,6 +150,6 @@ def save_predictions(pred, actual, file):
 
         writer.writeheader()
         for i in range(len(pred)):
-            writer.writerow({'Stance': snli_label_ref_rev[pred[i]], 'Actual': snli_label_ref_rev[actual[i]]})
+            writer.writerow({'Stance': FNC_LABELS_REV[pred[i]], 'Actual': FNC_LABELS_REV[actual[i]]})
 
 

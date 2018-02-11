@@ -17,7 +17,7 @@ import tensorflow as tf
 from keras.utils import np_utils
 import numpy as np
 
-from util import get_fnc_data, get_snli_data, get_vectorizers, get_feature_vectors  
+from util import get_fnc_data, get_snli_data, get_vectorizers, get_feature_vectors, save_predictions  
 
 def main():
     # Mode is either train or load
@@ -46,9 +46,9 @@ def main():
     LEARN_RATE = 0.01
     CLIP_RATIO = 5
     BATCH_SIZE_TRAIN = 500
-    EPOCHS = 50
+    EPOCHS = 30
     LOAD_MODEL_PATH = ""
-    SAVE_MODEL_PATH = "models/no_snli"
+    SAVE_MODEL_PATH = "models/no_snli/no_snli"
     USE_SNLI_DATA = False
     
     print("Getting Data...")
@@ -173,6 +173,10 @@ def main():
                 if total_loss < best_loss:
                     best_loss = total_loss
                     print("    New Best Training Loss")
+                    
+                    # save the model
+                    saver = tf.train.Saver()
+                    saver.save(sess, SAVE_MODEL_PATH)
                 
                 test_pred = sess.run(predict, feed_dict=test_feed_dict)
                 
@@ -198,9 +202,6 @@ def main():
                 print("    Composite Score", score)
                 print("    Label Accuracy", [correct[i]/total[i] for i in range(len(total))])
             
-            saver = tf.train.Saver()
-            saver.save(sess, SAVE_MODEL_PATH)
-
     # Save predictions
     save_predictions(test_pred, test_labels, PREDICTION_FILE)
 
