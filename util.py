@@ -52,17 +52,20 @@ def extract_tokens_from_binary_parse(parse):
 
 def get_snli_examples(jsonl_path, skip_no_majority=True, limit=None, use_neutral=True):
     examples = []
+    skipped = 0
     with open(jsonl_path) as f:
         for i, line in enumerate(f):
-            if limit is not None and i == limit:
+            if limit is not None and i - skipped >= limit:
                 break
             data = json.loads(line)
             label = data['gold_label']
             if label == "neutral" and not use_neutral:
+                skipped += 1
                 continue
             s1 = ' '.join(extract_tokens_from_binary_parse(data['sentence1_binary_parse']))
             s2 = ' '.join(extract_tokens_from_binary_parse(data['sentence2_binary_parse']))
             if skip_no_majority and label == '-':
+                skipped += 1
                 continue
             examples.append((label, s1, s2))
     return examples

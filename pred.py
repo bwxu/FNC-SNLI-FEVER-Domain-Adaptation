@@ -48,10 +48,9 @@ def main():
     TARGET_SIZE = 4
     DOMAIN_TARGET_SIZE = 2
     HIDDEN_SIZE = 100
-    DOMAIN_HIDDEN_SIZE = 100
+    DOMAIN_HIDDEN_SIZE = 10
     TRAIN_KEEP_PROB = 0.6
     L2_ALPHA = 0.00001
-    LEARN_RATE = 0.01
     CLIP_RATIO = 5
     BATCH_SIZE_TRAIN = 500
     EPOCHS = 90
@@ -68,7 +67,7 @@ def main():
     if not USE_SNLI_DATA:
         LIMIT = 0
 
-    snli_s1_train, snli_s2_train, snli_labels_train = get_snli_data(SNLI_TRAIN, limit=20000, use_neutral=USE_SNLI_NEUTRAL)
+    snli_s1_train, snli_s2_train, snli_labels_train = get_snli_data(SNLI_TRAIN, limit=LIMIT, use_neutral=USE_SNLI_NEUTRAL)
     snli_domain = [1 for i in range(len(snli_s1_train))]
     #snli_s1_val, snli_s2_val, snli_labels_val = get_snli_data(SNLI_VAL)
     #snli_s1_test, snli_s2_test, snli_labels_test = get_snli_data(SNLI_TEST)
@@ -118,6 +117,7 @@ def main():
     keep_prob_pl = tf.placeholder(tf.float32)
     domains_pl = tf.placeholder(tf.int64, [None], 'domains')
     gr_pl = tf.placeholder(tf.float32, [], 'gr')
+    lr_pl = tf.placeholder(tf.float32, [], 'lr')
 
     # Infer batch size
     batch_size = tf.shape(features_pl)[0]
@@ -169,7 +169,7 @@ def main():
         print("Training Model...")
 
         # Define optimiser
-        opt_func = tf.train.AdamOptimizer(LEARN_RATE)
+        opt_func = tf.train.AdamOptimizer(lr_pl)
         grads, _ = tf.clip_by_global_norm(tf.gradients(p_loss + d_loss, tf_vars), CLIP_RATIO)
         opt_op = opt_func.apply_gradients(zip(grads, tf_vars))
         
@@ -184,10 +184,15 @@ def main():
         # Perform training
         with tf.Session() as sess:
             sess.run(tf.global_variables_initializer())
-            
+           
             for epoch in range(EPOCHS):
                 print("  EPOCH", epoch)
-
+                
+                # Adaption Parameter and Learning Rate
+                p = float(epoch)/EPOCHS
+                gr = 2. / (1. + np.exp(-10. * p)) - 1
+                lr = 0.01 / (1. + 10 * p)**0.75
+            
                 total_loss = 0
                 total_p_loss = 0
                 total_d_loss = 0
@@ -205,7 +210,8 @@ def main():
                                        stances_pl: batch_stances,
                                        keep_prob_pl: TRAIN_KEEP_PROB,
                                        domains_pl: batch_domains,
-                                       gr_pl: 1.0}
+                                       gr_pl: gr,
+                                       lr_pl: lr}
 
                     _, ploss, dloss = sess.run([opt_op, p_loss, d_loss], feed_dict=batch_feed_dict)
                     
@@ -217,8 +223,8 @@ def main():
                 print("    Domain Loss =", total_d_loss)
                 print("    Total Loss =", total_loss)
                 
-                if total_loss < best_loss:
-                    best_loss = total_loss
+                if total_p_loss < best_loss:
+                    best_loss = total_p_loss
                     print("    New Best Training Loss")
                     
                     # save the model
