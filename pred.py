@@ -18,7 +18,7 @@ from keras.utils import np_utils
 import numpy as np
 
 from flip_gradient import flip_gradient 
-from util import get_fnc_data, get_snli_data, get_vectorizers, get_feature_vectors, save_predictions  
+from util import get_fnc_data, get_snli_data, get_vectorizers, get_feature_vectors, save_predictions, get_prediction_accuracies, get_composite_score  
 
 def main():
     # Mode is either train or load
@@ -49,8 +49,9 @@ def main():
     DOMAIN_TARGET_SIZE = 2
     HIDDEN_SIZE = 100
     DOMAIN_HIDDEN_SIZE = 10
+    LABEL_HIDDEN_SIZE = 10
     TRAIN_KEEP_PROB = 0.6
-    L2_ALPHA = 0.00001
+    L2_ALPHA = 0.01
     CLIP_RATIO = 5
     BATCH_SIZE_TRAIN = 500
     EPOCHS = 90
@@ -67,7 +68,7 @@ def main():
     if not USE_SNLI_DATA:
         LIMIT = 0
 
-    snli_s1_train, snli_s2_train, snli_labels_train = get_snli_data(SNLI_TRAIN, limit=LIMIT, use_neutral=USE_SNLI_NEUTRAL)
+    snli_s1_train, snli_s2_train, snli_labels_train = get_snli_data(SNLI_TRAIN, limit=20000, use_neutral=USE_SNLI_NEUTRAL)
     snli_domain = [1 for i in range(len(snli_s1_train))]
     #snli_s1_val, snli_s2_val, snli_labels_val = get_snli_data(SNLI_VAL)
     #snli_s1_test, snli_s2_test, snli_labels_test = get_snli_data(SNLI_TEST)
@@ -126,24 +127,26 @@ def main():
     hidden_layer = tf.nn.dropout(tf.nn.relu(tf.contrib.layers.linear(features_pl, HIDDEN_SIZE)), keep_prob=keep_prob_pl)
 
     ### Label Prediction ###
-
-    logits_flat = tf.nn.dropout(tf.contrib.layers.linear(hidden_layer, TARGET_SIZE), keep_prob=keep_prob_pl)
+    if LABEL_HIDDEN_SIZE is None:
+        hidden_layer_p = hidden_layer
+    else:
+        hidden_layer_p = tf.nn.dropout(tf.nn.relu(tf.contrib.layers.linear(hidden_layer, LABEL_HIDDEN_SIZE)), keep_prob=keep_prob_pl)
+    logits_flat = tf.nn.dropout(tf.contrib.layers.linear(hidden_layer_p, TARGET_SIZE), keep_prob=keep_prob_pl)
     logits = tf.reshape(logits_flat, [batch_size, TARGET_SIZE])
 
-    # Define L2 loss
-    tf_vars = tf.trainable_variables()
-    l2_loss = tf.add_n([tf.nn.l2_loss(v) for v in tf_vars if 'bias' not in v.name]) * L2_ALPHA
-
     # Define overall loss
-    p_loss = tf.reduce_sum(tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits, labels=stances_pl) + l2_loss)
+    p_loss = tf.reduce_sum(tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits, labels=stances_pl))
 
     # Define prediction
     softmaxed_logits = tf.nn.softmax(logits)
     predict = tf.argmax(softmaxed_logits, axis=1)
 
     ### Domain Prediction ###
-    hidden_layer_ = flip_gradient(hidden_layer, gr_pl) 
-    domain_layer = tf.nn.dropout(tf.nn.relu(tf.contrib.layers.linear(hidden_layer_, DOMAIN_HIDDEN_SIZE)), keep_prob=keep_prob_pl)
+    hidden_layer_d = flip_gradient(hidden_layer, gr_pl)
+    if DOMAIN_HIDDEN_SIZE is None:
+        domain_layer = hidden_layer_d
+    else:
+        domain_layer = tf.nn.dropout(tf.nn.relu(tf.contrib.layers.linear(hidden_layer_d, DOMAIN_HIDDEN_SIZE)), keep_prob=keep_prob_pl)
     d_logits_flat = tf.nn.dropout(tf.contrib.layers.linear(domain_layer, DOMAIN_TARGET_SIZE), keep_prob=keep_prob_pl)
     d_logits = tf.reshape(d_logits_flat, [batch_size, DOMAIN_TARGET_SIZE])
 
@@ -152,6 +155,11 @@ def main():
     softmaxed_d_logits = tf.nn.softmax(d_logits)
     d_predict = tf.argmax(softmaxed_d_logits, axis=1)
 
+    ### Regularization ###
+    # Define L2 loss
+    tf_vars = tf.trainable_variables()
+    l2_loss = tf.add_n([tf.nn.l2_loss(v) for v in tf_vars if 'bias' not in v.name]) * L2_ALPHA
+
     # Load model
     if MODE == 'load':
         with tf.Session() as sess:
@@ -159,9 +167,11 @@ def main():
             saver.restore(sess, LOAD_MODEL_PATH)
 
             # Predict
-            test_feed_dict = {features_pl: test_set, keep_prob_pl: 1.0}
+            test_feed_dict = {features_pl: test_vectors,
+                              keep_prob_pl: 1.0,
+                              domains_pl: [0 for i in range(len(test_vectors))],
+                              gr_pl: 1.0}
             test_pred = sess.run(predict, feed_dict=test_feed_dict)
-
 
     # Train model
     if MODE == 'train':
@@ -170,10 +180,11 @@ def main():
 
         # Define optimiser
         opt_func = tf.train.AdamOptimizer(lr_pl)
-        grads, _ = tf.clip_by_global_norm(tf.gradients(p_loss + d_loss, tf_vars), CLIP_RATIO)
+        grads, _ = tf.clip_by_global_norm(tf.gradients(p_loss + d_loss + l2_loss, tf_vars), CLIP_RATIO)
         opt_op = opt_func.apply_gradients(zip(grads, tf_vars))
         
         test_feed_dict = {features_pl: test_vectors,
+                          stances_pl: test_labels,
                           keep_prob_pl: 1.0,
                           domains_pl: [0 for i in range(len(test_vectors))],
                           gr_pl: 1.0}
@@ -186,7 +197,7 @@ def main():
             sess.run(tf.global_variables_initializer())
            
             for epoch in range(EPOCHS):
-                print("  EPOCH", epoch)
+                print("\n  EPOCH", epoch)
                 
                 # Adaption Parameter and Learning Rate
                 p = float(epoch)/EPOCHS
@@ -196,6 +207,9 @@ def main():
                 total_loss = 0
                 total_p_loss = 0
                 total_d_loss = 0
+                total_reg_loss = 0
+                train_l_pred = []
+                train_d_pred = []
 
                 indices = list(range(n_train))
                 r.shuffle(indices)
@@ -213,56 +227,49 @@ def main():
                                        gr_pl: gr,
                                        lr_pl: lr}
 
-                    _, ploss, dloss = sess.run([opt_op, p_loss, d_loss], feed_dict=batch_feed_dict)
+                    _, lpred, dpred, ploss, dloss, l2loss = sess.run([opt_op, predict, d_predict, p_loss, d_loss, l2_loss], feed_dict=batch_feed_dict)
                     
                     total_p_loss += ploss
                     total_d_loss += dloss
-                    total_loss += ploss + dloss
+                    total_reg_loss = l2loss
+                    total_loss += ploss + dloss + l2loss
+                    train_l_pred.extend(lpred)
+                    train_d_pred.extend(dpred)
 
-                print("    Label Loss =", total_p_loss)
-                print("    Domain Loss =", total_d_loss)
-                print("    Total Loss =", total_loss)
+                print("    Train Label Loss =", total_p_loss)
+                print("    Train Domain Loss =", total_d_loss)
+                print("    Train Regularization Loss =", total_reg_loss)
+                print("    Train Total Loss =", total_loss)
                 
-                if total_p_loss < best_loss:
-                    best_loss = total_p_loss
+                train_labels_epoch = [train_labels[i] for i in indices]
+                pred_accuracies = get_prediction_accuracies(train_l_pred, train_labels_epoch, 4)
+                print("    Train Label Accuracy", pred_accuracies)
+                train_domain_labels_epoch = [train_domains[i] for i in indices]
+                domain_accuracies = get_prediction_accuracies(train_d_pred, train_domain_labels_epoch, 2)
+                print("    Train Domain Accuracy", domain_accuracies)
+
+                test_pred, test_d_pred, test_p_loss, test_d_loss, test_l2_loss = sess.run([predict, d_predict, p_loss, d_loss, l2_loss], feed_dict=test_feed_dict)
+
+                print("\n    Test Label Loss =", test_p_loss)
+                print("    Test Domain Loss =", test_d_loss)
+                print("    Test Regularization Loss =", test_l2_loss)
+                print("    Test Total Loss =", test_p_loss + test_d_loss + test_l2_loss)
+                
+                if test_p_loss < best_loss:
+                    best_loss = test_p_loss
                     print("    New Best Training Loss")
                     
                     # save the model
                     saver = tf.train.Saver()
                     saver.save(sess, SAVE_MODEL_PATH)
-                
-                test_pred, test_d_pred = sess.run([predict, d_predict], feed_dict=test_feed_dict)
-                
-                correct = [0, 0, 0, 0]
-                total = [0, 0, 0, 0]
-                score = 0
-                
-                for i in range(len(test_pred)):
-                    total[test_labels[i]] += 1
-                    if test_pred[i] == test_labels[i]:
-                        correct[test_labels[i]] += 1
-                    
-                    # Unrelated label
-                    if test_labels[i] == 3 and test_pred[i] == 3:
-                        score += 0.25
 
-                    # Related label
-                    if test_labels[i] != 3 and test_pred[i] != 3:
-                        score += 0.25
-                        if test_labels[i] == test_pred[i]:
-                            score += 0.75
-
-                print("    Composite Score", score)
-                print("    Label Accuracy", [correct[i]/total[i] for i in range(len(total))])
-                
-                d_correct = 0
-                d_total = 0
-                for i in range(len(test_d_pred)):
-                    d_total += 1
-                    if test_d_pred[i] == 0:
-                        d_correct += 1
-                
-                print("    Domain Accuracy", d_correct/d_total)
+                composite_score = get_composite_score(test_pred, test_labels)
+                print("    Test Composite Score", composite_score)
+                pred_accuracies = get_prediction_accuracies(test_pred, test_labels, 4)
+                print("    Test Label Accuracy", pred_accuracies)
+                test_domain_labels = [0 for _ in range(len(test_labels))]
+                domain_accuracies = get_prediction_accuracies(test_d_pred, test_domain_labels, 2)
+                print("    Test Domain Accuracy", domain_accuracies)
 
     # Save predictions
     save_predictions(test_pred, test_labels, PREDICTION_FILE)

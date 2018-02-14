@@ -156,4 +156,33 @@ def save_predictions(pred, actual, file):
         for i in range(len(pred)):
             writer.writerow({'Stance': FNC_LABELS_REV[pred[i]], 'Actual': FNC_LABELS_REV[actual[i]]})
 
+def get_composite_score(pred, labels):
+    score = 0         
+    for i in range(len(pred)):
+        # Unrelated label
+        if labels[i] == FNC_LABELS['unrelated'] and pred[i] == FNC_LABELS['unrelated']:
+            score += 0.25
+
+        # Related label
+        if labels[i] != FNC_LABELS['unrelated'] and pred[i] != FNC_LABELS['unrelated']:
+            score += 0.25
+            if labels[i] == pred[i]:
+                score += 0.75
+    return score
+
+def get_prediction_accuracies(pred, labels, num_labels):
+    correct = [0 for _ in range(num_labels)]
+    total = [0 for _ in range(num_labels)]
+    
+    for i in range(len(pred)):
+        total[labels[i]] += 1
+        if pred[i] == labels[i]:
+            correct[labels[i]] += 1
+
+    # Avoid dividing by 0 case
+    for label in range(len(total)):
+        if total[label] == 0:
+            total[label] += 1
+
+    return [correct[i]/total[i] for i in range(len(total))]
 
