@@ -24,7 +24,7 @@ import tensorflow as tf
 
 FNC_LABELS = {'agree': 0, 'disagree': 1, 'discuss': 2, 'unrelated': 3}
 FNC_LABELS_REV = {0: 'agree', 1: 'disagree', 2: 'discuss', 3: 'unrelated'}
-SNLI_LABELS = {'entailment': 0, 'contradiction': 1}
+SNLI_LABELS = {'entailment': 0, 'contradiction': 1, 'neutral': 3}
 STOP_WORDS = set(stopwords.words('english'))
 
 
