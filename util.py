@@ -20,11 +20,11 @@ from sklearn.metrics.pairwise import cosine_similarity
 import json
 import numpy as np
 import tensorflow as tf
-
+import nltk
 
 FNC_LABELS = {'agree': 0, 'disagree': 1, 'discuss': 2, 'unrelated': 3}
 FNC_LABELS_REV = {0: 'agree', 1: 'disagree', 2: 'discuss', 3: 'unrelated'}
-SNLI_LABELS = {'entailment': 0, 'contradiction': 1, 'neutral': 3}
+SNLI_LABELS = {'entailment': 0, 'contradiction': 1, 'neutral': 2}
 STOP_WORDS = set(stopwords.words('english'))
 
 
@@ -95,6 +95,14 @@ def get_vectorizers(train_data, test_data, MAX_FEATURES):
 
 
 def get_feature_vectors(headlines, bodies, bow_vectorizer, tfreq_vectorizer, tfidf_vectorizer, use_cache=True):
+    '''
+    Convert data into feature vectors where the first NUM_FEATURES elements is the 
+    TF vector for the first document and the next NUM_FEATURES elements is the TF
+    vector for the second document. The cosine distance between the TFIDF values
+    of the vectors are then appended to this vector.
+
+    The output will be feature_vectors, a len(data) x (2*NUM_FEATURES + 1) vector
+    '''
     feature_vectors = []
     headline_cache = {}
     body_cache = {}
@@ -135,6 +143,38 @@ def get_feature_vectors(headlines, bodies, bow_vectorizer, tfreq_vectorizer, tfi
     print("    Number of Feature Vectors:", len(feature_vectors))
 
     return feature_vectors
+
+
+def get_relational_feature_vectors(feature_vectors):
+    '''
+    Create relational feature vectors where the first NUM_FEATURES elements are
+    the square of the difference between the feature vectors of the TF values for
+    the two documents at that corresponding vertex. The next NUM_FEATURES elements
+    represent the product of the two corresponding TF values. The value of the 
+    cosine distance of the TFIDF values are then appended to this vector.
+
+    Expected input is the list of feature_vectors from get_feature_vectors
+
+    Expected output is a len(feature_vectors) x (2*NUM_FEATURES + 1) list
+    '''
+    # Calculate number of features per document tf vector
+    NUM_FEATURES = len(feature_vectors[0])//2
+
+    relational_feature_vectors = []
+
+    for i in range(len(feature_vectors)):
+        if (i % 5000) == 0:
+            print("    Processed", i, "out of", len(feature_vectors))
+
+        current_vector = feature_vectors[i]
+        dist_vector = [(current_vector[j] - current_vector[5000+j])**2 for j in range(NUM_FEATURES)]
+        mag_vector = [current_vector[j] * current_vector[5000+j] for j in range(NUM_FEATURES)]
+        relational_vector = dist_vector + mag_vector + [current_vector[10000]]
+        relational_feature_vectors.append(np.asarray(relational_vector))
+
+    print("    Number of Relational Feature Vectors:", len(relational_feature_vectors))
+
+    return relational_feature_vectors
 
 def save_predictions(pred, actual, file):
 
@@ -185,4 +225,11 @@ def get_prediction_accuracies(pred, labels, num_labels):
             total[label] += 1
 
     return [correct[i]/total[i] for i in range(len(total))]
+
+def remove_stop_words(sentences):
+    stops = set(stopwords.words('english'))
+    sentences = [[word for word in nltk.word_tokenize(sentence.lower()) if word not in STOP_WORDS] for sentence in sentences]
+    sentences = [' '.join(word for word in sentence) for sentence in sentences]
+    return sentences
+
 
