@@ -21,7 +21,7 @@ from keras.utils import np_utils
 from keras.preprocessing.sequence import pad_sequences
 from keras.preprocessing.text import Tokenizer
 from flip_gradient import flip_gradient 
-from util import get_fnc_data, get_snli_data, get_vectorizers, get_feature_vectors, save_predictions, get_prediction_accuracies, get_composite_score, get_relational_feature_vectors, remove_stop_words
+from util import get_fnc_data, get_snli_data, get_vectorizers, get_feature_vectors, save_predictions, get_prediction_accuracies, get_composite_score, get_relational_feature_vectors, remove_stop_words, get_average_embeddings
 
 def main():
     # Mode is either train or load
@@ -37,15 +37,16 @@ def main():
     # Model options
     USE_FNC_DATA = True
     USE_SNLI_NEUTRAL = True
-    USE_DOMAINS = True
+    USE_DOMAINS = False
     ONLY_VECT_FNC = True
     ADD_FEATURES_TO_LABEL_PRED = True
     USE_RELATIONAL_FEATURE_VECTORS = False
-    USE_CNN_FEATURES = True 
+    USE_CNN_FEATURES = False
+    USE_AVG_EMBEDDINGS = True
      
     # CNN feature paramters
     EMBEDDING_PATH = "GoogleNews-vectors-negative300.bin"
-    CNN_INPUT_LENGTH = 100
+    CNN_INPUT_LENGTH = 250
     EMBEDDING_DIM = 300
     FILTER_SIZES = [2, 3, 4]
     NUM_FILTERS = 128
@@ -157,9 +158,9 @@ def main():
         # Two BOW representations and single value for TFIDF representation
         FEATURE_VECTOR_SIZE = MAX_FEATURES * 2 + 1
 
-        if USE_CNN_FEATURES:
-            print("Getting CNN Features")
-            f.write("Getting CNN Features...\n")
+        if USE_CNN_FEATURES or USE_AVG_EMBEDDINGS:
+            print("Proessing Embedding Data")
+            f.write("Processing Embedding Data...\n")
 
             print("  Getting pretrained embeddings...")
             f.write("  Getting pretrained embeddings...\n")
@@ -172,7 +173,17 @@ def main():
             train_bodies = remove_stop_words(train_bodies)
             test_headlines = remove_stop_words(test_headlines)
             test_bodies = remove_stop_words(test_bodies)
-           
+        
+        if USE_AVG_EMBEDDINGS:
+            train_headline_avg_embeddings = get_average_embeddings(train_headlines, embeddings)
+            train_body_avg_embeddings = get_average_embeddings(train_body, embeddings)
+            test_headline_avg_embeddings = get_average_embeddings(test_headlines, embeddings)
+            test_bodies_avg_embeddings = get_average_embeddings(test_bodies, embeddings)
+
+        if USE_CNN_FEATURES:
+            print("Extracting CNN Inputs...")
+            f.write("Extracting CNN Inputs...\n")
+
             print("  Tokenizing Text...")
             f.write("  Tokenizing Text...\n")
             # Map words to ids
@@ -204,10 +215,16 @@ def main():
 
         print("Defining Model...")
         f.write("Defining Model...\n")
+        
+        if USE_AVG_EMBEDDINGS:
+            avg_embeddings_headline_pl = tf.placeholder(tf.float32, [None, EMBEDDING_DIM])
+            avg_embeddings_body_pl = tf.placeholder(tf.float32, [None, EMBEDDING_DIM])
 
         # Create placeholders
         if USE_CNN_FEATURES:
             embedding_matrix_pl = tf.placeholder(tf.float32, [len(word_index) + 1, EMBEDDING_DIM])
+            W = tf.Variable(tf.constant(0.0, shape=[len(word_index) + 1, EMBEDDING_DIM]), trainable=False)
+            embedding_init = W.assign(embedding_matrix_pl)
             headline_words_pl = tf.placeholder(tf.int64, [None, CNN_INPUT_LENGTH])
             body_words_pl = tf.placeholder(tf.int64, [None, CNN_INPUT_LENGTH])
 
@@ -222,14 +239,16 @@ def main():
         batch_size = tf.shape(features_pl)[0]
         
         ### Feature Extraction ###
-        
+        if USE_EMBEDDINGS:
+            hidden_layer = tf.concat([avg_embeddings_headline_pl, avg_embeddings_body_pl], 1)
+
         if USE_CNN_FEATURES:
 
             # CNN output fully connected to hidden layer of HIDDEN_SIZE
             pooled_outputs = []
-
-            headline_embeddings = tf.nn.embedding_lookup(embedding_matrix_pl, headline_words_pl)
-            body_embeddings = tf.nn.embedding_lookup(embedding_matrix_pl, body_words_pl)
+            
+            headline_embeddings = tf.nn.embedding_lookup(embedding_init, headline_words_pl)
+            body_embeddings = tf.nn.embedding_lookup(embedding_init, body_words_pl)
 
             # Get headline features
             for filter_size in FILTER_SIZES:
@@ -255,7 +274,6 @@ def main():
             print("hidden_layer", hidden_layer.get_shape())
         
         else:
-       
             # TF and TFIDF features fully connected hidden layer of HIDDEN_SIZE
             hidden_layer = tf.nn.dropout(tf.nn.relu(tf.layers.dense(features_pl, HIDDEN_SIZE)), keep_prob=keep_prob_pl)
 
@@ -264,7 +282,7 @@ def main():
         # Fully connected hidden layer with size based on LABEL_HIDDEN_SIZE with original features concated
         if ADD_FEATURES_TO_LABEL_PRED:
             print(p_features_pl, p_features_pl.get_shape())
-            hidden_layer = tf.concat([p_features_pl, hidden_layer], axis=1)
+            hidden_layer_p = tf.concat([p_features_pl, hidden_layer], axis=1)
 
         if LABEL_HIDDEN_SIZE is None:
             hidden_layer_p = hidden_layer
