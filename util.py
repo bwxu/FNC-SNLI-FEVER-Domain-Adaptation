@@ -243,7 +243,7 @@ def get_average_embeddings(sentences, embeddings, embedding_size=300):
         for word in sentence:
             if word in embeddings.vocab:
                 np.add(avg_embeddings[i], embeddings[word])
-        avg_embeddings[i] /= len(sentence)
+        avg_embeddings[i] = np.divide(avg_embeddings[i], float(len(sentence)))
 
     return avg_embeddings
 

@@ -176,9 +176,9 @@ def main():
         
         if USE_AVG_EMBEDDINGS:
             train_headline_avg_embeddings = get_average_embeddings(train_headlines, embeddings)
-            train_body_avg_embeddings = get_average_embeddings(train_body, embeddings)
+            train_body_avg_embeddings = get_average_embeddings(train_bodies, embeddings)
             test_headline_avg_embeddings = get_average_embeddings(test_headlines, embeddings)
-            test_bodies_avg_embeddings = get_average_embeddings(test_bodies, embeddings)
+            test_body_avg_embeddings = get_average_embeddings(test_bodies, embeddings)
 
         if USE_CNN_FEATURES:
             print("Extracting CNN Inputs...")
@@ -239,7 +239,7 @@ def main():
         batch_size = tf.shape(features_pl)[0]
         
         ### Feature Extraction ###
-        if USE_EMBEDDINGS:
+        if USE_AVG_EMBEDDINGS:
             hidden_layer = tf.concat([avg_embeddings_headline_pl, avg_embeddings_body_pl], 1)
 
         if USE_CNN_FEATURES:
@@ -365,6 +365,16 @@ def main():
                                   domains_pl: test_domains,
                                   gr_pl: 1.0}
 
+            if USE_AVG_EMBEDDINGS:
+                test_feed_dict = {avg_embeddings_headline_pl: test_headline_avg_embeddings,
+                                  avg_embeddings_body_pl: test_body_avg_embeddings,
+                                  features_pl: test_vectors,
+                                  p_features_pl: test_vectors,
+                                  stances_pl: test_labels,
+                                  keep_prob_pl: 1.0,
+                                  domains_pl: test_domains,
+                                  gr_pl: 1.0}
+            
             elif USE_CNN_FEATURES:
                 test_feed_dict = {embedding_matrix_pl: embedding_matrix,
                                   headline_words_pl: x_test_headlines,
@@ -420,6 +430,10 @@ def main():
                         if USE_RELATIONAL_FEATURE_VECTORS:
                             batch_relational_features = [train_relational_vectors[i] for i in batch_indices]
                         
+                        if USE_AVG_EMBEDDINGS:
+                            batch_headline_avg_embeddings = [train_headline_avg_embeddings[i] for i in batch_indices]
+                            batch_body_avg_embeddings = [train_body_avg_embeddings[i] for i in batch_indices]
+
                         if USE_CNN_FEATURES:
                             batch_headlines = [x_train_headlines[i] for i in batch_indices]
                             batch_bodies = [x_train_bodies[i] for i in batch_indices]
@@ -440,7 +454,17 @@ def main():
                                                domains_pl: batch_domains,
                                                gr_pl: gr,
                                                lr_pl: lr}
-                        
+                        if USE_AVG_EMBEDDINGS:
+                            batch_feed_dict = {avg_embeddings_headline_pl: batch_headline_avg_embeddings,
+                                               avg_embeddings_body_pl: batch_body_avg_embeddings,
+                                               features_pl: batch_features,
+                                               p_features_pl: batch_features,
+                                               stances_pl: batch_stances,
+                                               keep_prob_pl: TRAIN_KEEP_PROB,
+                                               domains_pl: batch_domains,
+                                               gr_pl: gr,
+                                               lr_pl: lr}
+             
                         elif USE_CNN_FEATURES:
                             batch_feed_dict = {embedding_matrix_pl: embedding_matrix,
                                                headline_words_pl: batch_headlines,
