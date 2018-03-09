@@ -15,6 +15,7 @@
 import random
 import tensorflow as tf
 import numpy as np
+import os
 
 from gensim.models.keyedvectors import KeyedVectors
 from keras.utils import np_utils
@@ -28,22 +29,27 @@ def main():
     MODE = 'train'
     
     # Saving Parameters
-    MODEL_NAME = "test"
+    MODEL_NAME = "e_avg_dann_50000"
     SAVE_FOLDER = "models/" + MODEL_NAME + "/"
     PREDICTION_FILE = SAVE_FOLDER + MODEL_NAME + ".csv"
     SAVE_MODEL_PATH = SAVE_FOLDER + MODEL_NAME
     TRAINING_LOG_FILE = SAVE_FOLDER + "training.txt"
-  
+    if not os.path.exists(SAVE_FOLDER):
+        raise Exception("Folder of model name doesn't exist")
+
     # Model options
     USE_FNC_DATA = True
-    USE_SNLI_NEUTRAL = True
-    USE_DOMAINS = False
+    USE_SNLI_NEUTRAL = False
+    USE_DOMAINS = True
     ONLY_VECT_FNC = True
     ADD_FEATURES_TO_LABEL_PRED = True
     USE_RELATIONAL_FEATURE_VECTORS = False
     USE_CNN_FEATURES = False
     USE_AVG_EMBEDDINGS = True
-     
+    SNLI_TOTAL_SAMPLES_LIMIT = 20000
+    SNLI_SAMPLES_PER_EPOCH = 50000
+
+    
     # CNN feature paramters
     EMBEDDING_PATH = "GoogleNews-vectors-negative300.bin"
     CNN_INPUT_LENGTH = 250
@@ -75,10 +81,19 @@ def main():
     CLIP_RATIO = 5
     BATCH_SIZE_TRAIN = 66
     EPOCHS = 100
-    SNLI_TOTAL_SAMPLES_LIMIT = 0
-    SNLI_SAMPLES_PER_EPOCH = 50000
 
-    with open(TRAINING_LOG_FILE, 'a') as f:
+    with open(TRAINING_LOG_FILE, 'w') as f:
+        print("USE_DOMAINS, ADD_FEATURES_TO_LABEL_PRED, USE_RELATIONAL_FEATURE_VECTORS, USE_CNN_FEATURES, USE_AVG_EMBEDDINGS")
+        print(USE_DOMAINS, ADD_FEATURES_TO_LABEL_PRED, USE_RELATIONAL_FEATURE_VECTORS, USE_CNN_FEATURES, USE_AVG_EMBEDDINGS)
+        print("USE_SNLI_NEUTRAL, SNLI_TOTAL_SAMPLES_LIMIT, SNLI_SAMPLES_PER_EPOCH")
+        print(USE_SNLI_NEUTRAL, SNLI_TOTAL_SAMPLES_LIMIT, SNLI_SAMPLES_PER_EPOCH)
+
+        f.write("USE_DOMAINS, ADD_FEATURES_TO_LABEL_PRED, USE_RELATIONAL_FEATURE_VECTORS, USE_CNN_FEATURES, USE_AVG_EMBEDDINGS\n")
+        vals = [USE_DOMAINS, ADD_FEATURES_TO_LABEL_PRED, USE_RELATIONAL_FEATURE_VECTORS, USE_CNN_FEATURES, USE_AVG_EMBEDDINGS]
+        f.write(', '.join(str(val) for val in vals) + "\n")
+        f.write("USE_SNLI_NEUTRAL, SNLI_TOTAL_SAMPLES_LIMIT, SNLI_SAMPLES_PER_EPOCH\n")
+        vals = [USE_SNLI_NEUTRAL, SNLI_TOTAL_SAMPLES_LIMIT, SNLI_SAMPLES_PER_EPOCH]
+        f.write(', '.join(str(val) for val in vals) + "\n")
 
         ### Extract Data ###
 
@@ -239,10 +254,11 @@ def main():
         batch_size = tf.shape(features_pl)[0]
         
         ### Feature Extraction ###
+        
         if USE_AVG_EMBEDDINGS:
             hidden_layer = tf.concat([avg_embeddings_headline_pl, avg_embeddings_body_pl], 1)
 
-        if USE_CNN_FEATURES:
+        elif USE_CNN_FEATURES:
 
             # CNN output fully connected to hidden layer of HIDDEN_SIZE
             pooled_outputs = []
@@ -269,9 +285,7 @@ def main():
             # Concat features and connect to hidden layer
             cnn_out_vector = tf.reshape(tf.concat(pooled_outputs, 2), [-1, NUM_FILTERS * len(FILTER_SIZES) * 2])
             cnn_out_vector = tf.nn.dropout(cnn_out_vector, keep_prob_pl)
-            print("cnn_out_vector", cnn_out_vector.get_shape())
             hidden_layer = tf.layers.dense(cnn_out_vector, HIDDEN_SIZE)
-            print("hidden_layer", hidden_layer.get_shape())
         
         else:
             # TF and TFIDF features fully connected hidden layer of HIDDEN_SIZE
@@ -281,7 +295,6 @@ def main():
 
         # Fully connected hidden layer with size based on LABEL_HIDDEN_SIZE with original features concated
         if ADD_FEATURES_TO_LABEL_PRED:
-            print(p_features_pl, p_features_pl.get_shape())
             hidden_layer_p = tf.concat([p_features_pl, hidden_layer], axis=1)
 
         if LABEL_HIDDEN_SIZE is None:

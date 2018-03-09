@@ -240,10 +240,15 @@ def get_average_embeddings(sentences, embeddings, embedding_size=300):
     sentences = [nltk.word_tokenize(sentence.lower()) for sentence in sentences]
     avg_embeddings = [np.asarray([0 for _ in range(embedding_size)]) for _ in range(len(sentences))]
     for i, sentence in enumerate(sentences):
+        if len(sentence) == 0:
+            continue
+
+        count = 0.0
         for word in sentence:
             if word in embeddings.vocab:
-                np.add(avg_embeddings[i], embeddings[word])
-        avg_embeddings[i] = np.divide(avg_embeddings[i], float(len(sentence)))
-
+                count += 1
+                avg_embeddings[i] = np.add(avg_embeddings[i], embeddings[word])
+        avg_embeddings[i] = np.divide(avg_embeddings[i], count)
+    
     return avg_embeddings
 
