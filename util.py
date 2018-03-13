@@ -11,21 +11,24 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import imp
+import sys
+sys.modules["sqlite"] = imp.new_module("sqlite")
+sys.modules["sqlite3.dbapi2"] = imp.new_module("sqlite.dbapi2")
+import nltk
 
 from csv import DictReader, DictWriter
-from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer, TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 import json
 import numpy as np
 import tensorflow as tf
-import nltk
 
 FNC_LABELS = {'agree': 0, 'disagree': 1, 'discuss': 2, 'unrelated': 3}
 FNC_LABELS_REV = {0: 'agree', 1: 'disagree', 2: 'discuss', 3: 'unrelated'}
 SNLI_LABELS = {'entailment': 0, 'contradiction': 1, 'neutral': 2}
-STOP_WORDS = set(stopwords.words('english'))
+STOP_WORDS = set(nltk.corpus.stopwords.words('english'))
 
 
 def open_csv(path):
@@ -94,7 +97,7 @@ def get_vectorizers(train_data, test_data, MAX_FEATURES):
     return bow_vectorizer, tfreq_vectorizer, tfidf_vectorizer
 
 
-def get_feature_vectors(headlines, bodies, bow_vectorizer, tfreq_vectorizer, tfidf_vectorizer, use_cache=True):
+def get_feature_vectors(headlines, bodies, bow_vectorizer, tfreq_vectorizer, tfidf_vectorizer):
     '''
     Convert data into feature vectors where the first NUM_FEATURES elements is the 
     TF vector for the first document and the next NUM_FEATURES elements is the TF
@@ -104,8 +107,6 @@ def get_feature_vectors(headlines, bodies, bow_vectorizer, tfreq_vectorizer, tfi
     The output will be feature_vectors, a len(data) x (2*NUM_FEATURES + 1) vector
     '''
     feature_vectors = []
-    headline_cache = {}
-    body_cache = {}
 
     for i in range(len(headlines)):
         if i % 5000 == 0:
@@ -114,33 +115,22 @@ def get_feature_vectors(headlines, bodies, bow_vectorizer, tfreq_vectorizer, tfi
         headline = headlines[i]
         body = bodies[i]
        
-        if use_cache and headline in headline_cache:
-            headline_tf = headline_cache[headline][0]
-            headline_tfidf = headline_cache[headline][1]
-
-        else:
-            headline_bow = bow_vectorizer.transform([headline]).toarray()
-            headline_tf = tfreq_vectorizer.transform(headline_bow).toarray()[0].reshape(1, -1)
-            headline_tfidf = tfidf_vectorizer.transform([headline]).toarray().reshape(1, -1)
-            if use_cache:
-                headline_cache[headline] = (headline_tf, headline_tfidf)
+        headline_bow = bow_vectorizer.transform([headline]).toarray()
+        headline_tf = tfreq_vectorizer.transform(headline_bow).toarray()[0].reshape(1, -1)
+        headline_tfidf = tfidf_vectorizer.transform([headline]).toarray().reshape(1, -1)
         
-        if use_cache and body in body_cache:
-            body_tf = body_cache[body][0]
-            body_tfidf = body_cache[body][1]
-        
-        else:
-            body_bow = bow_vectorizer.transform([body]).toarray()
-            body_tf = tfreq_vectorizer.transform(body_bow).toarray()[0].reshape(1, -1)
-            body_tfidf = tfidf_vectorizer.transform([body]).toarray().reshape(1, -1)
-            if use_cache:
-                body_cache[body] = (body_tf, body_tfidf)
+        body_bow = bow_vectorizer.transform([body]).toarray()
+        body_tf = tfreq_vectorizer.transform(body_bow).toarray()[0].reshape(1, -1)
+        body_tfidf = tfidf_vectorizer.transform([body]).toarray().reshape(1, -1)
 
         tfidf_cos = cosine_similarity(headline_tfidf, body_tfidf)[0].reshape(1, 1)
         feature_vector = np.squeeze(np.c_[headline_tf, body_tf, tfidf_cos])
+        
         feature_vectors.append(feature_vector)
-    
+
     print("    Number of Feature Vectors:", len(feature_vectors))
+    
+    feature_vectors = np.asarray(feature_vectors)
 
     return feature_vectors
 
@@ -160,20 +150,25 @@ def get_relational_feature_vectors(feature_vectors):
     # Calculate number of features per document tf vector
     NUM_FEATURES = len(feature_vectors[0])//2
 
-    relational_feature_vectors = []
+    relational_feature_vectors = np.zeros((len(feature_vectors), 10001))
 
     for i in range(len(feature_vectors)):
         if (i % 5000) == 0:
             print("    Processed", i, "out of", len(feature_vectors))
+        
+        tf_vector_1 = feature_vectors[i][:NUM_FEATURES]
+        tf_vector_2 = feature_vectors[i][NUM_FEATURES:2*NUM_FEATURES]
+        tfidf = feature_vectors[i][2*NUM_FEATURES:]
+        
+        dist_vector = np.power(tf_vector_1 - tf_vector_2, 2)
+        mag_vector = np.multiply(tf_vector_1, tf_vector_2)
 
-        current_vector = feature_vectors[i]
-        dist_vector = [(current_vector[j] - current_vector[5000+j])**2 for j in range(NUM_FEATURES)]
-        mag_vector = [current_vector[j] * current_vector[5000+j] for j in range(NUM_FEATURES)]
-        relational_vector = dist_vector + mag_vector + [current_vector[10000]]
-        relational_feature_vectors.append(np.asarray(relational_vector))
+        relational_vector = np.concatenate([dist_vector, mag_vector, tfidf])
+
+        relational_feature_vectors[i] = relational_vector
 
     print("    Number of Relational Feature Vectors:", len(relational_feature_vectors))
-
+    
     return relational_feature_vectors
 
 def save_predictions(pred, actual, file):
@@ -227,7 +222,6 @@ def get_prediction_accuracies(pred, labels, num_labels):
     return [correct[i]/total[i] for i in range(len(total))]
 
 def remove_stop_words(sentences):
-    stops = set(stopwords.words('english'))
     sentences = [[word for word in nltk.word_tokenize(sentence.lower()) if word not in STOP_WORDS] for sentence in sentences]
     sentences = [' '.join(word for word in sentence) for sentence in sentences]
     return sentences
@@ -238,17 +232,22 @@ def get_average_embeddings(sentences, embeddings, embedding_size=300):
     avg embedding vector for each text
     '''
     sentences = [nltk.word_tokenize(sentence.lower()) for sentence in sentences]
-    avg_embeddings = [np.asarray([0 for _ in range(embedding_size)]) for _ in range(len(sentences))]
+    avg_embeddings = np.zeros((len(sentences), embedding_size))
+    
     for i, sentence in enumerate(sentences):
         if len(sentence) == 0:
             continue
+
+        if i % 5000 == 0:
+            print("    Processed", i, "out of", len(sentences))
 
         count = 0.0
         for word in sentence:
             if word in embeddings.vocab:
                 count += 1
-                avg_embeddings[i] = np.add(avg_embeddings[i], embeddings[word])
-        avg_embeddings[i] = np.divide(avg_embeddings[i], count)
+                avg_embeddings[i] += embeddings[word]
+        if count > 0:
+            avg_embeddings[i] /= count
     
     return avg_embeddings
 
