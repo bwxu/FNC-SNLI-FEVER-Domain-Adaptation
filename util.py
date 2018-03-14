@@ -250,4 +250,29 @@ def get_average_embeddings(sentences, embeddings, embedding_size=300):
             avg_embeddings[i] /= count
     
     return avg_embeddings
+                   
+def print_model_results(f, set_name, pred, labels, d_pred, d_labels, p_loss, d_loss, l2_loss, USE_DOMAINS):
+    print("\n    " + set_name + "  Label Loss =", p_loss)
+    print("    " + set_name + "  Domain Loss =", d_loss)
+    print("    " + set_name + "  Regularization Loss =", l2_loss)
+    print("    " + set_name + "  Total Loss =", p_loss + d_loss + l2_loss)
+
+    f.write("\n    " + set_name + "  Label Loss = " + str(p_loss) + "\n")
+    f.write("    " + set_name + "  Domain Loss = " + str(d_loss) + "\n")
+    f.write("    " + set_name + "  Regularization Loss = " + str(l2_loss) + "\n")
+    f.write("    " + set_name + "  Total Loss = " + str(p_loss + d_loss + l2_loss) + "\n")
+    
+    composite_score = get_composite_score(pred, labels)
+    print("    " + set_name + "  Composite Score", composite_score)
+    f.write("    " + set_name + "  Composite Score " + str(composite_score) + "\n")
+    
+    pred_accuracies = get_prediction_accuracies(pred, labels, 4)
+    print("    " + set_name + "  Label Accuracy", pred_accuracies)
+    f.write("    " + set_name + "  Label Accuracy [" + ', '.join(str(acc) for acc in pred_accuracies) + "]\n")
+    
+    if USE_DOMAINS:
+        domain_accuracies = get_prediction_accuracies(d_pred, d_labels, 2)
+        print("    " + set_name + " Domain Accuracy", domain_accuracies)
+        f.write("    " + set_name + " Domain Accuracy [" + ', '.join(str(acc) for acc in domain_accuracies) + "]\n")
+
 

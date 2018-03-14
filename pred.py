@@ -22,55 +22,69 @@ from keras.utils import np_utils
 from keras.preprocessing.sequence import pad_sequences
 from keras.preprocessing.text import Tokenizer
 from flip_gradient import flip_gradient 
-from util import get_fnc_data, get_snli_data, get_vectorizers, get_feature_vectors, save_predictions, get_prediction_accuracies, get_composite_score, get_relational_feature_vectors, remove_stop_words, get_average_embeddings
+from util import get_fnc_data, get_snli_data, get_vectorizers, get_feature_vectors, save_predictions
+from util import get_relational_feature_vectors, remove_stop_words, get_average_embeddings, print_model_results
 
 # Data Processing Params
 LOG_FILE = "log.txt"
-PICKLE_SAVE_FOLDER = "pickle_data/3_label_use_neutral/"
+PICKLE_SAVE_FOLDER = "pickle_data/3_label_only_fnc/"
 
 # Saving Parameters
-MODEL_NAME = "dann_d_50000_3"
+MODEL_NAME = "snli_pre_fnc_3"
 SAVE_FOLDER = "models/" + MODEL_NAME + "/"
 PREDICTION_FILE = SAVE_FOLDER + MODEL_NAME + ".csv"
-SAVE_MODEL_PATH = SAVE_FOLDER + MODEL_NAME
+SAVE_MODEL_PATH = SAVE_FOLDER + MODEL_NAME + ".ckpt"
 TRAINING_LOG_FILE = SAVE_FOLDER + "training.txt"
 if not os.path.exists(SAVE_FOLDER):
     raise Exception("Folder of model name doesn't exist")
 
+PRETRAINED_MODEL_PATH = "models/snli_pretrain/snli_pretrain.ckpt"
+
 # Model options
 USE_UNRELATED_LABEL = False
 USE_FNC_DATA = True
+USE_SNLI_DATA = False
 USE_SNLI_NEUTRAL = True
-USE_DOMAINS = True
+USE_DOMAINS = False
 ONLY_VECT_FNC = True
 ADD_FEATURES_TO_LABEL_PRED = False
 USE_RELATIONAL_FEATURE_VECTORS = False
 USE_AVG_EMBEDDINGS = False
 SNLI_TOTAL_SAMPLES_LIMIT = None
+EPOCHS = 30
+TOTAL_EPOCHS = 60
+EPOCH_START = 30
+VALIDATION_SET_SIZE = 0.2
+NUM_MODELS_TO_TRAIN = 20
 
+SNLI_SAMPLES_PER_EPOCH = None
 if USE_UNRELATED_LABEL:
-    FNC_TRAIN_SIZE = 49972
-    SNLI_SAMPLES_PER_EPOCH = 49972
+    FNC_SIZE = 49972
+    if USE_FNC_DATA:
+        SNLI_SAMPLES_PER_EPOCH = 49972
 else:
-    FNC_TRAIN_SIZE = 13427
-    SNLI_SAMPLES_PER_EPOCH = 13427
+    FNC_SIZE = 13427
+    if USE_FNC_DATA:
+        SNLI_SAMPLES_PER_EPOCH = 13427
 
 RATIO_LOSS = 0.5
 
-if not USE_UNRELATED_LABEL:
-    assert "3_label" in PICKLE_SAVE_FOLDER
-if USE_SNLI_NEUTRAL:
-    assert "use_neutral" in PICKLE_SAVE_FOLDER
-if USE_SNLI_NEUTRAL:
-    assert "_d_" in MODEL_NAME
-if ADD_FEATURES_TO_LABEL_PRED:
-    assert "e_" in MODEL_NAME
-if USE_RELATIONAL_FEATURE_VECTORS:
-    assert "_r_" in MODEL_NAME
-if USE_AVG_EMBEDDINGS:
-    assert "_avg_" in MODEL_NAME
-if SNLI_TOTAL_SAMPLES_LIMIT == 0:
-    assert "only_fnc" in PICKLE_SAVE_FOLDER
+CHECKS_ENABLED = False
+if CHECKS_ENABLED:
+    if not USE_UNRELATED_LABEL:
+        assert "3_label" in PICKLE_SAVE_FOLDER
+    if USE_SNLI_NEUTRAL:
+        assert "use_neutral" in PICKLE_SAVE_FOLDER
+    if USE_SNLI_NEUTRAL:
+        assert "_d_" in MODEL_NAME
+    if ADD_FEATURES_TO_LABEL_PRED:
+        assert "e_" in MODEL_NAME
+    if USE_RELATIONAL_FEATURE_VECTORS:
+        assert "_r_" in MODEL_NAME
+    if USE_AVG_EMBEDDINGS:
+        assert "_avg_" in MODEL_NAME
+    if SNLI_TOTAL_SAMPLES_LIMIT == 0:
+        assert "only_fnc" in PICKLE_SAVE_FOLDER
 
 # CNN feature paramters
 EMBEDDING_PATH = "GoogleNews-vectors-negative300.bin"
@@ -99,7 +113,6 @@ TRAIN_KEEP_PROB = 0.6
 L2_ALPHA = 0.01
 CLIP_RATIO = 5
 BATCH_SIZE_TRAIN = 100
-EPOCHS = 30
 LR_FACTOR = 0.01
 
 def process_data():
@@ -118,11 +131,11 @@ def process_data():
         f.write("Getting Data...\n")
         
         fnc_headlines_train, fnc_bodies_train, fnc_labels_train = get_fnc_data(FNC_TRAIN_STANCES, FNC_TRAIN_BODIES)
-        fnc_domain = [0 for i in range(len(fnc_headlines_train))]
+        fnc_domain = [0 for _ in range(len(fnc_headlines_train))]
         fnc_headlines_test, fnc_bodies_test, fnc_labels_test = get_fnc_data(FNC_TEST_STANCES, FNC_TEST_BODIES)
 
         snli_s1_train, snli_s2_train, snli_labels_train = get_snli_data(SNLI_TRAIN, limit=SNLI_TOTAL_SAMPLES_LIMIT, use_neutral=USE_SNLI_NEUTRAL)
-        snli_domain = [1 for i in range(len(snli_s1_train))]
+        snli_domain = [1 for _ in range(len(snli_s1_train))]
 
         train_headlines = fnc_headlines_train + snli_s1_train
         train_bodies = fnc_bodies_train + snli_s2_train
@@ -137,9 +150,9 @@ def process_data():
                 del train_labels[i]
                 del train_domains[i]
 
-        np.save(PICKLE_SAVE_FOLDER + "train_labels.npy", train_labels)
+        np.save(PICKLE_SAVE_FOLDER + "train_labels.npy", np.asarray(train_labels))
         del train_labels
-        np.save(PICKLE_SAVE_FOLDER + "train_domains.npy", train_domains)
+        np.save(PICKLE_SAVE_FOLDER + "train_domains.npy", np.asarray(train_domains))
         del train_domains
 
         test_headlines = fnc_headlines_test
@@ -155,9 +168,9 @@ def process_data():
                 del test_labels[i]
                 del test_domains[i]
 
-        np.save(PICKLE_SAVE_FOLDER + "test_labels.npy", test_labels)
+        np.save(PICKLE_SAVE_FOLDER + "test_labels.npy", np.asarray(test_labels))
         del test_labels
-        np.save(PICKLE_SAVE_FOLDER + "test_domains.npy", test_domains)
+        np.save(PICKLE_SAVE_FOLDER + "test_domains.npy", np.asarray(test_domains))
         del test_domains
 
         ### Get TF and TFIDF vectorizers ###
@@ -270,6 +283,7 @@ def process_data():
             np.save(PICKLE_SAVE_FOLDER + "test_avg_embed_vectors.npy", test_avg_embed_vectors)
             del test_avg_embed_vectors
 
+
 def train_model():
     with open(TRAINING_LOG_FILE, 'w') as f:
         # Loop for training multiple models\
@@ -282,10 +296,24 @@ def train_model():
 
         print("Loading train vectors...")
         f.write("Loading train vectors...\n")
+
+        # Take last VALDIATION_SET_SIZE PROPORTION of train set as validation set
         train_tf_vectors = np.load(PICKLE_SAVE_FOLDER + "train_tf_vectors.npy")
         train_labels = np.load(PICKLE_SAVE_FOLDER + "train_labels.npy")
         train_domains = np.load(PICKLE_SAVE_FOLDER + "train_domains.npy")
         
+        # TODO fix this hack
+        if "only_fnc" not in PICKLE_SAVE_FOLDER:
+            if not USE_FNC_DATA:
+                train_tf_vectors = train_tf_vectors[FNC_SIZE:]
+                train_labels = train_labels[FNC_SIZE:]
+                train_domains = train_domains[FNC_SIZE:]
+
+            if not USE_SNLI_DATA:
+                train_tf_vectors = train_tf_vectors[:FNC_SIZE]
+                train_labels = train_labels[:FNC_SIZE]
+                train_domains = train_domains[:FNC_SIZE]
+
         print("Loading test vectors...")
         f.write("Loading test vectors...\n")
         test_tf_vectors = np.load(PICKLE_SAVE_FOLDER + "test_tf_vectors.npy")
@@ -304,7 +332,66 @@ def train_model():
             train_avg_embed_vectors = np.load(PICKLE_SAVE_FOLDER + "train_avg_embed_vectors.npy")
             test_avg_embed_vectors = np.load(PICKLE_SAVE_FOLDER + "test_avg_embed_vectors.npy")
 
-        for _ in range(1):
+
+        if VALIDATION_SET_SIZE is not None and VALIDATION_SET_SIZE > 0:
+            print("Getting validation vectors...")
+            f.write("Getting validation vectors...")
+
+            if not USE_FNC_DATA or not USE_SNLI_DATA:
+                VAL_SIZE_PER_SET = int(len(train_tf_vectors) * VALIDATION_SET_SIZE)
+                val_tf_vectors = train_tf_vectors[-VAL_SIZE_PER_SET:, :]
+                val_labels = train_labels[-VAL_SIZE_PER_SET:]
+                val_domains = train_domains[-VAL_SIZE_PER_SET:]
+        
+                train_tf_vectors = train_tf_vectors[:-VAL_SIZE_PER_SET, :]
+                train_labels = train_labels[:-VAL_SIZE_PER_SET]
+                train_domains = train_domains[:-VAL_SIZE_PER_SET]
+
+                if USE_RELATIONAL_FEATURE_VECTORS:
+                    val_relation_vectors = train_relation_vectors[-VAL_SIZE_PER_SET:, :]
+                    train_relation_vectors = train_relation_vectors[:-VAL_SIZE_PER_SET, :]
+
+                if USE_AVG_EMBEDDINGS:
+                    val_avg_embed_vectors = train_avg_embed_vectors[-VAL_SIZE_PER_SET:, :]
+                    train_avg_embed_vectors = train_avg_embed_vectors[:-VAL_SIZE_PER_SET, :]
+
+            # if both datasets are present take VAL_SIZE_PER_SET from each for the validation set
+            else:
+                VAL_SIZE_PER_SET = int(FNC_SIZE * VALIDATION_SET_SIZE)
+                val_tf_vectors = train_tf_vectors[FNC_SIZE - VAL_SIZE_PER_SET:FNC_SIZE, :] + \
+                        train_tf_vectors[-VAL_SIZE_PER_SET:, :]
+                val_labels = train_labels[FNC_SIZE - VAL_SIZE_PER_SET:FNC_SIZE] + \
+                        train_labels[-VAL_SIZE_PER_SET:]
+                val_domains = train_domains[FNC_SIZE - VAL_SIZE_PER_SET:FNC_SIZE] + \
+                        train_domains[-VAL_SIZE_PER_SET:]
+                
+                train_tf_vectors = train_tf_vectors[:FNC_SIZE - VAL_SIZE_PER_SET, :] + \
+                        train_tf_vectors[FNC_SIZE:-VAL_SIZE_PER_SET, :]
+                train_labels = train_labels[:FNC_SIZE - VAL_SIZE_PER_SET] + \
+                        train_labels[FNC_SIZE:-VAL_SIZE_PER_SET]
+                train_domains = train_domains[:FNC_SIZE - VAL_SIZE_PER_SET] + \
+                        train_domains[FNC_SIZE:-VAL_SIZE_PER_SET]
+
+                if USE_RELATIONAL_FEATURE_VECTORS:
+                    val_relation_vectors = train_relation_vectors[FNC_SIZE - VAL_SIZE_PER_SET:FNC_SIZE, :] + \
+                            train_relation_vectors[-VAL_SIZE_PER_SET:, :]
+                    train_relation_vectors = train_relation_vectors[:FNC_SIZE - VAL_SIZE_PER_SET, :] + \
+                            train_relation_vectors[FNC_SIZE:-VAL_SIZE_PER_SET, :]
+
+                if USE_AVG_EMBEDDINGS:
+                    val_relation_vectors = train_avg_embed_vectors[FNC_SIZE - VAL_SIZE_PER_SET:FNC_SIZE, :] + \
+                            train_avg_embed_vectors[-VAL_SIZE_PER_SET:, :]
+                    train_relation_vectors = train_avg_embed_vectors[:FNC_SIZE - VAL_SIZE_PER_SET, :] + \
+                            train_avg_embed_vectors[FNC_SIZE:-VAL_SIZE_PER_SET, :]
+
+        print("SIZE_TRAIN = ", len(train_tf_vectors))
+        f.write("SIZE_TRAIN = " + str(len(train_tf_vectors)) + "\n")
+
+        best_loss = float('Inf')
+        
+        for model_num in range(NUM_MODELS_TO_TRAIN):
+            print("Training model " + str(model_num))
+            f.write("Training model " + str(model_num) + "\n")
             tf.reset_default_graph()
             
             print("Defining Model...")
@@ -380,12 +467,28 @@ def train_model():
             # L2 loss
             tf_vars = tf.trainable_variables()
             l2_loss = tf.add_n([tf.nn.l2_loss(v) for v in tf_vars if 'bias' not in v.name]) * L2_ALPHA
-
+           
             # Define optimiser
             opt_func = tf.train.AdamOptimizer(lr_pl)
             grads, _ = tf.clip_by_global_norm(tf.gradients(RATIO_LOSS * p_loss + (1 - RATIO_LOSS) * d_loss + l2_loss, tf_vars), CLIP_RATIO)
             opt_op = opt_func.apply_gradients(zip(grads, tf_vars))
+ 
+            # Intialize saver to save model
+            saver = tf.train.Saver()
+ 
+            ### Training Model ###
             
+            print("Training Model...")
+            f.write("Training Model...\n")
+
+            # Get validation inputs
+            val_feed_dict = {features_pl: val_tf_vectors,
+                              p_features_pl: val_tf_vectors,
+                              stances_pl: val_labels,
+                              keep_prob_pl: 1.0,
+                              domains_pl: val_domains,
+                              gr_pl: 1.0}
+
             # Get test inputs
             test_feed_dict = {features_pl: test_tf_vectors,
                               p_features_pl: test_tf_vectors,
@@ -410,39 +513,52 @@ def train_model():
                                   domains_pl: test_domains,
                                   gr_pl: 1.0}
  
-            best_loss = float('Inf')
-        
-            ### Training Model ###
-            print("Training Model...")
-            f.write("Training Model...\n")
-
             with tf.Session() as sess:
-                sess.run(tf.global_variables_initializer())
-                for epoch in range(EPOCHS):
+                # Load Pretrained Model if applicable
+                if PRETRAINED_MODEL_PATH is not None:
+                    print("Loading Saved Model...")
+                    f.write("Loading Saved Model...\n")
+                    saver.restore(sess, PRETRAINED_MODEL_PATH)
+
+                else:
+                    sess.run(tf.global_variables_initializer())
+                
+                for epoch in range(EPOCH_START, EPOCH_START + EPOCHS):
                     print("\n  EPOCH", epoch)
                     f.write("\n  EPOCH " + str(epoch))
                     
                     # Adaption Parameter and Learning Rate
-                    p = float(epoch)/EPOCHS
+                    p = float(epoch)/TOTAL_EPOCHS
                     gr = 2. / (1. + np.exp(-10. * p)) - 1
                     lr = LR_FACTOR / (1. + 10 * p)**0.75
                 
-                    total_loss, total_p_loss, total_d_loss, total_reg_loss = 0, 0, 0, 0
-                    train_l_pred = []
-                    train_d_pred = []
+                    train_loss, train_p_loss, train_d_loss, train_l2_loss = 0, 0, 0, 0
+                    train_l_pred, train_d_pred = [], []
                     
                     # Randomize order of FNC and SNLI data and randomly choose SNLI_SAMPLES_PER_EPOCH SNLI data
-                    n_train = len(train_tf_vectors)
-                    fnc_indices = list(range(FNC_TRAIN_SIZE))
-                    snli_indices = list(range(FNC_TRAIN_SIZE, n_train))
-                    rand1.shuffle(snli_indices)
+                    # If both FNC and SNLI data used ensure that the correct amount of SNLI samples
+                    # are used each epoch in addition to all of the FNC data
+                    if USE_FNC_DATA and USE_SNLI_DATA:
+                        n_train = len(train_tf_vectors)
+                        if VALIDATION_SET_SIZE is not None and VALIDATION_SET_SIZE > 0:
+                            FNC_TRAIN_SIZE = FNC_SIZE - int(FNC_SIZE * VALIDATION_SET_SIZE)
+                        else:
+                            FNC_TRAIN_SIZE = FNC_SIZE
+                        fnc_indices = list(range(FNC_TRAIN_SIZE))
+                        snli_indices = list(range(FNC_TRAIN_SIZE, n_train))
+                        rand1.shuffle(snli_indices)
 
-                    if SNLI_SAMPLES_PER_EPOCH is not None:
-                        indices = fnc_indices + snli_indices[:SNLI_SAMPLES_PER_EPOCH]
+                        if SNLI_SAMPLES_PER_EPOCH is not None:
+                            indices = fnc_indices + snli_indices[:SNLI_SAMPLES_PER_EPOCH]
+                        else:
+                            indices = fnc_indices + snli_indices
+                        rand2.shuffle(indices)
+
                     else:
-                        indices = fnc_indices + snli_indices
-                    rand2.shuffle(indices)
-                    
+                        n_train = len(train_tf_vectors)
+                        indices = list(range(n_train))
+                        rand1.shuffle(indices)
+                        
                     # Training epoch loop
                     for i in range(len(indices) // BATCH_SIZE_TRAIN):
 
@@ -485,74 +601,46 @@ def train_model():
                                                lr_pl: lr}
 
                         # Loss and predictions for each batch
-                        _, lpred, dpred, ploss, dloss, l2loss = sess.run([opt_op, predict, d_predict, p_loss, d_loss, l2_loss], feed_dict=batch_feed_dict)
+                        _, lpred, dpred, ploss, dloss, l2loss = \
+                                sess.run([opt_op, predict, d_predict, p_loss, d_loss, l2_loss], feed_dict=batch_feed_dict)
                         
                         # Total loss for current epoch
-                        total_p_loss += ploss
-                        total_d_loss += dloss
-                        total_reg_loss += l2loss
-                        total_loss += ploss + dloss + l2loss
+                        train_p_loss += ploss
+                        train_d_loss += dloss
+                        train_l2_loss += l2loss
+                        train_loss += ploss + dloss + l2loss
                         train_l_pred.extend(lpred)
                         if USE_DOMAINS:
                             train_d_pred.extend(dpred)
-
                     
                     # Record loss and accuracy information for train
-                    print("    Train Label Loss =", total_p_loss)
-                    print("    Train Domain Loss =", total_d_loss)
-                    print("    Train Regularization Loss =", total_reg_loss)
-                    print("    Train Total Loss =", total_loss)
+                    print_model_results(f, "Train", train_l_pred, train_labels, train_d_pred, train_domains,
+                                        train_p_loss, train_d_loss, train_l2_loss, USE_DOMAINS)
 
-                    f.write("    Train Label Loss = " + str(total_p_loss) + "\n")
-                    f.write("    Train Domain Loss = " + str(total_d_loss) + "\n")
-                    f.write("    Train Regularization Loss = " + str(total_reg_loss) + "\n")
-                    f.write("    Train Total Loss = " + str(total_loss) + "\n")
+                    # Record loss and accuracy for val
+                    if VALIDATION_SET_SIZE is not None and VALIDATION_SET_SIZE > 0:
+                        val_l_pred, val_d_pred, val_p_loss, val_d_loss, val_l2_loss = \
+                                sess.run([predict, d_predict, p_loss, d_loss, l2_loss], feed_dict=val_feed_dict)
 
-                    train_labels_epoch = [train_labels[i] for i in indices]
-                    pred_accuracies = get_prediction_accuracies(train_l_pred, train_labels_epoch, 4)
-                    print("    Train Label Accuracy", pred_accuracies)
-                    f.write("    Train Label Accuracy [" + ', '.join(str(acc) for acc in pred_accuracies) + "]\n")
+                        print_model_results(f, "Val", val_l_pred, val_labels, val_d_pred, val_domains,
+                                            val_p_loss, val_d_loss, val_l2_loss, USE_DOMAINS)
 
-                    if USE_DOMAINS:
-                        train_domain_labels_epoch = [train_domains[i] for i in indices]
-                        domain_accuracies = get_prediction_accuracies(train_d_pred, train_domain_labels_epoch, 2)
-                        print("    Train Domain Accuracy", domain_accuracies)
-                        f.write("    Train Domain Accuracy [" + ', '.join(str(acc) for acc in domain_accuracies) + "]\n")
+                        # Save best test label loss model
+                        if val_p_loss < best_loss:
+                            best_loss = val_p_loss
+                            saver.save(sess, SAVE_MODEL_PATH)
+                            print("\n    New Best Val Loss")
+                            f.write("\n    New Best Val Loss\n")
 
                     # Record loss and accuracy information for test
-                    test_pred, test_d_pred, test_p_loss, test_d_loss, test_l2_loss = sess.run([predict, d_predict, p_loss, d_loss, l2_loss], feed_dict=test_feed_dict)
-
-                    print("\n    Test Label Loss =", test_p_loss)
-                    print("    Test Domain Loss =", test_d_loss)
-                    print("    Test Regularization Loss =", test_l2_loss)
-                    print("    Test Total Loss =", test_p_loss + test_d_loss + test_l2_loss)
- 
-                    f.write("    Test Label Loss = " + str(test_p_loss) + "\n")
-                    f.write("    Test Domain Loss = " + str(test_d_loss) + "\n")
-                    f.write("    Test Regularization Loss = " + str(test_l2_loss) + "\n")
-                    f.write("    Test Total Loss = " + str(test_p_loss + test_d_loss + test_l2_loss) + "\n")
+                    test_l_pred, test_d_pred, test_p_loss, test_d_loss, test_l2_loss = \
+                            sess.run([predict, d_predict, p_loss, d_loss, l2_loss], feed_dict=test_feed_dict)
                     
-                    # Save best test label loss model
-                    if test_p_loss < best_loss:
-                        best_loss = test_p_loss
-                        saver = tf.train.Saver()
-                        saver.save(sess, SAVE_MODEL_PATH)
-                        print("    New Best Training Loss")
-                        f.write("    New Best Training Loss\n")
-
-                    composite_score = get_composite_score(test_pred, test_labels)
-                    print("    Test Composite Score", composite_score)
-                    f.write("    Test Composite Score " + str(composite_score) + "\n")
-                    
-                    pred_accuracies = get_prediction_accuracies(test_pred, test_labels, 4)
-                    print("    Test Label Accuracy", pred_accuracies)
-                    f.write("    Test Label Accuracy [" + ', '.join(str(acc) for acc in pred_accuracies) + "]\n")
-                    
-                    if USE_DOMAINS:
-                        test_domain_labels = [0 for _ in range(len(test_labels))]
-                        domain_accuracies = get_prediction_accuracies(test_d_pred, test_domain_labels, 2)
-                        print("    Test Domain Accuracy", domain_accuracies)
-                        f.write("    Test Domain Accuracy [" + ', '.join(str(acc) for acc in domain_accuracies) + "]\n")
+                    # Print and Write test results
+                    print_model_results(f, "Test", test_l_pred, test_labels, test_d_pred, test_domains,
+                                    test_p_loss, test_d_loss, test_l2_loss, USE_DOMAINS)
+                
+                save_predictions(test_l_pred, test_labels, PREDICTION_FILE)
 
 
 if __name__ == "__main__":
