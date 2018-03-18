@@ -26,7 +26,7 @@ from util import get_fnc_data, get_snli_data, get_vectorizers, get_feature_vecto
 from util import get_relational_feature_vectors, remove_stop_words, get_average_embeddings, print_model_results
 
 # Data Processing Params
-PICKLE_SAVE_FOLDER = "pickle_data/3_label_only_fnc/"
+PICKLE_SAVE_FOLDER = "pickle_data/4_label_only_fnc/"
 PICKLE_LOG_FILE = PICKLE_SAVE_FOLDER + "log.txt"
 
 # Saving Parameters
@@ -364,7 +364,7 @@ def train_model():
                 train_labels = train_labels[FNC_SIZE:]
                 train_domains = train_domains[FNC_SIZE:]
 
-            if not USE_SNLI_DATA:
+            elif not USE_SNLI_DATA:
                 train_tf_vectors = train_tf_vectors[:FNC_SIZE]
                 train_labels = train_labels[:FNC_SIZE]
                 train_domains = train_domains[:FNC_SIZE]
@@ -391,8 +391,6 @@ def train_model():
             f.write("Loading avg embeddings vectors...\n")
             train_avg_embed_vectors = np.load(PICKLE_SAVE_FOLDER + "train_avg_embed_vectors.npy")
             test_avg_embed_vectors = np.load(PICKLE_SAVE_FOLDER + "test_avg_embed_vectors.npy")
-            SIZE_TRAIN = len(train_avg_embed_vectors)
-            SIZE_TEST = len(test_avg_embed_vectors)
 
         if USE_CNN_FEATURES:
             print("Loading CNN vectors...")
@@ -498,11 +496,11 @@ def train_model():
             f.write("Defining Model...\n")
             if USE_TF_VECTORS:
                 FEATURE_VECTOR_SIZE = len(train_tf_vectors[0])
-            if USE_RELATIONAL_FEATURE_VECTORS:
+            elif USE_RELATIONAL_FEATURE_VECTORS:
                 FEATURE_VECTOR_SIZE = len(train_relation_vectors[0])
-            if USE_AVG_EMBEDDINGS:
+            elif USE_AVG_EMBEDDINGS:
                 FEATURE_VECTOR_SIZE = len(train_avg_embed_vectors[0])
-            if USE_CNN_FEATURES:
+            elif USE_CNN_FEATURES:
                 FEATURE_VECTOR_SIZE = NUM_FILTERS * len(FILTER_SIZES) * 2
         
             stances_pl = tf.placeholder(tf.int64, [None])
@@ -513,7 +511,7 @@ def train_model():
             
             if USE_TF_VECTORS:
                 features_pl = tf.placeholder(tf.float32, [None, FEATURE_VECTOR_SIZE])
-                p_features_pl = tf.placeholder(tf.float32, [None, len(train_tf_vectors[0])])
+                p_features_pl = tf.placeholder(tf.float32, [None, FEATURE_VECTOR_SIZE])
 
             if USE_AVG_EMBEDDINGS:
                 avg_embed_vector_pl = tf.placeholder(tf.float32, [None, EMBEDDING_DIM * 2])
@@ -630,14 +628,6 @@ def train_model():
                                   domains_pl: val_domains,
                                   gr_pl: 1.0}
 
-                # Get test inputs
-                test_feed_dict = {features_pl: test_tf_vectors,
-                                  p_features_pl: test_tf_vectors,
-                                  stances_pl: test_labels,
-                                  keep_prob_pl: 1.0,
-                                  domains_pl: test_domains,
-                                  gr_pl: 1.0}
-
             if USE_RELATIONAL_FEATURE_VECTORS:
                 val_feed_dict = {features_pl: val_relation_vectors,
                                   p_features_pl: val_tf_vectors,
@@ -646,46 +636,22 @@ def train_model():
                                   domains_pl: val_domains,
                                   gr_pl: 1.0}
 
-
-                test_feed_dict = {features_pl: test_relation_vectors,
-                                  p_features_pl: test_tf_vectors,
-                                  stances_pl: test_labels,
-                                  keep_prob_pl: 1.0,
-                                  domains_pl: test_domains,
-                                  gr_pl: 1.0}
-
             if USE_AVG_EMBEDDINGS:
-                val_feed_dict = {features_pl: val_avg_embed_vectors,
+                test_feed_dict = {features_pl: val_avg_embed_vectors,
                                   p_features_pl: val_tf_vectors,
                                   stances_pl: val_labels,
                                   keep_prob_pl: 1.0,
                                   domains_pl: val_domains,
                                   gr_pl: 1.0}
 
-
-                test_feed_dict = {features_pl: test_avg_embed_vectors,
-                                  p_features_pl: test_tf_vectors,
-                                  stances_pl: test_labels,
-                                  keep_prob_pl: 1.0,
-                                  domains_pl: test_domains,
-                                  gr_pl: 1.0}
-
             if USE_CNN_FEATURES:
-                val_feed_dict = {stances_pl: val_labels,
+               test_feed_dict = {stances_pl: val_labels,
                                  keep_prob_pl: 1.0,
                                  domains_pl: val_domains,
                                  gr_pl: 1.0,
                                  embedding_matrix_pl: embedding_matrix,
                                  headline_words_pl: x_val_headlines,
                                  body_words_pl: x_val_bodies}
-
-                test_feed_dict = {stances_pl: test_labels,
-                                  keep_prob_pl: 1.0,
-                                  domains_pl: test_domains,
-                                  gr_pl: 1.0,
-                                  embedding_matrix_pl: embedding_matrix,
-                                  headline_words_pl: x_test_headlines,
-                                  body_words_pl: x_test_bodies}
  
             with tf.Session() as sess:
                 # Load Pretrained Model if applicable
@@ -713,8 +679,7 @@ def train_model():
                     # Adaption Parameter and Learning Rate
                     p = float(epoch)/TOTAL_EPOCHS
                     gr = 2. / (1. + np.exp(-10. * p)) - 1
-                    #lr = LR_FACTOR / (1. + 10 * p)**0.75
-                    lr = LR_FACTOR
+                    lr = LR_FACTOR / (1. + 10 * p)**0.75
                 
                     train_loss, train_p_loss, train_d_loss, train_l2_loss = 0, 0, 0, 0
                     train_l_pred, train_d_pred = [], []
@@ -723,31 +688,29 @@ def train_model():
                     # If both FNC and SNLI data used ensure that the correct amount of SNLI samples
                     # are used each epoch in addition to all of the FNC data
                     if USE_FNC_DATA and USE_SNLI_DATA:
-                        n_train = SIZE_TRAIN - int(SIZE_TRAIN * VALIDATION_SET_SIZE)
                         if VALIDATION_SET_SIZE is not None and VALIDATION_SET_SIZE > 0:
                             FNC_TRAIN_SIZE = FNC_SIZE - int(FNC_SIZE * VALIDATION_SET_SIZE)
                         else:
                             FNC_TRAIN_SIZE = FNC_SIZE
                         fnc_indices = list(range(FNC_TRAIN_SIZE))
-                        snli_indices = list(range(FNC_TRAIN_SIZE, n_train))
+                        snli_indices = list(range(FNC_SIZE, SIZE_TRAIN - int(SIZE_TRAIN * VALIDATION_SET_SIZE)))
                         rand1.shuffle(snli_indices)
 
                         if SNLI_SAMPLES_PER_EPOCH is not None:
-                            indices = fnc_indices + snli_indices[:SNLI_SAMPLES_PER_EPOCH]
+                            train_indices = fnc_indices + snli_indices[:SNLI_SAMPLES_PER_EPOCH]
                         else:
-                            indices = fnc_indices + snli_indices
-                        rand2.shuffle(indices)
+                            train_indices = fnc_indices + snli_indices
+                        rand2.shuffle(train_indices)
 
                     else:
-                        n_train = SIZE_TRAIN - int(SIZE_TRAIN * VALIDATION_SET_SIZE)
-                        indices = list(range(n_train))
-                        rand1.shuffle(indices)
+                        train_indices = list(range(SIZE_TRAIN - int(SIZE_TRAIN * VALIDATION_SET_SIZE)))
+                        rand1.shuffle(train_indices)
                         
                     # Training epoch loop
-                    for i in range(len(indices) // BATCH_SIZE_TRAIN + 1):
+                    for i in range(len(train_indices) // BATCH_SIZE_TRAIN + 1):
 
                         # Get training batches
-                        batch_indices = indices[i * BATCH_SIZE_TRAIN: (i + 1) * BATCH_SIZE_TRAIN]
+                        batch_indices = train_indices[i * BATCH_SIZE_TRAIN: (i + 1) * BATCH_SIZE_TRAIN]
                         batch_stances = [train_labels[i] for i in batch_indices]
                         batch_domains = [train_domains[i] for i in batch_indices]
 
@@ -833,7 +796,7 @@ def train_model():
                             print("\n    New Best Val Loss")
                             f.write("\n    New Best Val Loss\n")
 
-                    indices = list(range(SIZE_TEST))
+                    test_indices = list(range(SIZE_TEST))
                     test_loss, test_p_loss, test_d_loss, test_l2_loss = 0, 0, 0, 0
                     test_l_pred, test_d_pred = [], []
                     
@@ -841,7 +804,7 @@ def train_model():
                     for j in range(SIZE_TEST // BATCH_SIZE_TRAIN + 1):
 
                         # Get training batches
-                        batch_indices = indices[j * BATCH_SIZE_TRAIN: (j + 1) * BATCH_SIZE_TRAIN]
+                        batch_indices = test_indices[j * BATCH_SIZE_TRAIN: (j + 1) * BATCH_SIZE_TRAIN]
                         batch_stances = [test_labels[i] for i in batch_indices]
                         batch_domains = [test_domains[i] for i in batch_indices]
 
@@ -862,35 +825,31 @@ def train_model():
                             batch_test_feed_dict = {features_pl: batch_features,
                                                p_features_pl: batch_features,
                                                stances_pl: batch_stances,
-                                               keep_prob_pl: TRAIN_KEEP_PROB,
+                                               keep_prob_pl: 1.0,
                                                domains_pl: batch_domains,
-                                               gr_pl: 1.0,
-                                               lr_pl: 1.0}
+                                               gr_pl: 1.0}
 
                         if USE_RELATIONAL_FEATURE_VECTORS:
                             batch_test_feed_dict = {features_pl: batch_relation_vectors,
                                                p_features_pl: batch_features,
                                                stances_pl: batch_stances,
-                                               keep_prob_pl: TRAIN_KEEP_PROB,
+                                               keep_prob_pl: 1.0,
                                                domains_pl: batch_domains,
-                                               gr_pl: 1.0,
-                                               lr_pl: 1.0}
+                                               gr_pl: 1.0}
 
                         if USE_AVG_EMBEDDINGS:
                             batch_test_feed_dict = {features_pl: batch_avg_embed_vectors,
                                                p_features_pl: batch_features,
                                                stances_pl: batch_stances,
-                                               keep_prob_pl: TRAIN_KEEP_PROB,
+                                               keep_prob_pl: 1.0,
                                                domains_pl: batch_domains,
-                                               gr_pl: 1.0,
-                                               lr_pl: 1.0}
+                                               gr_pl: 1.0}
 
                         if USE_CNN_FEATURES:
                             batch_test_feed_dict = {stances_pl: batch_stances,
-                                               keep_prob_pl: TRAIN_KEEP_PROB,
+                                               keep_prob_pl: 1.0,
                                                domains_pl: batch_domains,
                                                gr_pl: 1.0,
-                                               lr_pl: 1.0,
                                                embedding_matrix_pl: embedding_matrix,
                                                headline_words_pl: batch_x_headlines,
                                                body_words_pl: batch_x_bodies}
@@ -911,13 +870,13 @@ def train_model():
                     # Print and Write test results
                     print_model_results(f, "Test", test_l_pred, test_labels, test_d_pred, test_domains,
                                     test_p_loss, test_d_loss, test_l2_loss, USE_DOMAINS)
-                
+                    
                 #saver.restore(sess, SAVE_MODEL_PATH)
                 #test_l_pred = sess.run([predict], feed_dict = test_feed_dict)
                 #save_predictions(test_l_pred, test_labels, PREDICTION_FILE)
 
 
 if __name__ == "__main__":
-    process_data()
+    #process_data()
     train_model()
 
