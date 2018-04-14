@@ -26,11 +26,11 @@ from util import get_fnc_data, get_snli_data, get_fever_data, get_vectorizers, g
 from util import get_relational_feature_vectors, remove_stop_words, get_average_embeddings, print_model_results
 
 # Data Processing Params
-PICKLE_SAVE_FOLDER = "pickle_data/3_label_use_neutral_length_fix/"
+PICKLE_SAVE_FOLDER = "pickle_data/fever_only"
 PICKLE_LOG_FILE = PICKLE_SAVE_FOLDER + "log.txt"
 
 # Saving Parameters
-MODEL_NAME = "test"
+MODEL_NAME = "test2"
 SAVE_FOLDER = "models/" + MODEL_NAME + "/"
 PREDICTION_FILE = SAVE_FOLDER + MODEL_NAME + ".csv"
 SAVE_MODEL_PATH = SAVE_FOLDER + MODEL_NAME + ".ckpt"
@@ -43,18 +43,18 @@ PRETRAINED_MODEL_PATH = None
 
 # Model options
 USE_UNRELATED_LABEL = False
-USE_FNC_DATA = True
-USE_SNLI_DATA = True
-USE_FEVER_DATA = False
-USE_SNLI_NEUTRAL = True
+USE_FNC_DATA = False
+USE_SNLI_DATA = False
+USE_FEVER_DATA = True
+USE_SNLI_NEUTRAL = False
 SNLI_TOTAL_SAMPLES_LIMIT = None
-ONLY_VECT_FNC = True
+ONLY_VECT_FNC = False
 
 assert not USE_SNLI_DATA or not USE_FEVER_DATA
 
 USE_DOMAINS = True
 
-ADD_FEATURES_TO_LABEL_PRED = True
+ADD_FEATURES_TO_LABEL_PRED = False
 
 USE_TF_VECTORS = False
 USE_RELATIONAL_FEATURE_VECTORS = False
@@ -121,6 +121,7 @@ FEVER_WIKI = "fever_data/wiki-pages"
 # Model parameters
 rand1 = random.Random()
 rand2 = random.Random()
+rand3 = random.Random()
 MAX_FEATURES = 5000
 TARGET_SIZE = 4
 DOMAIN_TARGET_SIZE = 2
@@ -142,6 +143,9 @@ CNN_BODY_LENGTH = 500
 
 def process_data():
    with open(PICKLE_LOG_FILE, 'w') as f:
+        print("FEVER ONLY")
+        f.write("FEVER ONLY\n")
+
         # Save parameters to log file
         vals = [USE_DOMAINS, ADD_FEATURES_TO_LABEL_PRED, USE_RELATIONAL_FEATURE_VECTORS, USE_AVG_EMBEDDINGS, USE_SNLI_NEUTRAL]
         print("USE_DOMAINS, ADD_FEATURES_TO_LABEL_PRED, USE_RELATIONAL_FEATURE_VECTORS, USE_AVG_EMBEDDINGS, USE_SNLI_NEUTRAL\n")
@@ -155,77 +159,34 @@ def process_data():
         print("Getting Data...")
         f.write("Getting Data...\n")
         
-        # for now only supports when using FNC data
-        assert USE_FNC_DATA == True
+        fever_headlines, fever_bodies, fever_labels, fever_claim_set = get_fever_data(FEVER_TRAIN, FEVER_WIKI)
+        fever_domain = [1 for _ in range(len(fever_headlines))] 
 
-        fnc_headlines_train, fnc_bodies_train, fnc_labels_train = get_fnc_data(FNC_TRAIN_STANCES, FNC_TRAIN_BODIES)
-        fnc_domain = [0 for _ in range(len(fnc_headlines_train))]
-        fnc_headlines_test, fnc_bodies_test, fnc_labels_test = get_fnc_data(FNC_TEST_STANCES, FNC_TEST_BODIES)
+        claim_list = list(fever_claim_set)
+        claim_indices = list(range(len(claim_list)))
+        rand3.shuffle(claim_indices)
+
+        train_claims = set([claim_list[i] for i in claim_indices[:int(len(claim_indices) * 0.8)]])
+        test_claims = set([claim_list[i] for i in claim_indices[int(len(claim_indices) * 0.8):]])
+
+        train_indices = [i for i in range(len(fever_headlines)) if fever_headlines[i] in train_claims]
+        test_indices = [i for i in range(len(fever_headlines)) if fever_headlines[i] in test_claims]
+
+        train_headlines = [fever_headlines[i] for i in train_indices]
+        train_bodies = [fever_bodies[i] for i in train_indices]
+        train_labels = [fever_labels[i] for i in train_indices]
+
+        test_headlines = [fever_headlines[i] for i in test_indices]
+        test_bodies = [fever_bodies[i] for i in test_indices]
+        test_labels = [fever_labels[i] for i in test_indices]
         
-        if USE_SNLI_DATA:
-            snli_s1_train, snli_s2_train, snli_labels_train = get_snli_data(SNLI_TRAIN, limit=SNLI_TOTAL_SAMPLES_LIMIT, use_neutral=USE_SNLI_NEUTRAL)
-            snli_domain = [1 for _ in range(len(snli_s1_train))]
-
-        if USE_FEVER_DATA:
-            fever_headlines, fever_bodies, fever_labels, fever_claim_set = get_fever_data(FEVER_TRAIN, FEVER_WIKI)
-            fever_domain = [1 for _ in range(len(fever_headlines))]
-
-        extra_headlines = []
-        extra_bodies = []
-        extra_labels = []
-        extra_domains = []
-
-        if USE_SNLI_DATA:
-            extra_headlines += snli_s1_train
-            extra_bodies += snli_s2_train
-            extra_labels += snli_labels_train
-            extra_domains += snli_domain
-
-        elif USE_FEVER_DATA:
-            extra_headlines += fever_headlines
-            extra_bodies += fever_bodies
-            extra_labels += fever_labels
-            extra_domains += fever_domain
-
-        train_headlines = fnc_headlines_train + extra_headlines
-        train_bodies = fnc_bodies_train + extra_bodies
-        train_labels = fnc_labels_train + extra_labels
-        train_domains = fnc_domain + extra_domains
-
-        if not USE_UNRELATED_LABEL:
-            unrelated_indices = [i for i, x in enumerate(train_labels) if x == 3]
-            for i in sorted(unrelated_indices, reverse=True):
-                del train_headlines[i]
-                del train_bodies[i]
-                del train_labels[i]
-                del train_domains[i]
-        
-        print(len(train_labels))
+        print(len(train_labels), len(test_labels))
 
         np.save(PICKLE_SAVE_FOLDER + "train_labels.npy", np.asarray(train_labels))
         del train_labels
-        np.save(PICKLE_SAVE_FOLDER + "train_domains.npy", np.asarray(train_domains))
-        del train_domains
 
-        test_headlines = fnc_headlines_test
-        test_bodies = fnc_bodies_test
-        test_labels = fnc_labels_test
-        test_domains = [0 for _ in range(len(test_headlines))]
-        
-        if not USE_UNRELATED_LABEL:
-            unrelated_indices = [i for i, x in enumerate(test_labels) if x == 3]
-            for i in sorted(unrelated_indices, reverse=True):
-                del test_headlines[i]
-                del test_bodies[i]
-                del test_labels[i]
-                del test_domains[i]
-
-        print(len(test_labels))
-        
         np.save(PICKLE_SAVE_FOLDER + "test_labels.npy", np.asarray(test_labels))
         del test_labels
-        np.save(PICKLE_SAVE_FOLDER + "test_domains.npy", np.asarray(test_domains))
-        del test_domains
 
         ### Get TF and TFIDF vectorizers ###
 
@@ -233,19 +194,14 @@ def process_data():
         f.write("Creating Vectorizers...\n")
 
         vec_train_data = train_headlines + train_bodies
-        vec_test_data = fnc_headlines_test + fnc_bodies_test
+        vec_test_data = test_headlines + test_bodies
 
-        # Only train vectorizers with FNC data
-        if ONLY_VECT_FNC:
-            vec_train_data = fnc_headlines_train + fnc_bodies_train
-            vec_test_data = fnc_headlines_test + fnc_bodies_test
-        
         bow_vectorizer, tfreq_vectorizer, tfidf_vectorizer = get_vectorizers(vec_train_data, vec_test_data, MAX_FEATURES)
         del vec_train_data
         del vec_test_data
 
         ### Get Feature Vectors ###
-        if USE_TF_VECTORS or ADD_FEATURES_TO_LABEL_PRED:
+        if USE_TF_VECTORS:
             print("Getting Feature Vectors...")
             f.write("Getting Feature Vectors...\n")
             
@@ -437,7 +393,7 @@ def train_model():
             print("Getting validation vectors...")
             f.write("Getting validation vectors...\n")
 
-            if not USE_SNLI_DATA and not USE_FEVER_DATA:
+            if (not USE_SNLI_DATA and not USE_FEVER_DATA) or not USE_FNC_DATA:
                 VAL_SIZE_PER_SET = int(SIZE_TRAIN * VALIDATION_SET_SIZE)
                 val_labels = train_labels[-VAL_SIZE_PER_SET:]
                 val_domains = train_domains[-VAL_SIZE_PER_SET:]
@@ -888,7 +844,7 @@ def train_model():
                 #save_predictions(test_l_pred, test_labels, PREDICTION_FILE)
 
 if __name__ == "__main__":
-    #process_data()
-    train_model()
+    process_data()
+    #train_model()
 
 

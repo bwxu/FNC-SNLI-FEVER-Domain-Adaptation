@@ -16,6 +16,7 @@ import sys
 sys.modules["sqlite"] = imp.new_module("sqlite")
 sys.modules["sqlite3.dbapi2"] = imp.new_module("sqlite.dbapi2")
 import nltk
+import os
 
 from csv import DictReader, DictWriter
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer, TfidfVectorizer
@@ -24,10 +25,12 @@ from sklearn.metrics.pairwise import cosine_similarity
 import json
 import numpy as np
 import tensorflow as tf
+import unicodedata
 
 FNC_LABELS = {'agree': 0, 'disagree': 1, 'discuss': 2, 'unrelated': 3}
 FNC_LABELS_REV = {0: 'agree', 1: 'disagree', 2: 'discuss', 3: 'unrelated'}
 SNLI_LABELS = {'entailment': 0, 'contradiction': 1, 'neutral': 2}
+FEVER_LABELS = {'SUPPORTS': 0, 'REFUTES': 1}
 STOP_WORDS = set(nltk.corpus.stopwords.words('english'))
 
 
@@ -81,6 +84,62 @@ def get_snli_data(jsonl_path, limit=None, use_neutral=True):
     labels = [SNLI_LABELS[l] for l, _, _ in data]
     return left, right, labels
 
+def extract_fever_train_jsonl_data(train_path):
+    num_train = 0
+    total_ev = 0
+    
+    headlines = []
+    labels = []
+    article_list = []
+    claim_set = set()
+
+    with open(train_path, 'r') as f:
+        for item in f:
+            data = json.loads(item)
+            claim_set.add(data["claim"])
+            if data["verifiable"] == "VERIFIABLE":
+                for evidence in data["all_evidence"]:
+                    headlines.append(data["claim"])
+                    labels.append(FEVER_LABELS[data["label"]])
+                    article_list.append(unicodedata.normalize('NFC', evidence[2]))
+
+                    total_ev += 1
+                num_train += 1
+    
+    print("Num Distinct Claims", num_train)
+    print("Num Data Points", total_ev)
+
+    return headlines, labels, article_list, claim_set
+
+def get_relevant_articles(wikidata_path, article_list):
+    article_dict = {article: None for article in article_list}
+    
+    wiki_files = [os.path.join(wikidata_path, f) for f in os.listdir(wikidata_path)]
+    print(wiki_files[:10])
+
+    total_num_files = 0
+    for file in wiki_files:
+        print(file)
+        with open(file, 'r') as f:
+            for item in f:
+                data = json.loads(item)
+                key = unicodedata.normalize('NFC', data["id"])
+                if key in article_dict:
+                    article_dict[key] = data["text"]
+                total_num_files += 1
+                
+    print("Total Num Wiki Articles", total_num_files)
+
+    bodies = []
+    for article in article_list:
+        bodies.append(article_dict[article])
+    
+    return bodies
+
+def get_fever_data(train_path, wikidata_path):
+    headlines, labels, article_list, claim_set = extract_fever_train_jsonl_data(train_path)
+    bodies = get_relevant_articles(wikidata_path, article_list)
+    return headlines, bodies, labels, claim_set
 
 def get_vectorizers(train_data, test_data, MAX_FEATURES):
     train_data = list(set(train_data))
