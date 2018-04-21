@@ -1,5 +1,3 @@
-
-#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -17,20 +15,26 @@ import tensorflow as tf
 import numpy as np
 import os
 
+import imp
+import sys
+sys.modules["sqlite"] = imp.new_module("sqlite")
+sys.modules["sqlite3.dbapi2"] = imp.new_module("sqlite.dbapi2")
+import nltk.data
+
 from gensim.models.keyedvectors import KeyedVectors
 from keras.utils import np_utils
 from keras.preprocessing.sequence import pad_sequences
 from keras.preprocessing.text import Tokenizer
 from flip_gradient import flip_gradient 
 from util import get_fnc_data, get_snli_data, get_fever_data, get_vectorizers, get_feature_vectors, save_predictions
-from util import get_relational_feature_vectors, remove_stop_words, get_average_embeddings, print_model_results
+from util import get_relational_feature_vectors, remove_stop_words, get_average_embeddings, print_model_results, get_body_sentences, select_best_body_sentences 
 
 # Data Processing Params
-PICKLE_SAVE_FOLDER = "pickle_data/fever_only"
+PICKLE_SAVE_FOLDER = "pickle_data/fever_only_focused/"
 PICKLE_LOG_FILE = PICKLE_SAVE_FOLDER + "log.txt"
 
 # Saving Parameters
-MODEL_NAME = "test2"
+MODEL_NAME = "fever_cnn_focused"
 SAVE_FOLDER = "models/" + MODEL_NAME + "/"
 PREDICTION_FILE = SAVE_FOLDER + MODEL_NAME + ".csv"
 SAVE_MODEL_PATH = SAVE_FOLDER + MODEL_NAME + ".ckpt"
@@ -52,7 +56,11 @@ ONLY_VECT_FNC = False
 
 assert not USE_SNLI_DATA or not USE_FEVER_DATA
 
-USE_DOMAINS = True
+# Pick the most relevant sentences from body
+PICK_BODY_SENTENCES = True
+NUM_BODY_SENTENCES = 1
+
+USE_DOMAINS = False
 
 ADD_FEATURES_TO_LABEL_PRED = False
 
@@ -173,14 +181,39 @@ def process_data():
         test_indices = [i for i in range(len(fever_headlines)) if fever_headlines[i] in test_claims]
 
         train_headlines = [fever_headlines[i] for i in train_indices]
+        print(train_headlines[:20])
         train_bodies = [fever_bodies[i] for i in train_indices]
         train_labels = [fever_labels[i] for i in train_indices]
+        train_domains = [0 for i in train_indices]
 
         test_headlines = [fever_headlines[i] for i in test_indices]
         test_bodies = [fever_bodies[i] for i in test_indices]
         test_labels = [fever_labels[i] for i in test_indices]
-        
-        print(len(train_labels), len(test_labels))
+        test_domains = [0 for i in test_indices]
+ 
+        if PICK_BODY_SENTENCES:
+            train_sents = get_body_sentences(train_bodies, flatten=True)
+            test_sents = get_body_sentences(test_bodies, flatten=True)
+            _, _, tfidf_vectorizer = get_vectorizers(train_sents + train_headlines, test_sents + test_headlines, MAX_FEATURES)
+            
+            print("tokenize train")
+            train_sents = get_body_sentences(train_bodies, flatten=False)
+            print("tokenize test")
+            test_sents = get_body_sentences(test_bodies, flatten=False)
+            print("getting best sentences")
+            train_bodies = select_best_body_sentences(train_headlines, train_sents, tfidf_vectorizer)
+            print("getting best test sentences")
+            test_bodies = select_best_body_sentences(test_headlines, test_sents, tfidf_vectorizer)
+            
+            del train_sents
+            del test_sents
+
+
+        np.save(PICKLE_SAVE_FOLDER + "train_domains.npy", np.asarray(train_domains))
+        del train_domains
+       
+        np.save(PICKLE_SAVE_FOLDER + "test_domains.npy", np.asarray(test_domains))
+        del test_domains
 
         np.save(PICKLE_SAVE_FOLDER + "train_labels.npy", np.asarray(train_labels))
         del train_labels
@@ -314,7 +347,7 @@ def process_data():
             np.save(PICKLE_SAVE_FOLDER + "x_train_headlines.npy", x_train_headlines)
             np.save(PICKLE_SAVE_FOLDER + "x_train_bodies.npy", x_train_bodies)
             np.save(PICKLE_SAVE_FOLDER + "x_test_headlines.npy", x_test_headlines)
-            np.save(PICKLE_SAVE_FOLDER + "x_trest_bodies.npy", x_test_bodies)
+            np.save(PICKLE_SAVE_FOLDER + "x_test_bodies.npy", x_test_bodies)
 
             print("  Creating Embedding Matrix...")
             f.write(" Creating Embedding Matrix...\n")
@@ -380,7 +413,7 @@ def train_model():
             x_train_headlines = np.load(PICKLE_SAVE_FOLDER + "x_train_headlines.npy")
             x_train_bodies = np.load(PICKLE_SAVE_FOLDER + "x_train_bodies.npy")
             x_test_headlines = np.load(PICKLE_SAVE_FOLDER + "x_test_headlines.npy")
-            x_test_bodies = np.load(PICKLE_SAVE_FOLDER + "x_trest_bodies.npy")
+            x_test_bodies = np.load(PICKLE_SAVE_FOLDER + "x_test_bodies.npy")
             SIZE_TRAIN = len(x_train_headlines)
             SIZE_TEST = len(x_test_headlines)
 
@@ -640,7 +673,7 @@ def train_model():
                     # Randomize order of FNC and SNLI data and randomly choose EXTRA_SAMPLES_PER_EPOCH SNLI data
                     # If both FNC and SNLI data used ensure that the correct amount of SNLI samples
                     # are used each epoch in addition to all of the FNC data
-                    if USE_FNC_DATA and USE_SNLI_DATA or USE_FNC_DATA and USE_FEVER_DATA:
+                    if (USE_FNC_DATA and USE_SNLI_DATA) or (USE_FNC_DATA and USE_FEVER_DATA):
                         if VALIDATION_SET_SIZE is not None and VALIDATION_SET_SIZE > 0:
                             FNC_TRAIN_SIZE = FNC_SIZE - int(FNC_SIZE * VALIDATION_SET_SIZE)
                         else:
@@ -658,7 +691,7 @@ def train_model():
                     else:
                         train_indices = list(range(SIZE_TRAIN - int(SIZE_TRAIN * VALIDATION_SET_SIZE)))
                         rand1.shuffle(train_indices)
-                        
+                       
                     # Training epoch loop
                     for i in range(len(train_indices) // BATCH_SIZE + 1):
 
@@ -844,7 +877,7 @@ def train_model():
                 #save_predictions(test_l_pred, test_labels, PREDICTION_FILE)
 
 if __name__ == "__main__":
-    process_data()
-    #train_model()
+    #process_data()
+    train_model()
 
 

@@ -26,12 +26,12 @@ from util import get_fnc_data, get_snli_data, get_fever_data, get_vectorizers, g
 from util import get_relational_feature_vectors, remove_stop_words, get_average_embeddings, print_model_results
 
 # Data Processing Params
-PICKLE_SAVE_FOLDER = "pickle_data/3_label_use_neutral_length_fix/"
+PICKLE_SAVE_FOLDER = "pickle_data/2_label_fever_a_d/"
 PICKLE_LOG_FILE = PICKLE_SAVE_FOLDER + "log.txt"
 
 # Saving Parameters
-MODEL_NAME = "test"
-SAVE_FOLDER = "models/" + MODEL_NAME + "/"
+MODEL_NAME = "fever_tf_a_d"
+SAVE_FOLDER = "models/apr_19/" + MODEL_NAME + "/"
 PREDICTION_FILE = SAVE_FOLDER + MODEL_NAME + ".csv"
 SAVE_MODEL_PATH = SAVE_FOLDER + MODEL_NAME + ".ckpt"
 TRAINING_LOG_FILE = SAVE_FOLDER + "training.txt"
@@ -43,23 +43,24 @@ PRETRAINED_MODEL_PATH = None
 
 # Model options
 USE_UNRELATED_LABEL = False
+USE_DISCUSS_LABEL = False
 USE_FNC_DATA = True
-USE_SNLI_DATA = True
-USE_FEVER_DATA = False
-USE_SNLI_NEUTRAL = True
+USE_SNLI_DATA = False
+USE_FEVER_DATA = True
+USE_SNLI_NEUTRAL = False
 SNLI_TOTAL_SAMPLES_LIMIT = None
 ONLY_VECT_FNC = True
 
 assert not USE_SNLI_DATA or not USE_FEVER_DATA
 
-USE_DOMAINS = True
+USE_DOMAINS = False
 
-ADD_FEATURES_TO_LABEL_PRED = True
+ADD_FEATURES_TO_LABEL_PRED = False
 
-USE_TF_VECTORS = False
+USE_TF_VECTORS = True
 USE_RELATIONAL_FEATURE_VECTORS = False
 USE_AVG_EMBEDDINGS = False
-USE_CNN_FEATURES = True
+USE_CNN_FEATURES = False
 input_vectors = [USE_TF_VECTORS, USE_RELATIONAL_FEATURE_VECTORS, USE_AVG_EMBEDDINGS, USE_CNN_FEATURES]  
 #assert len([x for x in input_vectors if x == True]) <= 1 
 
@@ -81,6 +82,10 @@ else:
     FNC_SIZE = 13427
     if USE_FNC_DATA:
         EXTRA_SAMPLES_PER_EPOCH = 13427
+    if not USE_DISCUSS_LABEL:
+        FNC_SIZE = 4518
+        if USE_FNC_DATA:
+            EXTRA_SAMPLES_PER_EPOCH = 4518
 
 RATIO_LOSS = 0.5
 
@@ -119,8 +124,9 @@ FEVER_TRAIN = "fever_data/train.jsonl"
 FEVER_WIKI = "fever_data/wiki-pages"
 
 # Model parameters
-rand1 = random.Random()
-rand2 = random.Random()
+rand0 = random.Random(0)
+rand1 = random.Random(1)
+rand2 = random.Random(2)
 MAX_FEATURES = 5000
 TARGET_SIZE = 4
 DOMAIN_TARGET_SIZE = 2
@@ -158,9 +164,9 @@ def process_data():
         # for now only supports when using FNC data
         assert USE_FNC_DATA == True
 
-        fnc_headlines_train, fnc_bodies_train, fnc_labels_train = get_fnc_data(FNC_TRAIN_STANCES, FNC_TRAIN_BODIES)
+        fnc_headlines_train, fnc_bodies_train, fnc_labels_train, fnc_body_ids_train = get_fnc_data(FNC_TRAIN_STANCES, FNC_TRAIN_BODIES)
         fnc_domain = [0 for _ in range(len(fnc_headlines_train))]
-        fnc_headlines_test, fnc_bodies_test, fnc_labels_test = get_fnc_data(FNC_TEST_STANCES, FNC_TEST_BODIES)
+        fnc_headlines_test, fnc_bodies_test, fnc_labels_test, fnc_body_ids_test = get_fnc_data(FNC_TEST_STANCES, FNC_TEST_BODIES)
         
         if USE_SNLI_DATA:
             snli_s1_train, snli_s2_train, snli_labels_train = get_snli_data(SNLI_TRAIN, limit=SNLI_TOTAL_SAMPLES_LIMIT, use_neutral=USE_SNLI_NEUTRAL)
@@ -199,6 +205,14 @@ def process_data():
                 del train_bodies[i]
                 del train_labels[i]
                 del train_domains[i]
+
+        if not USE_DISCUSS_LABEL:
+            unrelated_indices = [i for i, x in enumerate(train_labels) if x == 2]
+            for i in sorted(unrelated_indices, reverse=True):
+                del train_headlines[i]
+                del train_bodies[i]
+                del train_labels[i]
+                del train_domains[i]
         
         print(len(train_labels))
 
@@ -220,6 +234,14 @@ def process_data():
                 del test_labels[i]
                 del test_domains[i]
 
+        if not USE_DISCUSS_LABEL:
+            unrelated_indices = [i for i, x in enumerate(test_labels) if x == 2]
+            for i in sorted(unrelated_indices, reverse=True):
+                del test_headlines[i]
+                del test_bodies[i]
+                del test_labels[i]
+                del test_domains[i]
+ 
         print(len(test_labels))
         
         np.save(PICKLE_SAVE_FOLDER + "test_labels.npy", np.asarray(test_labels))
@@ -358,7 +380,7 @@ def process_data():
             np.save(PICKLE_SAVE_FOLDER + "x_train_headlines.npy", x_train_headlines)
             np.save(PICKLE_SAVE_FOLDER + "x_train_bodies.npy", x_train_bodies)
             np.save(PICKLE_SAVE_FOLDER + "x_test_headlines.npy", x_test_headlines)
-            np.save(PICKLE_SAVE_FOLDER + "x_trest_bodies.npy", x_test_bodies)
+            np.save(PICKLE_SAVE_FOLDER + "x_test_bodies.npy", x_test_bodies)
 
             print("  Creating Embedding Matrix...")
             f.write(" Creating Embedding Matrix...\n")
@@ -424,7 +446,7 @@ def train_model():
             x_train_headlines = np.load(PICKLE_SAVE_FOLDER + "x_train_headlines.npy")
             x_train_bodies = np.load(PICKLE_SAVE_FOLDER + "x_train_bodies.npy")
             x_test_headlines = np.load(PICKLE_SAVE_FOLDER + "x_test_headlines.npy")
-            x_test_bodies = np.load(PICKLE_SAVE_FOLDER + "x_trest_bodies.npy")
+            x_test_bodies = np.load(PICKLE_SAVE_FOLDER + "x_test_bodies.npy")
             SIZE_TRAIN = len(x_train_headlines)
             SIZE_TEST = len(x_test_headlines)
 
@@ -437,7 +459,7 @@ def train_model():
             print("Getting validation vectors...")
             f.write("Getting validation vectors...\n")
 
-            if not USE_SNLI_DATA and not USE_FEVER_DATA:
+            if (not USE_SNLI_DATA and not USE_FEVER_DATA) or not USE_FNC_DATA:
                 VAL_SIZE_PER_SET = int(SIZE_TRAIN * VALIDATION_SET_SIZE)
                 val_labels = train_labels[-VAL_SIZE_PER_SET:]
                 val_domains = train_domains[-VAL_SIZE_PER_SET:]
@@ -445,7 +467,7 @@ def train_model():
                 train_labels = train_labels[:-VAL_SIZE_PER_SET]
                 train_domains = train_domains[:-VAL_SIZE_PER_SET]
 
-                if USE_TF_VECTORS or USE_RELATIONAL_FEATURE_VECTORS or USE_AVG_EMBEDDINGS:
+                if USE_TF_VECTORS or USE_RELATIONAL_FEATURE_VECTORS or USE_AVG_EMBEDDINGS or ADD_FEATURES_TO_LABEL_PRED:
                     val_tf_vectors = train_tf_vectors[-VAL_SIZE_PER_SET:, :]
                     train_tf_vectors = train_tf_vectors[:-VAL_SIZE_PER_SET, :]
 
@@ -477,7 +499,7 @@ def train_model():
                 train_domains = np.concatenate([train_domains[:FNC_SIZE - VAL_SIZE_PER_SET], \
                                                 train_domains[FNC_SIZE:-VAL_SIZE_PER_SET]])
                 
-                if USE_TF_VECTORS:
+                if USE_TF_VECTORS or ADD_FEATURES_TO_LABEL_PRED:
                     val_tf_vectors = np.concatenate([train_tf_vectors[FNC_SIZE - VAL_SIZE_PER_SET:FNC_SIZE, :], \
                                                      train_tf_vectors[-VAL_SIZE_PER_SET:, :]])
                     train_tf_vectors = np.concatenate([train_tf_vectors[:FNC_SIZE - VAL_SIZE_PER_SET, :], \
@@ -535,15 +557,17 @@ def train_model():
             elif USE_CNN_FEATURES:
                 FEATURE_VECTOR_SIZE = NUM_FILTERS * len(FILTER_SIZES) * 2
         
-            stances_pl = tf.placeholder(tf.int64, [None])
-            keep_prob_pl = tf.placeholder(tf.float32)
-            domains_pl = tf.placeholder(tf.int64, [None])
-            gr_pl = tf.placeholder(tf.float32, [])
-            lr_pl = tf.placeholder(tf.float32, [])
+            stances_pl = tf.placeholder(tf.int64, [None], name="stances_pl")
+            keep_prob_pl = tf.placeholder(tf.float32, name="keep_prob_pl")
+            domains_pl = tf.placeholder(tf.int64, [None], name="domains_pl")
+            gr_pl = tf.placeholder(tf.float32, [], name="gr_pl")
+            lr_pl = tf.placeholder(tf.float32, [], name="lr_pl")
             
             if USE_TF_VECTORS or USE_RELATIONAL_FEATURE_VECTORS or USE_AVG_EMBEDDINGS:
-                features_pl = tf.placeholder(tf.float32, [None, FEATURE_VECTOR_SIZE])
-                p_features_pl = tf.placeholder(tf.float32, [None, len(train_tf_vectors[0])])
+                features_pl = tf.placeholder(tf.float32, [None, FEATURE_VECTOR_SIZE], name="features_pl")
+
+            if ADD_FEATURES_TO_LABEL_PRED:
+                p_features_pl = tf.placeholder(tf.float32, [None, len(train_tf_vectors[0])], name="p_features_pl")
 
             if USE_AVG_EMBEDDINGS:
                 avg_embed_vector_pl = tf.placeholder(tf.float32, [None, EMBEDDING_DIM * 2])
@@ -658,12 +682,12 @@ def train_model():
                     saver.restore(sess, PRETRAINED_MODEL_PATH)
                     
                     # Record loss and accuracy information for test
-                    test_l_pred, test_d_pred, test_p_loss, test_d_loss, test_l2_loss = \
-                            sess.run([predict, d_predict, p_loss, d_loss, l2_loss], feed_dict=test_feed_dict)
+                    #test_l_pred, test_d_pred, test_p_loss, test_d_loss, test_l2_loss = \
+                    #        sess.run([predict, d_predict, p_loss, d_loss, l2_loss], feed_dict=test_feed_dict)
                     
                     # Print and Write test results
-                    print_model_results(f, "Test Original", test_l_pred, test_labels, test_d_pred, test_domains,
-                                    test_p_loss, test_d_loss, test_l2_loss, USE_DOMAINS)
+                    #print_model_results(f, "Test Original", test_l_pred, test_labels, test_d_pred, test_domains,
+                    #                test_p_loss, test_d_loss, test_l2_loss, USE_DOMAINS)
  
 
                 else:
@@ -708,6 +732,8 @@ def train_model():
 
                         # Get training batches
                         batch_indices = train_indices[i * BATCH_SIZE: (i + 1) * BATCH_SIZE]
+                        if len(batch_indices) == 0:
+                            break
                         batch_stances = [train_labels[i] for i in batch_indices]
                         batch_domains = [train_domains[i] for i in batch_indices]
                        
@@ -764,7 +790,7 @@ def train_model():
                         if not USE_SNLI_DATA and not USE_FEVER_DATA:
                             VAL_SIZE = int(SIZE_TRAIN * VALIDATION_SET_SIZE)
                         else:
-                            VAL_SIZE = int(FNC_SIZE * VALIDATION_SET_SIZE * 2)
+                            VAL_SIZE = int(FNC_SIZE * VALIDATION_SET_SIZE) * 2
 
                         val_indices = list(range(VAL_SIZE))
                         val_loss, val_p_loss, val_d_loss, val_l2_loss = 0, 0, 0, 0
@@ -772,6 +798,8 @@ def train_model():
    
                         for i in range(int(VAL_SIZE) // BATCH_SIZE + 1):
                             batch_indices = val_indices[i * BATCH_SIZE: (i + 1) * BATCH_SIZE]
+                            if len(batch_indices) == 0:
+                                break
                             batch_stances = [val_labels[i] for i in batch_indices]
                             batch_domains = [val_domains[i] for i in batch_indices]
                             
@@ -834,6 +862,8 @@ def train_model():
                     for i in range(SIZE_TEST // BATCH_SIZE + 1):
 
                         batch_indices = test_indices[i * BATCH_SIZE: (i + 1) * BATCH_SIZE]
+                        if len(batch_indices) == 0:
+                            break
                         batch_stances = [test_labels[i] for i in batch_indices]
                         batch_domains = [test_domains[i] for i in batch_indices]
                         

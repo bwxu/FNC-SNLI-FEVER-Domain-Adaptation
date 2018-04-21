@@ -48,8 +48,9 @@ def get_fnc_data(stances_path, bodies_path):
     body_id_to_article = {int(row['Body ID']): row['articleBody'] for row in bodies_file} 
     bodies = [body_id_to_article[int(row['Body ID'])] for row in stances_file]
     labels = [FNC_LABELS[row['Stance']] for row in stances_file]
+    body_ids = [int(row['Body ID']) for row in stances_file]
     
-    return headlines, bodies, labels
+    return headlines, bodies, labels, body_ids
 
 
 def extract_tokens_from_binary_parse(parse):
@@ -98,10 +99,16 @@ def extract_fever_train_jsonl_data(train_path):
             data = json.loads(item)
             claim_set.add(data["claim"])
             if data["verifiable"] == "VERIFIABLE":
+                evidence_articles = set()
                 for evidence in data["all_evidence"]:
-                    headlines.append(data["claim"])
-                    labels.append(FEVER_LABELS[data["label"]])
-                    article_list.append(unicodedata.normalize('NFC', evidence[2]))
+                    article_name = unicodedata.normalize('NFC', evidence[2])
+                    if article_name in evidence_articles:
+                        continue
+                    else:                    
+                        article_list.append(article_name)
+                        evidence_articles.add(article_name)
+                        headlines.append(data["claim"])
+                        labels.append(FEVER_LABELS[data["label"]])
 
                     total_ev += 1
                 num_train += 1
@@ -138,6 +145,7 @@ def get_relevant_articles(wikidata_path, article_list):
 
 def get_fever_data(train_path, wikidata_path):
     headlines, labels, article_list, claim_set = extract_fever_train_jsonl_data(train_path)
+    print(headlines[:20], article_list[:20])
     bodies = get_relevant_articles(wikidata_path, article_list)
     return headlines, bodies, labels, claim_set
 
@@ -333,5 +341,48 @@ def print_model_results(f, set_name, pred, labels, d_pred, d_labels, p_loss, d_l
         domain_accuracies = get_prediction_accuracies(d_pred, d_labels, 2)
         print("    " + set_name + " Domain Accuracy", domain_accuracies)
         f.write("    " + set_name + " Domain Accuracy [" + ', '.join(str(acc) for acc in domain_accuracies) + "]\n")
+
+def get_body_sentences(bodies, flatten=False):
+    result = []
+    tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
+    for body in bodies: 
+        sents = tokenizer.tokenize(body)
+        if flatten:
+            result.extend(sents)
+        else:
+            result.append(sents)
+    return result
+
+def select_best_body_sentences(headlines, bodies, tfidf_vectorizer):
+    
+    best_sents = []
+
+    for i, headline in enumerate(headlines):
+        if i % 1000 == 0:
+            print('Finished ' + str(i) + ' out of ' + str(len(headlines)) + ' headlines')
+
+        best_sent = None
+        best_tfidf = -1
+        
+        for j, body_sent in enumerate(bodies[i]):
+            headline_tfidf = tfidf_vectorizer.transform([headline]).toarray().reshape(1, -1)
+            body_tfidf = tfidf_vectorizer.transform([body_sent]).toarray().reshape(1, -1)
+            
+            tfidf_cos = cosine_similarity(headline_tfidf, body_tfidf)[0].reshape(1, 1)
+
+            if tfidf_cos > best_tfidf:
+                best_tfidf = tfidf_cos
+                best_sent = body_sent
+
+        best_sents.append(best_sent)
+
+    return best_sents
+
+
+
+
+            
+            
+
 
 
