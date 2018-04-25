@@ -31,7 +31,7 @@ PICKLE_SAVE_FOLDER = "pickle_data/2_label_only_fever_a_d/"
 PICKLE_LOG_FILE = PICKLE_SAVE_FOLDER + "log.txt"
 
 # Saving Parameters
-MODEL_NAME = "fever_cnn_2"
+MODEL_NAME = "fever_tf_2"
 SAVE_FOLDER = "models/apr_25/" + MODEL_NAME + "/"
 PREDICTION_FILE = SAVE_FOLDER + MODEL_NAME + ".csv"
 SAVE_MODEL_PATH = SAVE_FOLDER + MODEL_NAME + ".ckpt"
@@ -70,11 +70,10 @@ USE_DOMAINS = False
 
 ADD_FEATURES_TO_LABEL_PRED = False
 
-USE_TF_VECTORS = False
+USE_TF_VECTORS = True
 USE_RELATIONAL_FEATURE_VECTORS = False
 USE_AVG_EMBEDDINGS = False
-USE_CNN_FEATURES = True
-input_vectors = [USE_TF_VECTORS, USE_RELATIONAL_FEATURE_VECTORS, USE_AVG_EMBEDDINGS, USE_CNN_FEATURES]  
+USE_CNN_FEATURES = False
 
 EPOCHS = 30
 TOTAL_EPOCHS = 30
@@ -89,17 +88,6 @@ if not USE_FNC_DATA and not USE_SNLI_DATA and not USE_FEVER_DATA:
 EXTRA_SAMPLES_PER_EPOCH = 1
 
 RATIO_LOSS = 0.5
-
-CHECKS_ENABLED = False
-if CHECKS_ENABLED:
-    if not USE_UNRELATED_LABEL:
-        assert "3_label" in PICKLE_SAVE_FOLDER
-    if ADD_FEATURES_TO_LABEL_PRED:
-        assert "e_" in MODEL_NAME
-    if USE_RELATIONAL_FEATURE_VECTORS:
-        assert "_r_" in MODEL_NAME
-    if USE_AVG_EMBEDDINGS:
-        assert "_avg_" in MODEL_NAME
 
 # CNN feature paramters
 EMBEDDING_PATH = "GoogleNews-vectors-negative300.bin"
@@ -144,11 +132,13 @@ CNN_BODY_LENGTH = 500
 def process_data():
    with open(PICKLE_LOG_FILE, 'w') as f:
         # Save parameters to log file
-        vals = [USE_DOMAINS, ADD_FEATURES_TO_LABEL_PRED, USE_RELATIONAL_FEATURE_VECTORS, USE_AVG_EMBEDDINGS]
-        print("USE_DOMAINS, ADD_FEATURES_TO_LABEL_PRED, USE_RELATIONAL_FEATURE_VECTORS, USE_AVG_EMBEDDINGS\n")
+        vals = [USE_TF_VECTORS, ADD_FEATURES_TO_LABEL_PRED, USE_RELATIONAL_FEATURE_VECTORS, USE_AVG_EMBEDDINGS, USE_CNN_VECTORS \
+                USE_FNC_DATA, USE_SNLI_DATA, USE_FEVER_DATA, USE_UNRELATED_LABEL, USE_DISCUSS_LABEL, TEST_DATASET]
+        print("USE_TF_VECTORS, ADD_FEATURES_TO_LABEL_PRED, USE_RELATIONAL_FEATURE_VECTORS, USE_AVG_EMBEDDINGS, USE_CNN_VECTORS \
+               USE_FNC_DATA, USE_SNLI_DATA, USE_FEVER_DATA, USE_UNRELATED_LABEL, USE_DISCUSS_LABEL, TEST_DATASET")
         print(vals)
-
-        f.write("USE_DOMAINS, ADD_FEATURES_TO_LABEL_PRED, USE_RELATIONAL_FEATURE_VECTORS, USE_AVG_EMBEDDINGS\n")
+        f.write("USE_TF_VECTORS, ADD_FEATURES_TO_LABEL_PRED, USE_RELATIONAL_FEATURE_VECTORS, USE_AVG_EMBEDDINGS, USE_CNN_VECTORS \
+                 USE_FNC_DATA, USE_SNLI_DATA, USE_FEVER_DATA, USE_UNRELATED_LABEL, USE_DISCUSS_LABEL, TEST_DATASET\n")
         f.write(', '.join(str(val) for val in vals) + "\n")
 
         ### Extract Data ###
@@ -524,14 +514,16 @@ def process_data():
 def train_model():
     with open(TRAINING_LOG_FILE, 'w') as f:
         # Loop for training multiple models\
-        vals = [USE_DOMAINS, ADD_FEATURES_TO_LABEL_PRED, USE_RELATIONAL_FEATURE_VECTORS, \
-                USE_AVG_EMBEDDINGS, USE_TF_VECTORS, USE_CNN_FEATURES]
-        print("USE_DOMAINS, ADD_FEATURES_TO_LABEL_PRED, USE_RELATIONAL_FEATURE_VECTORS, \
-               USE_AVG_EMBEDDINGS, USE_TF_VECTORS, USE_CNN_FEATURES")
+        vals = [USE_FNC_DATA, USE_SNLI_DATA, USE_FEVER_DATA, TEST_DATASET, PRETRAINED_MODEL_PATH, BALANCE_LABELS, \
+                USE_DOMAINS, ADD_FEATURES_TO_LABEL_PRED, USE_TF_VECTORS, USE_RELATIONAL_FEATURE_VECTORS, \
+                USE_AVG_EMBEDDINGS, USE_CNN_FEATURES, EXTRA_SAMPLES_PER_EPOCH]
+        print("USE_FNC_DATA, USE_SNLI_DATA, USE_FEVER_DATA, TEST_DATASET, PRETRAINED_MODEL_PATH, BALANCE_LABELS, \
+               USE_DOMAINS, ADD_FEATURES_TO_LABEL_PRED, USE_TF_VECTORS, USE_RELATIONAL_FEATURE_VECTORS, \
+               USE_AVG_EMBEDDINGS, USE_CNN_FEATURES, EXTRA_SAMPLES_PER_EPOCH")
         print(vals)
-
-        f.write("USE_DOMAINS, ADD_FEATURES_TO_LABEL_PRED, USE_RELATIONAL_FEATURE_VECTORS, \
-                USE_AVG_EMBEDDINGS, USE_TF_VECTORS, USE_CNN_FEATURES\n")
+        f.write("USE_FNC_DATA, USE_SNLI_DATA, USE_FEVER_DATA, TEST_DATASET, PRETRAINED_MODEL_PATH, BALANCE_LABELS, \
+                 USE_DOMAINS, ADD_FEATURES_TO_LABEL_PRED, USE_TF_VECTORS, USE_RELATIONAL_FEATURE_VECTORS, \
+                 USE_AVG_EMBEDDINGS, USE_CNN_FEATURES, EXTRA_SAMPLES_PER_EPOCH\n")
         f.write(', '.join(str(val) for val in vals) + "\n")
 
         # Take last VALIDATION_SET_SIZE PROPORTION of train set as validation set
@@ -797,7 +789,6 @@ def train_model():
                         rand1.shuffle(fever_indices)
                         for i in fever_indices:
                             assert train_domains[i] == 2
-                    print("fever_indices", len(fever_indices))
                     
                     if USE_SNLI_DATA:
                         snli_indices = list(range(index, index + train_sizes['snli']))
