@@ -27,7 +27,7 @@ from util import get_fnc_data, get_snli_data, get_fever_data, get_vectorizers, g
 from util import get_relational_feature_vectors, remove_stop_words, get_average_embeddings, print_model_results, remove_data_with_label
 
 # Data Processing Params
-PICKLE_SAVE_FOLDER = "pickle_data/2_label_only_fever_a_d/"
+PICKLE_SAVE_FOLDER = "pickle_data/2_label_fever_snli_a_d/"
 PICKLE_LOG_FILE = PICKLE_SAVE_FOLDER + "log.txt"
 
 # Saving Parameters
@@ -48,7 +48,7 @@ USE_DISCUSS_LABEL = False
 
 # Select train and val datasets
 USE_FNC_DATA = False
-USE_SNLI_DATA = False
+USE_SNLI_DATA = True
 USE_FEVER_DATA = True
 
 # Select test dataset
@@ -152,11 +152,9 @@ def process_data():
 
         print("Getting Data...")
         f.write("Getting Data...\n")
-        
-        # for now only supports when using FNC data
-        assert USE_FNC_DATA == True
+       
+        # Choose labels to not use
         LABELS_TO_IGNORE = set()
-        
         if not USE_UNRELATED_LABEL:
             LABELS_TO_IGNORE.add(3)
         if not USE_DISCUSS_LABEL:
