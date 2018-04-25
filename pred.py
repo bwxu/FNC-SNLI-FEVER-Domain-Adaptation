@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import math
 import random
 import tensorflow as tf
 import numpy as np
@@ -23,15 +24,15 @@ from keras.preprocessing.sequence import pad_sequences
 from keras.preprocessing.text import Tokenizer
 from flip_gradient import flip_gradient 
 from util import get_fnc_data, get_snli_data, get_fever_data, get_vectorizers, get_feature_vectors, save_predictions
-from util import get_relational_feature_vectors, remove_stop_words, get_average_embeddings, print_model_results
+from util import get_relational_feature_vectors, remove_stop_words, get_average_embeddings, print_model_results, remove_data_with_label
 
 # Data Processing Params
-PICKLE_SAVE_FOLDER = "pickle_data/2_label_fever_a_d/"
+PICKLE_SAVE_FOLDER = "pickle_data/2_label_only_fnc_a_d/"
 PICKLE_LOG_FILE = PICKLE_SAVE_FOLDER + "log.txt"
 
 # Saving Parameters
-MODEL_NAME = "fever_tf_a_d"
-SAVE_FOLDER = "models/apr_19/" + MODEL_NAME + "/"
+MODEL_NAME = "fnc_cnn_2"
+SAVE_FOLDER = "models/apr_24/" + MODEL_NAME + "/"
 PREDICTION_FILE = SAVE_FOLDER + MODEL_NAME + ".csv"
 SAVE_MODEL_PATH = SAVE_FOLDER + MODEL_NAME + ".ckpt"
 TRAINING_LOG_FILE = SAVE_FOLDER + "training.txt"
@@ -44,25 +45,27 @@ PRETRAINED_MODEL_PATH = None
 # Model options
 USE_UNRELATED_LABEL = False
 USE_DISCUSS_LABEL = False
+
 USE_FNC_DATA = True
 USE_SNLI_DATA = False
-USE_FEVER_DATA = True
+USE_FEVER_DATA = False
+TEST_DATASET = "FNC"
+
 USE_SNLI_NEUTRAL = False
 SNLI_TOTAL_SAMPLES_LIMIT = None
 ONLY_VECT_FNC = True
 
-assert not USE_SNLI_DATA or not USE_FEVER_DATA
+BALANCE_LABELS = False
 
 USE_DOMAINS = False
 
 ADD_FEATURES_TO_LABEL_PRED = False
 
-USE_TF_VECTORS = True
+USE_TF_VECTORS = False
 USE_RELATIONAL_FEATURE_VECTORS = False
 USE_AVG_EMBEDDINGS = False
-USE_CNN_FEATURES = False
+USE_CNN_FEATURES = True
 input_vectors = [USE_TF_VECTORS, USE_RELATIONAL_FEATURE_VECTORS, USE_AVG_EMBEDDINGS, USE_CNN_FEATURES]  
-#assert len([x for x in input_vectors if x == True]) <= 1 
 
 EPOCHS = 30
 TOTAL_EPOCHS = 30
@@ -73,19 +76,8 @@ NUM_MODELS_TO_TRAIN = 5
 if not USE_FNC_DATA and not USE_SNLI_DATA and not USE_FEVER_DATA:
     raise Exception("Must choose data to use")
 
-EXTRA_SAMPLES_PER_EPOCH = None
-if USE_UNRELATED_LABEL:
-    FNC_SIZE = 49972
-    if USE_FNC_DATA:
-        EXTRA_SAMPLES_PER_EPOCH = 49972
-else:
-    FNC_SIZE = 13427
-    if USE_FNC_DATA:
-        EXTRA_SAMPLES_PER_EPOCH = 13427
-    if not USE_DISCUSS_LABEL:
-        FNC_SIZE = 4518
-        if USE_FNC_DATA:
-            EXTRA_SAMPLES_PER_EPOCH = 4518
+# Number of extra samples used is EXTRA_SAMPLES_PER_EPOCH * FNC_TRAIN_SIZE
+EXTRA_SAMPLES_PER_EPOCH = 1
 
 RATIO_LOSS = 0.5
 
@@ -129,7 +121,7 @@ rand1 = random.Random(1)
 rand2 = random.Random(2)
 MAX_FEATURES = 5000
 TARGET_SIZE = 4
-DOMAIN_TARGET_SIZE = 2
+DOMAIN_TARGET_SIZE = 3
 HIDDEN_SIZE = 100
 DOMAIN_HIDDEN_SIZE = 100
 LABEL_HIDDEN_SIZE = None
@@ -163,87 +155,157 @@ def process_data():
         
         # for now only supports when using FNC data
         assert USE_FNC_DATA == True
-
-        fnc_headlines_train, fnc_bodies_train, fnc_labels_train, fnc_body_ids_train = get_fnc_data(FNC_TRAIN_STANCES, FNC_TRAIN_BODIES)
-        fnc_domain = [0 for _ in range(len(fnc_headlines_train))]
-        fnc_headlines_test, fnc_bodies_test, fnc_labels_test, fnc_body_ids_test = get_fnc_data(FNC_TEST_STANCES, FNC_TEST_BODIES)
+        LABELS_TO_IGNORE = set()
         
+        if not USE_UNRELATED_LABEL:
+            LABELS_TO_IGNORE.add(3)
+        if not USE_DISCUSS_LABEL:
+            LABELS_TO_IGNORE.add(2)
+        
+        train_headlines, train_bodies, train_labels, train_domains = [], [], [], []
+        val_headlines, val_bodies, val_labels, val_domains = [], [], [], []
+        train_sizes = {}
+        val_sizes = {}
+
+        VAL_SIZE_CAP = None
+        
+        if USE_FNC_DATA:
+            fnc_headlines_train, fnc_bodies_train, fnc_labels_train, fnc_body_ids_train = get_fnc_data(FNC_TRAIN_STANCES, FNC_TRAIN_BODIES)
+            fnc_headlines_test, fnc_bodies_test, fnc_labels_test, _ = get_fnc_data(FNC_TEST_STANCES, FNC_TEST_BODIES)
+            fnc_domain_train = [0 for i in range(len(fnc_headlines_train))]
+            fnc_domain_test = [0 for i in range(len(fnc_headlines_test))]
+
+            # Remove unwanted labels determined by USE_UNRELATED_LABEL and USE_DISCUSS_LABEL
+            fnc_headlines_train, fnc_bodies_train, fnc_labels_train, fnc_domain_train, fnc_body_ids_train = \
+                    remove_data_with_label(LABELS_TO_IGNORE, fnc_headlines_train, fnc_bodies_train, fnc_labels_train, fnc_domain_train, additional=fnc_body_ids_train)
+
+            fnc_headlines_test, fnc_bodies_test, fnc_labels_test, fnc_domain_test = \
+                    remove_data_with_label(LABELS_TO_IGNORE, fnc_headlines_test, fnc_bodies_test, fnc_labels_test, fnc_domain_test) 
+            
+            # Seperate the train in to train and validation sets such that
+            # no body article or headline is in both the train and validation set
+            unique_body_ids = list(set(fnc_body_ids_train))
+            indices = list(range(len(unique_body_ids)))
+            rand0.shuffle(indices)
+
+            train_body_ids = set(unique_body_ids[i] for i in indices[:len(indices) - int(len(indices) * VALIDATION_SET_SIZE)])
+            val_body_ids = set(unique_body_ids[i] for i in indices[len(indices) - int(len(indices) * VALIDATION_SET_SIZE):])
+
+            train_indices = set(i for i in range(len(fnc_body_ids_train)) if fnc_body_ids_train[i] in train_body_ids)
+            val_indices = set(i for i in range(len(fnc_body_ids_train)) if fnc_body_ids_train[i] in val_body_ids)
+
+            val_headlines += [fnc_headlines_train[i] for i in val_indices]
+            val_bodies += [fnc_bodies_train[i] for i in val_indices]
+            val_labels += [fnc_labels_train[i] for i in val_indices]
+            val_domains += [0 for _ in range(len(val_indices))]
+            
+            train_headlines = [fnc_headlines_train[i] for i in train_indices]
+            train_bodies = [fnc_bodies_train[i] for i in train_indices]
+            train_labels = [fnc_labels_train[i] for i in train_indices]
+            train_domains = [0 for _ in range(len(train_indices))]
+
+            train_sizes['fnc'] = len(train_indices)
+            val_sizes['fnc'] = len(val_indices)
+
+            VAL_SIZE_CAP = len(val_headlines) * EXTRA_SAMPLES_PER_EPOCH
+            
         if USE_SNLI_DATA:
             snli_s1_train, snli_s2_train, snli_labels_train = get_snli_data(SNLI_TRAIN, limit=SNLI_TOTAL_SAMPLES_LIMIT, use_neutral=USE_SNLI_NEUTRAL)
             snli_domain = [1 for _ in range(len(snli_s1_train))]
+            
+            snli_s1_train, snli_s2_train, snli_labels_train, snli_domain = \
+                remove_data_with_label(LABELS_TO_IGNORE, snli_s1_train, snli_s2_train, snli_labels_train, snli_domain)
+            
+            s2_list = list(set(snli_s2_train))
+            s2_indices = list(range(len(s2_list)))
+            rand1.shuffle(s2_indices)
+
+            snli_val_test_size = int(len(s2_indices) * VALIDATION_SET_SIZE
+            train_s2 = set([s2_list[i] for i in s2_indices[:len(s2_indices) - 2 * snli_val_test_size]])
+            val_s2 = set([s2_list[i] for i in s2_indices[len(s2_indices) - 2 * snli_val_test_size:len(s2_indices) - snli_val_test_size]])
+            test_s2 = set([s2_list[i] for i in s2_indices[len(s2_indices) - snli_val_test_size:]])
+
+            train_indices = [i for i in range(len(snli_s2_train)) if snli_s2_train[i] in train_s2]
+            val_indices = [i for i in range(len(snli_s2_train)) if snli_s2_train[i] in val_s2]
+            test_indices = [i for i in range(len(snli_s2_train)) if snli_s2_train[i] in test_s2]
+            
+            train_headlines += [snli_s1_train[i] for i in train_indices]
+            train_bodies += [snli_s2_train[i] for i in train_indices]
+            train_labels += [snli_labels_train[i] for i in train_indices]
+            train_domains += [snli_domain[i] for i in train_indices]
+
+            val_headlines += [snli_s1_train[i] for i in val_indices][:VAL_SIZE_CAP]
+            val_bodies += [snli_s2_train[i] for i in val_indices][:VAL_SIZE_CAP]
+            val_labels += [snli_labels_train[i] for i in val_indices][:VAL_SIZE_CAP]
+            val_domains += [snli_domain[i] for i in val_indices][:VAL_SIZE_CAP]
+            
+            snli_headlines_test = [snli_s1_train[i] for i in test_indices]
+            snli_bodies_test = [snli_s2_train[i] for i in test_indices]
+            snli_labels_test = [snli_labels_train[i] for i in test_indices]
+            snli_domains_test = [snli_domain[i] for i in train_indices]
+            
+            train_sizes['snli'] = len(train_indices)
+            val_sizes['snli'] = len(val_indices)
 
         if USE_FEVER_DATA:
             fever_headlines, fever_bodies, fever_labels, fever_claim_set = get_fever_data(FEVER_TRAIN, FEVER_WIKI)
-            fever_domain = [1 for _ in range(len(fever_headlines))]
+            fever_domain = [2 for _ in range(len(fever_headlines))]
 
-        extra_headlines = []
-        extra_bodies = []
-        extra_labels = []
-        extra_domains = []
+            fever_headlines, fever_bodies, fever_labels, fever_domain = \
+                remove_data_with_label(LABELS_TO_IGNORE, fever_headlines, fever_bodies, fever_labels, fever_domain)
+ 
+            claim_list = list(fever_claim_set)
+            claim_indices = list(range(len(claim_list)))
+            rand1.shuffle(claim_indices)
 
-        if USE_SNLI_DATA:
-            extra_headlines += snli_s1_train
-            extra_bodies += snli_s2_train
-            extra_labels += snli_labels_train
-            extra_domains += snli_domain
+            fever_val_test_size = int(len(claim_indices * VALIDATION_SET_SIZE))
+            train_claims = set([claim_list[i] for i in claim_indices[:len(claim_indices) - 2 *fever_val_test_size]])
+            val_claims = set([claim_list[i] for i in claim_indices[len(claim_indices) - 2 * fever_val_test_size:len(claim_indices) - fever_val_test_size]])
+            test_claims = set([claim_list[i] for i in claim_indices[len(claim_indices) - fever_val_test_size:]])
 
-        elif USE_FEVER_DATA:
-            extra_headlines += fever_headlines
-            extra_bodies += fever_bodies
-            extra_labels += fever_labels
-            extra_domains += fever_domain
+            train_indices = [i for i in range(len(fever_headlines)) if fever_headlines[i] in train_claims]
+            val_indices = [i for i in range(len(fever_headlines)) if fever_headlines[i] in val_claims]
+            test_indices = [i for i in range(len(fever_headlines)) if fever_headlines[i] in test_claims]
 
-        train_headlines = fnc_headlines_train + extra_headlines
-        train_bodies = fnc_bodies_train + extra_bodies
-        train_labels = fnc_labels_train + extra_labels
-        train_domains = fnc_domain + extra_domains
+            train_headlines += [fever_headlines[i] for i in train_indices]
+            train_bodies += [fever_bodies[i] for i in train_indices]
+            train_labels += [fever_labels[i] for i in train_indices]
+            train_domains += [fever_domain[i] for i in train_indices]
 
-        if not USE_UNRELATED_LABEL:
-            unrelated_indices = [i for i, x in enumerate(train_labels) if x == 3]
-            for i in sorted(unrelated_indices, reverse=True):
-                del train_headlines[i]
-                del train_bodies[i]
-                del train_labels[i]
-                del train_domains[i]
+            val_headlines += [fever_headlines[i] for i in val_indices][:VAL_SIZE_CAP]
+            val_bodies += [fever_bodies[i] for i in val_indices][:VAL_SIZE_CAP]
+            val_labels += [fever_labels[i] for i in val_indices][:VAL_SIZE_CAP]
+            val_domains += [fever_domain[i] for i in val_indices][:VAL_SIZE_CAP]
 
-        if not USE_DISCUSS_LABEL:
-            unrelated_indices = [i for i, x in enumerate(train_labels) if x == 2]
-            for i in sorted(unrelated_indices, reverse=True):
-                del train_headlines[i]
-                del train_bodies[i]
-                del train_labels[i]
-                del train_domains[i]
-        
-        print(len(train_labels))
+            fever_headlines_test = [fever_headlines[i] for i in test_indices]
+            fever_bodies_test = [fever_bodies[i] for i in test_indices]
+            fever_labels_test = [fever_labels[i] for i in test_indices]
+            fever_domains_test = [fever_domain[i] for i in test_indices]
+
+            train_sizes['fever'] = len(train_indices)
+            val_sizes['fever'] = len(val_indices)
+
+        np.save(PICKLE_SAVE_FOLDER + "train_sizes.npy", train_sizes)
+        np.save(PICKLE_SAVE_FOLDER + "val_sizes.npy", val_sizes)
 
         np.save(PICKLE_SAVE_FOLDER + "train_labels.npy", np.asarray(train_labels))
         del train_labels
         np.save(PICKLE_SAVE_FOLDER + "train_domains.npy", np.asarray(train_domains))
         del train_domains
 
+        np.save(PICKLE_SAVE_FOLDER + "val_labels.npy", np.asarray(val_labels))
+        del val_labels
+        np.save(PICKLE_SAVE_FOLDER + "val_domains.npy", np.asarray(val_domains))
+        del val_domains
+
         test_headlines = fnc_headlines_test
         test_bodies = fnc_bodies_test
         test_labels = fnc_labels_test
         test_domains = [0 for _ in range(len(test_headlines))]
         
-        if not USE_UNRELATED_LABEL:
-            unrelated_indices = [i for i, x in enumerate(test_labels) if x == 3]
-            for i in sorted(unrelated_indices, reverse=True):
-                del test_headlines[i]
-                del test_bodies[i]
-                del test_labels[i]
-                del test_domains[i]
+        test_headlines, test_bodies, test_labels, test_domains = \
+            remove_data_with_label(LABELS_TO_IGNORE, test_headlines, test_bodies, test_labels, test_domains)
 
-        if not USE_DISCUSS_LABEL:
-            unrelated_indices = [i for i, x in enumerate(test_labels) if x == 2]
-            for i in sorted(unrelated_indices, reverse=True):
-                del test_headlines[i]
-                del test_bodies[i]
-                del test_labels[i]
-                del test_domains[i]
- 
-        print(len(test_labels))
-        
         np.save(PICKLE_SAVE_FOLDER + "test_labels.npy", np.asarray(test_labels))
         del test_labels
         np.save(PICKLE_SAVE_FOLDER + "test_domains.npy", np.asarray(test_domains))
@@ -255,31 +317,36 @@ def process_data():
         f.write("Creating Vectorizers...\n")
 
         vec_train_data = train_headlines + train_bodies
-        vec_test_data = fnc_headlines_test + fnc_bodies_test
 
         # Only train vectorizers with FNC data
-        if ONLY_VECT_FNC:
-            vec_train_data = fnc_headlines_train + fnc_bodies_train
-            vec_test_data = fnc_headlines_test + fnc_bodies_test
-        
-        bow_vectorizer, tfreq_vectorizer, tfidf_vectorizer = get_vectorizers(vec_train_data, vec_test_data, MAX_FEATURES)
+        if ONLY_VECT_FNC and USE_FNC_DATA:
+            vec_train_data = train_headlines[:train_sizes['fnc']] + fnc_bodies_train[:train_sizes['fnc']]
+       
+        bow_vectorizer, tfreq_vectorizer, tfidf_vectorizer = get_vectorizers(vec_train_data, MAX_FEATURES)
         del vec_train_data
-        del vec_test_data
 
         ### Get Feature Vectors ###
+
         if USE_TF_VECTORS or ADD_FEATURES_TO_LABEL_PRED:
             print("Getting Feature Vectors...")
             f.write("Getting Feature Vectors...\n")
             
-            print("  FNC/SNLI train...")
-            f.write("  FNC/SNLI train...\n")
+            print("  train...")
+            f.write("  train...\n")
             train_tf_vectors = get_feature_vectors(train_headlines, train_bodies,
                                                    bow_vectorizer, tfreq_vectorizer, tfidf_vectorizer)
             np.save(PICKLE_SAVE_FOLDER + "train_tf_vectors.npy", train_tf_vectors)
             f.write("    Number of Feature Vectors: " + str(len(train_tf_vectors)) + "\n")
 
-            print("  FNC test...")
-            f.write("  FNC test...\n")
+            print("  val...")
+            f.write("  val...\n")
+            val_tf_vectors = get_feature_vectors(val_headlines, val_bodies,
+                                                 bow_vectorizer, tfreq_vectorizer, tfidf_vectorizer)
+            np.save(PICKLE_SAVE_FOLDER + "val_tf_vectors.npy", val_tf_vectors)
+            f.write("    Number of Feature Vectors: " + str(len(val_tf_vectors)) + "\n")
+
+            print("  test...")
+            f.write("  test...\n")
             test_tf_vectors = get_feature_vectors(test_headlines, test_bodies,
                                                bow_vectorizer, tfreq_vectorizer, tfidf_vectorizer)
             
@@ -296,6 +363,13 @@ def process_data():
             del train_tf_vectors
             np.save(PICKLE_SAVE_FOLDER + "train_relation_vectors.npy", train_relation_vectors)
             del train_relation_vectors
+
+            print("  val...")
+            f.write("  val...\n")
+            val_relation_vectors = get_relational_feature_vectors(val_tf_vectors)
+            del val_tf_vectors
+            np.save(PICKLE_SAVE_FOLDER + "val_relation_vectors.npy", val_relation_vectors)
+            del val_relation_vectors
 
             print("  test...")
             f.write("  test...\n")
@@ -314,10 +388,14 @@ def process_data():
             embeddings = KeyedVectors.load_word2vec_format(EMBEDDING_PATH, binary=True)
 
             print("  Removing Stop Words...")
-            f.write("  Removing Stop Words...\n")
+            f.write("  Removing Stop Words...\n") 
             # Remove stopwords from training and test data
             train_headlines = remove_stop_words(train_headlines)
             train_bodies = remove_stop_words(train_bodies)
+
+            val_headlines = remove_stop_words(val_headlines)
+            val_bodies = remove_stop_words(val_bodies)
+            
             test_headlines = remove_stop_words(test_headlines)
             test_bodies = remove_stop_words(test_bodies)
             
@@ -332,6 +410,14 @@ def process_data():
             print("  Train Body...")
             f.write("  Train Body...\n")
             train_body_avg_embeddings = get_average_embeddings(train_bodies, embeddings)
+
+            print("  Val Headline...")
+            f.write("  Val Headline...\n")
+            val_headline_avg_embeddings = get_average_embeddings(val_headlines, embeddings)
+
+            print("  Val Body...")
+            f.write("  Val Body...\n")
+            val_body_avg_embeddings = get_average_embeddings(val_bodies, embeddings)
             
             print("  Test Headline...")
             f.write("  Test Headline...\n") 
@@ -344,9 +430,16 @@ def process_data():
             print("  Combining Train Vectors...")
             f.write("  Combining Train Vectors...\n")
             train_avg_embed_vectors = [np.concatenate([train_headline_avg_embeddings[i], train_body_avg_embeddings[i]])
-                                      for i in range(len(train_headline_avg_embeddings))]
+                                       for i in range(len(train_headline_avg_embeddings))]
             np.save(PICKLE_SAVE_FOLDER + "train_avg_embed_vectors.npy", train_avg_embed_vectors)
             del train_avg_embed_vectors
+            
+            print("  Combining Val Vectors...")
+            f.write("  Combining Val Vectors...")
+            val_avg_embed_vectors = [np.concatenate([val_headline_avg_embeddings[i], train_body_avg_embeddings[i]])
+                                     for i in range(len(val_headline_avg_embeddings))]
+            np.save(PICKLE_SAVE_FOLDER + "val_avg_embed_vectors.npy", val_avg_embed_vectors)
+            del val_avg_embed_vectors
 
             print("  Combining Test Vectors...")
             f.write("  Combining Test Vectors...\n")
@@ -362,11 +455,17 @@ def process_data():
             print("  Tokenizing Text...")
             f.write("  Tokenizing Text...\n")
             tokenizer = Tokenizer()
-            tokenizer.fit_on_texts(train_headlines + test_bodies)
+            tokenizer.fit_on_texts(train_headlines + train_bodies)
+
             train_headline_seq = tokenizer.texts_to_sequences(train_headlines)
             train_body_seq = tokenizer.texts_to_sequences(train_bodies)
+            
+            val_headline_seq = tokenizer.texts_to_sequences(val_headlines)
+            val_body_seq = tokenizer.texts_to_sequences(val_bodies)
+
             test_headline_seq = tokenizer.texts_to_sequences(test_headlines)
             test_body_seq = tokenizer.texts_to_sequences(test_bodies)
+            
             word_index = tokenizer.word_index
             np.save(PICKLE_SAVE_FOLDER + "word_index.npy", word_index)
 
@@ -374,11 +473,19 @@ def process_data():
             f.write("  Padding Sequences...\n")
             x_train_headlines = pad_sequences(train_headline_seq, maxlen=CNN_HEADLINE_LENGTH)
             x_train_bodies = pad_sequences(train_body_seq, maxlen=CNN_BODY_LENGTH)
+            
+            x_val_headlines = pad_sequences(val_headline_seq, maxlen=CNN_HEADLINE_LENGTH)
+            x_val_bodies = pad_sequences(val_body_seq, maxlen=CNN_BODY_LENGTH)
+
             x_test_headlines = pad_sequences(test_headline_seq, maxlen=CNN_HEADLINE_LENGTH)
             x_test_bodies = pad_sequences(test_body_seq, maxlen=CNN_BODY_LENGTH)
 
             np.save(PICKLE_SAVE_FOLDER + "x_train_headlines.npy", x_train_headlines)
             np.save(PICKLE_SAVE_FOLDER + "x_train_bodies.npy", x_train_bodies)
+
+            np.save(PICKLE_SAVE_FOLDER + "x_val_headlines.npy", x_val_headlines)
+            np.save(PICKLE_SAVE_FOLDER + "x_val_bodies.npy", x_val_bodies)
+
             np.save(PICKLE_SAVE_FOLDER + "x_test_headlines.npy", x_test_headlines)
             np.save(PICKLE_SAVE_FOLDER + "x_test_bodies.npy", x_test_bodies)
 
@@ -406,13 +513,21 @@ def train_model():
                 USE_AVG_EMBEDDINGS, USE_SNLI_NEUTRAL, USE_TF_VECTORS, USE_CNN_FEATURES\n")
         f.write(', '.join(str(val) for val in vals) + "\n")
 
+        # Take last VALIDATION_SET_SIZE PROPORTION of train set as validation set
         print("Loading train vectors...")
         f.write("Loading train vectors...\n")
-
-        # Take last VALDIATION_SET_SIZE PROPORTION of train set as validation set
+        train_sizes = np.load(PICKLE_SAVE_FOLDER + "train_sizes.npy")
+        train_sizes = train_sizes.item()
         train_labels = np.load(PICKLE_SAVE_FOLDER + "train_labels.npy")
         train_domains = np.load(PICKLE_SAVE_FOLDER + "train_domains.npy")
         
+        print("Loading val vectors...")
+        f.write("Loading val vectors...\n")
+        val_sizes = np.load(PICKLE_SAVE_FOLDER + "val_sizes.npy")
+        val_sizes = val_sizes.item()
+        val_labels = np.load(PICKLE_SAVE_FOLDER + "val_labels.npy")
+        val_domains = np.load(PICKLE_SAVE_FOLDER + "val_domains.npy")
+ 
         print("Loading test vectors...")
         f.write("Loading test vectors...\n")
         test_labels = np.load(PICKLE_SAVE_FOLDER + "test_labels.npy")
@@ -421,123 +536,70 @@ def train_model():
         if USE_TF_VECTORS or USE_RELATIONAL_FEATURE_VECTORS or USE_AVG_EMBEDDINGS or ADD_FEATURES_TO_LABEL_PRED:
             print("Loading TF vectors...")
             f.write("Loading TF vectors...\n")
+            
             train_tf_vectors = np.load(PICKLE_SAVE_FOLDER + "train_tf_vectors.npy")
+            val_tf_vectors = np.load(PICKLE_SAVE_FOLDER + "val_tf_vectors.npy")
             test_tf_vectors = np.load(PICKLE_SAVE_FOLDER + "test_tf_vectors.npy")
+            
             SIZE_TRAIN = len(train_tf_vectors)
+            SIZE_VAL = len(val_tf_vectors)
             SIZE_TEST = len(test_tf_vectors)
 
         if USE_RELATIONAL_FEATURE_VECTORS:
             print("Loading relation vectors...")
             f.write("Loading relation vectors...\n")
+            
             train_relation_vectors = np.load(PICKLE_SAVE_FOLDER + "train_relation_vectors.npy")
+            val_relation_vectors = np.load(PICKLE_SAVE_FOLDER + "val_relation_vectors.npy")
             test_relation_vectors = np.load(PICKLE_SAVE_FOLDER + "test_relation_vectors.npy")
+            
+            SIZE_TRAIN = len(train_relation_vectors)
+            SIZE_VAL = len(val_relation_vectors)
+            SIZE_TEST = len(test_relation_vectors)
 
         if USE_AVG_EMBEDDINGS:
             print("Loading avg embedding vectors...")
             f.write("Loading avg embeddings vectors...\n")
+            
             train_avg_embed_vectors = np.load(PICKLE_SAVE_FOLDER + "train_avg_embed_vectors.npy")
+            val_avg_embed_vectors = np.load(PICKLE_SAVE_FOLDER + "val_avg_embed_vectors.npy")
             test_avg_embed_vectors = np.load(PICKLE_SAVE_FOLDER + "test_avg_embed_vectors.npy")
+            
             SIZE_TRAIN = len(train_avg_embed_vectors)
+            SIZE_VAL = len(val_avg_embed_vectors)
             SIZE_TEST = len(test_avg_embed_vectors)
 
         if USE_CNN_FEATURES:
             print("Loading CNN vectors...")
             f.write("Loading CNN vectors...\n")
+            
             x_train_headlines = np.load(PICKLE_SAVE_FOLDER + "x_train_headlines.npy")
             x_train_bodies = np.load(PICKLE_SAVE_FOLDER + "x_train_bodies.npy")
+            x_val_headlines = np.load(PICKLE_SAVE_FOLDER + "x_val_headlines.npy")
+            x_val_bodies = np.load(PICKLE_SAVE_FOLDER + "x_val_bodies.npy")
             x_test_headlines = np.load(PICKLE_SAVE_FOLDER + "x_test_headlines.npy")
             x_test_bodies = np.load(PICKLE_SAVE_FOLDER + "x_test_bodies.npy")
+            
             SIZE_TRAIN = len(x_train_headlines)
+            SIZE_VAL = len(x_val_headlines)
             SIZE_TEST = len(x_test_headlines)
 
             embedding_matrix = np.load(PICKLE_SAVE_FOLDER + "embedding_matrix.npy")
             word_index = np.load(PICKLE_SAVE_FOLDER + "word_index.npy")
             word_index = word_index.item()
 
-
-        if VALIDATION_SET_SIZE is not None and VALIDATION_SET_SIZE > 0:
-            print("Getting validation vectors...")
-            f.write("Getting validation vectors...\n")
-
-            if (not USE_SNLI_DATA and not USE_FEVER_DATA) or not USE_FNC_DATA:
-                VAL_SIZE_PER_SET = int(SIZE_TRAIN * VALIDATION_SET_SIZE)
-                val_labels = train_labels[-VAL_SIZE_PER_SET:]
-                val_domains = train_domains[-VAL_SIZE_PER_SET:]
-        
-                train_labels = train_labels[:-VAL_SIZE_PER_SET]
-                train_domains = train_domains[:-VAL_SIZE_PER_SET]
-
-                if USE_TF_VECTORS or USE_RELATIONAL_FEATURE_VECTORS or USE_AVG_EMBEDDINGS or ADD_FEATURES_TO_LABEL_PRED:
-                    val_tf_vectors = train_tf_vectors[-VAL_SIZE_PER_SET:, :]
-                    train_tf_vectors = train_tf_vectors[:-VAL_SIZE_PER_SET, :]
-
-                if USE_RELATIONAL_FEATURE_VECTORS:
-                    val_relation_vectors = train_relation_vectors[-VAL_SIZE_PER_SET:, :]
-                    train_relation_vectors = train_relation_vectors[:-VAL_SIZE_PER_SET, :]
-
-                if USE_AVG_EMBEDDINGS:
-                    val_avg_embed_vectors = train_avg_embed_vectors[-VAL_SIZE_PER_SET:, :]
-                    train_avg_embed_vectors = train_avg_embed_vectors[:-VAL_SIZE_PER_SET, :]
-
-                if USE_CNN_FEATURES:
-                    x_val_headlines = x_train_headlines[-VAL_SIZE_PER_SET:, :]
-                    x_train_headlines = x_train_headlines[:-VAL_SIZE_PER_SET, :]
-                    
-                    x_val_bodies = x_train_bodies[-VAL_SIZE_PER_SET:, :]
-                    x_train_bodies = x_train_bodies[:-VAL_SIZE_PER_SET, :]
-
-            # if both datasets are present take VAL_SIZE_PER_SET from each for the validation set
-            else:
-                VAL_SIZE_PER_SET = int(FNC_SIZE * VALIDATION_SET_SIZE)
-                val_labels = np.concatenate([train_labels[FNC_SIZE - VAL_SIZE_PER_SET:FNC_SIZE], \
-                                             train_labels[-VAL_SIZE_PER_SET:]])
-                val_domains = np.concatenate([train_domains[FNC_SIZE - VAL_SIZE_PER_SET:FNC_SIZE], \
-                                              train_domains[-VAL_SIZE_PER_SET:]])
-                
-                train_labels = np.concatenate([train_labels[:FNC_SIZE - VAL_SIZE_PER_SET], \
-                                               train_labels[FNC_SIZE:-VAL_SIZE_PER_SET]])
-                train_domains = np.concatenate([train_domains[:FNC_SIZE - VAL_SIZE_PER_SET], \
-                                                train_domains[FNC_SIZE:-VAL_SIZE_PER_SET]])
-                
-                if USE_TF_VECTORS or ADD_FEATURES_TO_LABEL_PRED:
-                    val_tf_vectors = np.concatenate([train_tf_vectors[FNC_SIZE - VAL_SIZE_PER_SET:FNC_SIZE, :], \
-                                                     train_tf_vectors[-VAL_SIZE_PER_SET:, :]])
-                    train_tf_vectors = np.concatenate([train_tf_vectors[:FNC_SIZE - VAL_SIZE_PER_SET, :], \
-                                                       train_tf_vectors[FNC_SIZE:-VAL_SIZE_PER_SET, :]])
-
-                if USE_RELATIONAL_FEATURE_VECTORS:
-                    val_relation_vectors = np.concatenate([train_relation_vectors[FNC_SIZE - VAL_SIZE_PER_SET:FNC_SIZE, :], \
-                                                           train_relation_vectors[-VAL_SIZE_PER_SET:, :]])
-                    train_relation_vectors = np.concatenate([train_relation_vectors[:FNC_SIZE - VAL_SIZE_PER_SET, :], \
-                                                             train_relation_vectors[FNC_SIZE:-VAL_SIZE_PER_SET, :]])
-
-                if USE_AVG_EMBEDDINGS:
-                    val_relation_vectors = np.concatenate([train_avg_embed_vectors[FNC_SIZE - VAL_SIZE_PER_SET:FNC_SIZE, :], \
-                                                           train_avg_embed_vectors[-VAL_SIZE_PER_SET:, :]])
-                    train_relation_vectors = np.concatenate([train_avg_embed_vectors[:FNC_SIZE - VAL_SIZE_PER_SET, :], \
-                                                             train_avg_embed_vectors[FNC_SIZE:-VAL_SIZE_PER_SET, :]])
-
-                if USE_CNN_FEATURES:
-                    x_val_headlines = np.concatenate([x_train_headlines[FNC_SIZE - VAL_SIZE_PER_SET:FNC_SIZE, :], \
-                                                      x_train_headlines[-VAL_SIZE_PER_SET:, :]])
-                    x_train_headlines = np.concatenate([x_train_headlines[:FNC_SIZE - VAL_SIZE_PER_SET, :], \
-                                                        x_train_headlines[FNC_SIZE:-VAL_SIZE_PER_SET, :]])
-
-                    x_val_bodies = np.concatenate([x_train_bodies[FNC_SIZE - VAL_SIZE_PER_SET:FNC_SIZE, :], \
-                                                   x_train_bodies[-VAL_SIZE_PER_SET:, :]])
-                    x_train_bodies = np.concatenate([x_train_bodies[:FNC_SIZE - VAL_SIZE_PER_SET, :], \
-                                                     x_train_bodies[FNC_SIZE:-VAL_SIZE_PER_SET, :]])
-
         print("SIZE_TRAIN = ", SIZE_TRAIN)
         f.write("SIZE_TRAIN = " + str(SIZE_TRAIN) + "\n")
+
+        print("SIZE_VAL = ", SIZE_VAL)
+        f.write("SIZE_VAL = " + str(SIZE_VAL) + "\n")
+ 
         print("SIZE_TEST = ", SIZE_TEST)
         f.write("SIZE_TEST = " + str(SIZE_TEST) + "\n")
-
 
         ################
         # DEFINE MODEL #
         ################
-
 
         best_loss = float('Inf')
         
@@ -583,6 +645,7 @@ def train_model():
                 batch_size = tf.shape(headline_words_pl)[0]
             else:
                 batch_size = tf.shape(features_pl)[0]
+            
             ### Feature Extraction ###
             
             # TF and TFIDF features fully connected hidden layer of HIDDEN_SIZE
@@ -681,15 +744,6 @@ def train_model():
                     f.write("Loading Saved Model...\n")
                     saver.restore(sess, PRETRAINED_MODEL_PATH)
                     
-                    # Record loss and accuracy information for test
-                    #test_l_pred, test_d_pred, test_p_loss, test_d_loss, test_l2_loss = \
-                    #        sess.run([predict, d_predict, p_loss, d_loss, l2_loss], feed_dict=test_feed_dict)
-                    
-                    # Print and Write test results
-                    #print_model_results(f, "Test Original", test_l_pred, test_labels, test_d_pred, test_domains,
-                    #                test_p_loss, test_d_loss, test_l2_loss, USE_DOMAINS)
- 
-
                 else:
                     sess.run(tf.global_variables_initializer())
                 
@@ -705,27 +759,63 @@ def train_model():
                     train_loss, train_p_loss, train_d_loss, train_l2_loss = 0, 0, 0, 0
                     train_l_pred, train_d_pred = [], []
                     
-                    # Randomize order of FNC and SNLI data and randomly choose EXTRA_SAMPLES_PER_EPOCH SNLI data
-                    # If both FNC and SNLI data used ensure that the correct amount of SNLI samples
-                    # are used each epoch in addition to all of the FNC data
-                    if USE_FNC_DATA and USE_SNLI_DATA or USE_FNC_DATA and USE_FEVER_DATA:
-                        if VALIDATION_SET_SIZE is not None and VALIDATION_SET_SIZE > 0:
-                            FNC_TRAIN_SIZE = FNC_SIZE - int(FNC_SIZE * VALIDATION_SET_SIZE)
-                        else:
-                            FNC_TRAIN_SIZE = FNC_SIZE
-                        fnc_indices = list(range(FNC_TRAIN_SIZE))
-                        snli_indices = list(range(FNC_SIZE, SIZE_TRAIN - int(SIZE_TRAIN * VALIDATION_SET_SIZE)))
+                    # Organize and randomize order of training data from each dataset
+                    index = 0
+                    fnc_indices, snli_indices, fever_indices = [], [], []
+
+                    if USE_FNC_DATA:
+                        fnc_indices = list(range(index, index + train_sizes['fnc']))
+                        index += train_sizes['fnc']
+                        rand1.shuffle(fnc_indices)
+                    if USE_SNLI_DATA:
+                        snli_indices = list(range(index, index + train_sizes['snli']))
+                        index += train_sizes['snli']
                         rand1.shuffle(snli_indices)
+                    if USE_FEVER_DATA:
+                        fever_indices = list(range(index, index + train_sizes['fever']))
+                        index += train_sizes['fever']
+                        rand1.shuffle(fever_indices)
+                        
+                    # Use equal numbers of FNC and other data per epoch
+                    if EXTRA_SAMPLES_PER_EPOCH is not None and USE_FNC_DATA:
+                        
+                        # Use equal numbers of agree/disagree labels per epoch
+                        if BALANCE_LABELS:
+                            fnc_agree_indices = [i for i in fnc_indices if train_labels[i] == 0]
+                            fnc_disagree_indices = [i for i in fnc_indices if train_labels[i] == 1]
+                            
+                            snli_agree_indices = [i for i in snli_indices if train_labels[i] == 0]
+                            snli_disagree_indices = [i for i in snli_indices if train_labels[i] == 1]
 
-                        if EXTRA_SAMPLES_PER_EPOCH is not None:
-                            train_indices = fnc_indices + snli_indices[:EXTRA_SAMPLES_PER_EPOCH]
+                            fever_agree_indices = [i for i in fever_indices if train_labels[i] == 0]
+                            fever_disagree_indices = [i for i in fever_indices if train_labels[i] == 1]
+
+                            LABEL_SIZE = float('inf')
+                            if USE_FNC_DATA:
+                                LABEL_SIZE = min(LABEL_SIZE, len(fnc_agree_indices), len(fnc_disagree_indices))
+                            if USE_SNLI_DATA:
+                                LABEL_SIZE = min(LABEL_SIZE, len(snli_agree_indices), len(snli_disagree_indices))
+                            if USE_FEVER_DATA:
+                                LABEL_SIZE = min(LABEL_SIZE, len(fever_agree_indices), len(fever_disagree_indices))
+
+                            train_indices = fnc_agree_indices[:LABEL_SIZE] + \
+                                            fnc_disagree_indices[:LABEL_SIZE] + \
+                                            snli_agree_indices[:LABEL_SIZE * EXTRA_SAMPLES_PER_EPOCH] + \
+                                            snli_disagree_indices[:LABEL_SIZE * EXTRA_SAMPLES_PER_EPOCH] + \
+                                            fever_agree_indices[:LABEL_SIZE * EXTRA_SAMPLES_PER_EPOCH] + \
+                                            fever_disagree_indices[:LABEL_SIZE * EXTRA_SAMPLES_PER_EPOCH]
+                        
+                        # Don't balance labels but maintain same amount of data from each dataset
                         else:
-                            train_indices = fnc_indices + snli_indices
-                        rand2.shuffle(train_indices)
-
+                            train_indices = fnc_indices + snli_indices[:train_sizes['fnc'] * EXTRA_SAMPLES_PER_EPOCH] + \
+                                fever_indices[:train_sizes['fnc'] * EXTRA_SAMPLES_PER_EPOCH]
+                    
+                    # Use all training data each epoch
                     else:
-                        train_indices = list(range(SIZE_TRAIN - int(SIZE_TRAIN * VALIDATION_SET_SIZE)))
-                        rand1.shuffle(train_indices)
+                        train_indices = fnc_indices + snli_indices + fnc_indices
+
+                    # Randomize order of training data
+                    rand2.shuffle(train_indices)
                         
                     # Training epoch loop
                     for i in range(len(train_indices) // BATCH_SIZE + 1):
@@ -782,21 +872,18 @@ def train_model():
                             train_d_pred.extend(dpred)
                     
                     # Record loss and accuracy information for train
-                    print_model_results(f, "Train", train_l_pred, train_labels, train_d_pred, train_domains,
+                    actual_train_labels = [train_labels[i] for i in train_indices]
+                    actual_train_domains = [train_domains[i] for i in train_indices]
+                    print_model_results(f, "Train", train_l_pred, actual_train_labels, train_d_pred, actual_train_domains,
                                         train_p_loss, train_d_loss, train_l2_loss, USE_DOMAINS)
 
                     # Record loss and accuracy for val
                     if VALIDATION_SET_SIZE is not None and VALIDATION_SET_SIZE > 0:
-                        if not USE_SNLI_DATA and not USE_FEVER_DATA:
-                            VAL_SIZE = int(SIZE_TRAIN * VALIDATION_SET_SIZE)
-                        else:
-                            VAL_SIZE = int(FNC_SIZE * VALIDATION_SET_SIZE) * 2
-
-                        val_indices = list(range(VAL_SIZE))
+                        val_indices = list(range(SIZE_VAL))
                         val_loss, val_p_loss, val_d_loss, val_l2_loss = 0, 0, 0, 0
                         val_l_pred, val_d_pred = [], []
    
-                        for i in range(int(VAL_SIZE) // BATCH_SIZE + 1):
+                        for i in range(int(SIZE_VAL) // BATCH_SIZE + 1):
                             batch_indices = val_indices[i * BATCH_SIZE: (i + 1) * BATCH_SIZE]
                             if len(batch_indices) == 0:
                                 break
@@ -918,7 +1005,7 @@ def train_model():
                 #save_predictions(test_l_pred, test_labels, PREDICTION_FILE)
 
 if __name__ == "__main__":
-    #process_data()
+    process_data()
     train_model()
 
 

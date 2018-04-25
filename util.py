@@ -149,17 +149,15 @@ def get_fever_data(train_path, wikidata_path):
     bodies = get_relevant_articles(wikidata_path, article_list)
     return headlines, bodies, labels, claim_set
 
-def get_vectorizers(train_data, test_data, MAX_FEATURES):
+def get_vectorizers(train_data, MAX_FEATURES):
     train_data = list(set(train_data))
-    test_data = list(set(test_data))
     
     bow_vectorizer = CountVectorizer(max_features=MAX_FEATURES, stop_words=STOP_WORDS)
-    bow = bow_vectorizer.fit_transform(train_data)  # Train set only
+    bow = bow_vectorizer.fit_transform(train_data)
 
     tfreq_vectorizer = TfidfTransformer(use_idf=False).fit(bow)
 
-    tfidf_vectorizer = TfidfVectorizer(max_features=MAX_FEATURES, stop_words=STOP_WORDS).\
-        fit(train_data + test_data)  # Train and test sets
+    tfidf_vectorizer = TfidfVectorizer(max_features=MAX_FEATURES, stop_words=STOP_WORDS).fit(train_data)
 
     return bow_vectorizer, tfreq_vectorizer, tfidf_vectorizer
 
@@ -338,9 +336,9 @@ def print_model_results(f, set_name, pred, labels, d_pred, d_labels, p_loss, d_l
     f.write("    " + set_name + "  Label Accuracy [" + ', '.join(str(acc) for acc in pred_accuracies) + "]\n")
     
     if USE_DOMAINS:
-        domain_accuracies = get_prediction_accuracies(d_pred, d_labels, 2)
-        print("    " + set_name + " Domain Accuracy", domain_accuracies)
-        f.write("    " + set_name + " Domain Accuracy [" + ', '.join(str(acc) for acc in domain_accuracies) + "]\n")
+        domain_accuracies = get_prediction_accuracies(d_pred, d_labels, 3)
+        print("    " + set_name + "  Domain Accuracy", domain_accuracies)
+        f.write("    " + set_name + "  Domain Accuracy [" + ', '.join(str(acc) for acc in domain_accuracies) + "]\n")
 
 def get_body_sentences(bodies, flatten=False):
     result = []
@@ -378,11 +376,21 @@ def select_best_body_sentences(headlines, bodies, tfidf_vectorizer):
 
     return best_sents
 
-
-
-
-            
-            
-
+def remove_data_with_label(labels_to_remove, headlines, bodies, labels, domains, additional=None):
+    
+    throwaway_indices = [i for i, x in enumerate(labels) if x in labels_to_remove]
+    
+    for i in sorted(throwaway_indices, reverse=True):
+        del headlines[i]
+        del bodies[i]
+        del labels[i]
+        del domains[i]
+        if additional is not None:
+            del additional[i]
+    
+    result = [headlines, bodies, labels, domains]
+    if additional is not None:
+        result.append(additional)
+    return result
 
 

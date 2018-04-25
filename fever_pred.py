@@ -166,6 +166,30 @@ def process_data():
 
         print("Getting Data...")
         f.write("Getting Data...\n")
+            if USE_TF_VECTORS or USE_RELATIONAL_FEATURE_VECTORS or USE_AVG_EMBEDDINGS:
+                features_pl = tf.placeholder(tf.float32, [None, FEATURE_VECTOR_SIZE])
+                p_features_pl = tf.placeholder(tf.float32, [None, len(train_tf_vectors[0])])
+
+            if USE_AVG_EMBEDDINGS:
+                avg_embed_vector_pl = tf.placeholder(tf.float32, [None, EMBEDDING_DIM * 2])
+
+            if USE_CNN_FEATURES:
+                embedding_matrix_pl = tf.placeholder(tf.float32, [len(word_index) + 1, EMBEDDING_DIM])
+                W = tf.Variable(tf.constant(0.0, shape=[len(word_index) + 1, EMBEDDING_DIM]), trainable=False)
+                embedding_init = W.assign(embedding_matrix_pl)
+                headline_words_pl = tf.placeholder(tf.int64, [None, len(x_train_headlines[0])])
+                body_words_pl = tf.placeholder(tf.int64, [None, len(x_train_bodies[0])])
+            
+            if USE_CNN_FEATURES:
+                batch_size = tf.shape(headline_words_pl)[0]
+            else:
+                batch_size = tf.shape(features_pl)[0]
+            ### Feature Extraction ###
+            
+            # TF and TFIDF features fully connected hidden layer of HIDDEN_SIZE
+            if USE_CNN_FEATURES:
+                pooled_outputs = []
+
         
         fever_headlines, fever_bodies, fever_labels, fever_claim_set = get_fever_data(FEVER_TRAIN, FEVER_WIKI)
         fever_domain = [1 for _ in range(len(fever_headlines))] 
