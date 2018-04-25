@@ -27,12 +27,12 @@ from util import get_fnc_data, get_snli_data, get_fever_data, get_vectorizers, g
 from util import get_relational_feature_vectors, remove_stop_words, get_average_embeddings, print_model_results, remove_data_with_label
 
 # Data Processing Params
-PICKLE_SAVE_FOLDER = "pickle_data/2_label_fever_snli_a_d/"
+PICKLE_SAVE_FOLDER = "pickle_data/2_label_only_fever_a_d/"
 PICKLE_LOG_FILE = PICKLE_SAVE_FOLDER + "log.txt"
 
 # Saving Parameters
-MODEL_NAME = "test"
-SAVE_FOLDER = "models/" + MODEL_NAME + "/"
+MODEL_NAME = "fever_cnn_2"
+SAVE_FOLDER = "models/apr_25/" + MODEL_NAME + "/"
 PREDICTION_FILE = SAVE_FOLDER + MODEL_NAME + ".csv"
 SAVE_MODEL_PATH = SAVE_FOLDER + MODEL_NAME + ".ckpt"
 TRAINING_LOG_FILE = SAVE_FOLDER + "training.txt"
@@ -48,24 +48,29 @@ USE_DISCUSS_LABEL = False
 
 # Select train and val datasets
 USE_FNC_DATA = False
-USE_SNLI_DATA = True
+USE_SNLI_DATA = False
 USE_FEVER_DATA = True
 
 # Select test dataset
 TEST_DATASET = "FEVER"
 if TEST_DATASET not in ["FNC", "FEVER", "SNLI"]:
     raise Exception("TEST_DATASET must be FNC, FEVER, or SNLI")
+if TEST_DATASET == "FNC" and not USE_FNC_DATA:
+    raise Exception("Must use dataset to use test data")
+if TEST_DATASET == "SNLI" and not USE_SNLI_DATA:
+    raise Exception("Must use dataset to use test data")
+if TEST_DATASET == "FEVER" and not USE_FEVER_DATA:
+    raise Exception("Must use dataset to use test data")
 
-SNLI_TOTAL_SAMPLES_LIMIT = None
 ONLY_VECT_FNC = True
 
-BALANCE_LABELS = False
+BALANCE_LABELS = True
 
 USE_DOMAINS = False
 
 ADD_FEATURES_TO_LABEL_PRED = False
 
-USE_TF_VECTORS = True
+USE_TF_VECTORS = False
 USE_RELATIONAL_FEATURE_VECTORS = False
 USE_AVG_EMBEDDINGS = False
 USE_CNN_FEATURES = True
@@ -95,8 +100,6 @@ if CHECKS_ENABLED:
         assert "_r_" in MODEL_NAME
     if USE_AVG_EMBEDDINGS:
         assert "_avg_" in MODEL_NAME
-    if SNLI_TOTAL_SAMPLES_LIMIT == 0:
-        assert "only_fnc" in PICKLE_SAVE_FOLDER
 
 # CNN feature paramters
 EMBEDDING_PATH = "GoogleNews-vectors-negative300.bin"
@@ -250,7 +253,7 @@ def process_data():
                 VAL_SIZE_CAP = len(val_headlines) * EXTRA_SAMPLES_PER_EPOCH
            
         if USE_SNLI_DATA:
-            snli_s1_train, snli_s2_train, snli_labels_train = get_snli_data(SNLI_TRAIN, limit=SNLI_TOTAL_SAMPLES_LIMIT)
+            snli_s1_train, snli_s2_train, snli_labels_train = get_snli_data(SNLI_TRAIN)
             snli_domains = [1 for _ in range(len(snli_s1_train))]
             
             snli_s1_train, snli_s2_train, snli_labels_train, snli_domains = \
@@ -794,6 +797,7 @@ def train_model():
                         rand1.shuffle(fever_indices)
                         for i in fever_indices:
                             assert train_domains[i] == 2
+                    print("fever_indices", len(fever_indices))
                     
                     if USE_SNLI_DATA:
                         snli_indices = list(range(index, index + train_sizes['snli']))
@@ -803,7 +807,7 @@ def train_model():
                             assert train_domains[i] == 1
                        
                     # Use equal numbers of FNC and other data per epoch
-                    if EXTRA_SAMPLES_PER_EPOCH is not None and USE_FNC_DATA:
+                    if EXTRA_SAMPLES_PER_EPOCH is not None:
                         
                         # Use equal numbers of agree/disagree labels per epoch
                         if BALANCE_LABELS:
@@ -823,7 +827,6 @@ def train_model():
                                 LABEL_SIZE = min(LABEL_SIZE, len(snli_agree_indices), len(snli_disagree_indices))
                             if USE_FEVER_DATA:
                                 LABEL_SIZE = min(LABEL_SIZE, len(fever_agree_indices), len(fever_disagree_indices))
-
                             train_indices = fnc_agree_indices[:LABEL_SIZE * EXTRA_SAMPLES_PER_EPOCH] + \
                                             fnc_disagree_indices[:LABEL_SIZE * EXTRA_SAMPLES_PER_EPOCH] + \
                                             snli_agree_indices[:LABEL_SIZE * EXTRA_SAMPLES_PER_EPOCH] + \
@@ -846,11 +849,11 @@ def train_model():
                     
                     # Use all training data each epoch
                     else:
-                        train_indices = fnc_indices + snli_indices + fnc_indices
+                        train_indices = fnc_indices + snli_indices + fever_indices
 
                     # Randomize order of training data
                     rand2.shuffle(train_indices)
-                        
+                    
                     # Training epoch loop
                     for i in range(len(train_indices) // BATCH_SIZE + 1):
 
@@ -1039,7 +1042,7 @@ def train_model():
                 #save_predictions(test_l_pred, test_labels, PREDICTION_FILE)
 
 if __name__ == "__main__":
-    process_data()
-    #train_model()
+    #process_data()
+    train_model()
 
 
