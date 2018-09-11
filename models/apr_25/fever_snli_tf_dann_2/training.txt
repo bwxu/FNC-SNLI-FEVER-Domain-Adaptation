@@ -1,0 +1,3798 @@
+USE_FNC_DATA, USE_SNLI_DATA, USE_FEVER_DATA, TEST_DATASET, PRETRAINED_MODEL_PATH, BALANCE_LABELS, USE_DOMAINS, ADD_FEATURES_TO_LABEL_PRED, USE_TF_VECTORS, USE_RELATIONAL_FEATURE_VECTORS, USE_AVG_EMBEDDINGS, USE_CNN_FEATURES, EXTRA_SAMPLES_PER_EPOCH
+False, True, True, FEVER, None, True, True, False, True, False, False, False, 1
+Loading train vectors...
+Loading val vectors...
+Loading test vectors...
+Loading TF vectors...
+SIZE_TRAIN = 304316
+SIZE_VAL = 56342
+SIZE_TEST = 28049
+Training model 0
+Defining Model...
+Training Model...
+
+  EPOCH 0
+    Train  Label Loss = 76036.36032867432
+    Train  Domain Loss = 38332.75238800049
+    Train  Regularization Loss = 7951.792262017727
+    Train  Total Loss = 122320.90497869253
+    Train  Composite Score 61953.5
+    Train  Label Accuracy [0.6851901989982402, 0.512025630612337, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.7609990523893326, 0.676323270610532]
+
+    Val  Label Loss = 33436.59065437317
+    Val  Domain Loss = 5980.69307923317
+    Val  Regularization Loss = 5579.125225067139
+    Val  Total Loss = 44996.40895867348
+    Val  Composite Score 42942.5
+    Val  Label Accuracy [0.6830344187126357, 0.6826905501736429, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.9694366547158425, 0.9663128749423165]
+
+    New Best Val Loss
+
+    Test  Label Loss = 18519.715673446655
+    Test  Domain Loss = 3548.1153647899628
+    Test  Regularization Loss = 2779.6705465316772
+    Test  Total Loss = 24847.501584768295
+    Test  Composite Score 20051.75
+    Test  Label Accuracy [0.6318937846512985, 0.5867503673033257, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9689115476487575]
+
+  EPOCH 1
+    Train  Label Loss = 74057.0391998291
+    Train  Domain Loss = 71871.1259841919
+    Train  Regularization Loss = 7908.0636558532715
+    Train  Total Loss = 153836.22883987427
+    Train  Composite Score 62952.0
+    Train  Label Accuracy [0.7077523577455891, 0.5193583322052254, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5719507242452958, 0.4715265556608456]
+
+    Val  Label Loss = 32499.99933052063
+    Val  Domain Loss = 34125.22068023682
+    Val  Regularization Loss = 4939.35676574707
+    Val  Total Loss = 71564.57677650452
+    Val  Composite Score 43406.0
+    Val  Label Accuracy [0.7113587555865111, 0.6663315664412356, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.9861559760036918, 0.6424337084235562]
+
+    New Best Val Loss
+
+    Test  Label Loss = 18107.55241394043
+    Test  Domain Loss = 19876.953315734863
+    Test  Regularization Loss = 2460.9206581115723
+    Test  Total Loss = 40445.426387786865
+    Test  Composite Score 20400.5
+    Test  Label Accuracy [0.6601011574749538, 0.5713904100440764, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.6411636778494777]
+
+  EPOCH 2
+    Train  Label Loss = 72962.98335647583
+    Train  Domain Loss = 73164.02365493774
+    Train  Regularization Loss = 6656.000846862793
+    Train  Total Loss = 152783.00785827637
+    Train  Composite Score 63589.5
+    Train  Label Accuracy [0.7154234917196878, 0.5308650331663733, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5479445873381165, 0.42299535219529805]
+
+    Val  Label Loss = 31735.59748840332
+    Val  Domain Loss = 38594.39475631714
+    Val  Regularization Loss = 4084.8425159454346
+    Val  Total Loss = 74414.8347606659
+    Val  Composite Score 44123.75
+    Val  Label Accuracy [0.7500435312554414, 0.6491500639736794, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.9820737637996522, 0.08746583365872707]
+
+    New Best Val Loss
+
+    Test  Label Loss = 17762.236518859863
+    Test  Domain Loss = 20368.43695831299
+    Test  Regularization Loss = 2035.178629398346
+    Test  Total Loss = 40165.8521065712
+    Test  Composite Score 20897.0
+    Test  Label Accuracy [0.6990078786110301, 0.5529584613329772, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.08987842703839709]
+
+  EPOCH 3
+    Train  Label Loss = 72612.68115615845
+    Train  Domain Loss = 73549.60082244873
+    Train  Regularization Loss = 5853.552594661713
+    Train  Total Loss = 152015.8345732689
+    Train  Composite Score 63733.5
+    Train  Label Accuracy [0.721064031406525, 0.5295564279590271, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5335499300573079, 0.42245386038536165]
+
+    Val  Label Loss = 30508.082878112793
+    Val  Domain Loss = 39275.00848388672
+    Val  Regularization Loss = 3561.97603225708
+    Val  Total Loss = 73345.06739425659
+    Val  Composite Score 45331.25
+    Val  Label Accuracy [0.8222763944512159, 0.6089837324072381, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    New Best Val Loss
+
+    Test  Label Loss = 16766.20502471924
+    Test  Domain Loss = 20194.19495010376
+    Test  Regularization Loss = 1774.6724557876587
+    Test  Total Loss = 38735.07243061066
+    Test  Composite Score 21956.75
+    Test  Label Accuracy [0.8174302110689622, 0.4164551889942567, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 4
+    Train  Label Loss = 72447.22173309326
+    Train  Domain Loss = 73579.74322128296
+    Train  Regularization Loss = 5472.054647445679
+    Train  Total Loss = 151499.0196018219
+    Train  Composite Score 63816.0
+    Train  Label Accuracy [0.7246062903298588, 0.5284960064979017, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5315644600875412, 0.4212580659717522]
+
+    Val  Label Loss = 30092.225332260132
+    Val  Domain Loss = 39170.432399749756
+    Val  Regularization Loss = 3311.800054550171
+    Val  Total Loss = 72574.45778656006
+    Val  Composite Score 45205.25
+    Val  Label Accuracy [0.7972314121539266, 0.6407420946810455, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.7723190515068687, 0.35937666394519185]
+
+    New Best Val Loss
+
+    Test  Label Loss = 16559.776500701904
+    Test  Domain Loss = 21404.796295166016
+    Test  Regularization Loss = 1650.0280413627625
+    Test  Total Loss = 39614.60083723068
+    Test  Composite Score 21756.5
+    Test  Label Accuracy [0.78061472619395, 0.48190196340323227, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.35819458804235443]
+
+  EPOCH 5
+    Train  Label Loss = 71403.44680023193
+    Train  Domain Loss = 73671.598777771
+    Train  Regularization Loss = 5036.253985881805
+    Train  Total Loss = 150111.29956388474
+    Train  Composite Score 64500.75
+    Train  Label Accuracy [0.7310816298903479, 0.5426199178737422, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.563106358016335, 0.3889039303280538]
+
+    Val  Label Loss = 31958.590698242188
+    Val  Domain Loss = 37756.96924972534
+    Val  Regularization Loss = 3137.993070602417
+    Val  Total Loss = 72853.55301856995
+    Val  Composite Score 43442.0
+    Val  Label Accuracy [0.6686691044169714, 0.7357430085907513, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.5882645273508218, 0.7724255439991481]
+
+    Test  Label Loss = 18244.830940246582
+    Test  Domain Loss = 18481.43313217163
+    Test  Regularization Loss = 1563.4327178001404
+    Test  Total Loss = 38289.69679021835
+    Test  Composite Score 20090.75
+    Test  Label Accuracy [0.6174010310281101, 0.6334980633097369, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.7754643659310493]
+
+  EPOCH 6
+    Train  Label Loss = 71489.2970199585
+    Train  Domain Loss = 73664.36982727051
+    Train  Regularization Loss = 4747.078443527222
+    Train  Total Loss = 149900.74529075623
+    Train  Composite Score 64304.25
+    Train  Label Accuracy [0.7297279003655069, 0.5380623618067777, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5754027345336402, 0.37186950047380535]
+
+    Val  Label Loss = 31758.533765792847
+    Val  Domain Loss = 38973.93632507324
+    Val  Regularization Loss = 2988.1647033691406
+    Val  Total Loss = 73720.63479423523
+    Val  Composite Score 43166.0
+    Val  Label Accuracy [0.6396192466190725, 0.7646682507768232, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.7539313478399773, 0.5255759468957438]
+
+    Test  Label Loss = 18294.435695648193
+    Test  Domain Loss = 19287.97352218628
+    Test  Regularization Loss = 1488.7841873168945
+    Test  Total Loss = 39071.19340515137
+    Test  Composite Score 19788.5
+    Test  Label Accuracy [0.5806828129559382, 0.6805128890076132, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.5159542229669507]
+
+  EPOCH 7
+    Train  Label Loss = 71292.2698173523
+    Train  Domain Loss = 73747.85946655273
+    Train  Regularization Loss = 4673.392777919769
+    Train  Total Loss = 149713.5220618248
+    Train  Composite Score 64493.25
+    Train  Label Accuracy [0.7292089707143179, 0.5442669554622986, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5820585713641081, 0.36483010694463247]
+
+    Val  Label Loss = 30289.97766304016
+    Val  Domain Loss = 30461.987522125244
+    Val  Regularization Loss = 3321.8926906585693
+    Val  Total Loss = 64073.857875823975
+    Val  Composite Score 45046.25
+    Val  Label Accuracy [0.7701839921063324, 0.6736428440870043, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 17025.09903907776
+    Test  Domain Loss = 9922.94476890564
+    Test  Regularization Loss = 1655.0564646720886
+    Test  Total Loss = 28603.100272655487
+    Test  Composite Score 21590.0
+    Test  Label Accuracy [0.7580974613364458, 0.5140910912247897, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 8
+    Train  Label Loss = 70602.20375061035
+    Train  Domain Loss = 73806.0271987915
+    Train  Regularization Loss = 4727.739363670349
+    Train  Total Loss = 149135.9703130722
+    Train  Composite Score 64922.25
+    Train  Label Accuracy [0.7394973151031091, 0.5468841658769911, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5663553088759532, 0.37999187762285097]
+
+    Val  Label Loss = 30212.383335113525
+    Val  Domain Loss = 39107.1380443573
+    Val  Regularization Loss = 2856.4911403656006
+    Val  Total Loss = 72176.01251983643
+    Val  Composite Score 44973.5
+    Val  Label Accuracy [0.7701839921063324, 0.669210382014257, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 17182.729454040527
+    Test  Domain Loss = 19584.34670639038
+    Test  Regularization Loss = 1423.1808695793152
+    Test  Total Loss = 38190.25703001022
+    Test  Composite Score 21302.75
+    Test  Label Accuracy [0.7278961190545666, 0.5458795245091492, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 9
+    Train  Label Loss = 70492.64409255981
+    Train  Domain Loss = 73800.08153915405
+    Train  Regularization Loss = 4464.508145332336
+    Train  Total Loss = 148757.2337770462
+    Train  Composite Score 64900.5
+    Train  Label Accuracy [0.7363386128784802, 0.5493885654979468, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5756960425973557, 0.375727629619602]
+
+    Val  Label Loss = 29749.21540260315
+    Val  Domain Loss = 38696.380210876465
+    Val  Regularization Loss = 2773.733030319214
+    Val  Total Loss = 71219.32864379883
+    Val  Composite Score 45350.75
+    Val  Label Accuracy [0.7844622438911139, 0.6697130323524035, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.37879379503744987, 0.8927975577721771]
+
+    New Best Val Loss
+
+    Test  Label Loss = 16676.559547424316
+    Test  Domain Loss = 18735.503524780273
+    Test  Regularization Loss = 1381.9485487937927
+    Test  Total Loss = 36794.01162099838
+    Test  Composite Score 21578.75
+    Test  Label Accuracy [0.7547903900398794, 0.5211700280486176, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.8951121252094549]
+
+  EPOCH 10
+    Train  Label Loss = 70327.55799484253
+    Train  Domain Loss = 73690.33057785034
+    Train  Regularization Loss = 4170.463068008423
+    Train  Total Loss = 148188.3516407013
+    Train  Composite Score 65138.25
+    Train  Label Accuracy [0.7415730337078652, 0.5513063489914715, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5778620098371012, 0.3742159649835296]
+
+    Val  Label Loss = 29244.305349349976
+    Val  Domain Loss = 38970.46881866455
+    Val  Regularization Loss = 2639.851770401001
+    Val  Total Loss = 70854.62593841553
+    Val  Composite Score 45581.75
+    Val  Label Accuracy [0.8023100586220907, 0.6556845183695851, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.31024812750701075, 0.8158034858542472]
+
+    New Best Val Loss
+
+    Test  Label Loss = 16257.375308990479
+    Test  Domain Loss = 19053.494369506836
+    Test  Regularization Loss = 1315.2452969551086
+    Test  Total Loss = 36626.11497545242
+    Test  Composite Score 21789.5
+    Test  Label Accuracy [0.7706935123042505, 0.5150260451449179, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.8151449249527613]
+
+  EPOCH 11
+    Train  Label Loss = 69898.28349304199
+    Train  Domain Loss = 73759.89724349976
+    Train  Regularization Loss = 4210.899072647095
+    Train  Total Loss = 147869.07980918884
+    Train  Composite Score 65304.0
+    Train  Label Accuracy [0.7414602229141284, 0.5564053968683723, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5771851450746808, 0.37624655927079104]
+
+    Val  Label Loss = 29634.154809951782
+    Val  Domain Loss = 39106.54319190979
+    Val  Regularization Loss = 2638.9785346984863
+    Val  Total Loss = 71379.67653656006
+    Val  Composite Score 45402.5
+    Val  Label Accuracy [0.7864646816414186, 0.6697130323524035, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 16727.81183242798
+    Test  Domain Loss = 19292.269012451172
+    Test  Regularization Loss = 1314.810227394104
+    Test  Total Loss = 37334.891072273254
+    Test  Composite Score 21479.0
+    Test  Label Accuracy [0.7447719093473397, 0.5309202617870976, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 12
+    Train  Label Loss = 69508.15592575073
+    Train  Domain Loss = 73935.72751998901
+    Train  Regularization Loss = 4103.609607219696
+    Train  Total Loss = 147547.49305295944
+    Train  Composite Score 65609.25
+    Train  Label Accuracy [0.7506204593655521, 0.5564279590271197, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5645503361761653, 0.3796308830828934]
+
+    Val  Label Loss = 29770.972089767456
+    Val  Domain Loss = 38979.13713645935
+    Val  Regularization Loss = 2554.7130374908447
+    Val  Total Loss = 71304.82226371765
+    Val  Composite Score 45142.25
+    Val  Label Accuracy [0.7599396366591212, 0.695622372509596, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.45216712221788363, 0.7148131056760498]
+
+    Test  Label Loss = 16887.877475738525
+    Test  Domain Loss = 19293.545711517334
+    Test  Regularization Loss = 1272.8268857002258
+    Test  Total Loss = 37454.250072956085
+    Test  Composite Score 21298.25
+    Test  Label Accuracy [0.7197743410174108, 0.5673834646720983, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.7191343719918714]
+
+  EPOCH 13
+    Train  Label Loss = 69076.32567596436
+    Train  Domain Loss = 73784.54000091553
+    Train  Regularization Loss = 3966.2817673683167
+    Train  Total Loss = 146827.1474442482
+    Train  Composite Score 65557.5
+    Train  Label Accuracy [0.7477325030458915, 0.5577591263932133, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5570822616307929, 0.39759036144578314]
+
+    Val  Label Loss = 28951.53450012207
+    Val  Domain Loss = 38728.36629867554
+    Val  Regularization Loss = 2490.1481895446777
+    Val  Total Loss = 70170.04898834229
+    Val  Composite Score 45597.5
+    Val  Label Accuracy [0.796999245458239, 0.6650063973679401, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.41922544460615524, 0.8116857761527813]
+
+    New Best Val Loss
+
+    Test  Label Loss = 16362.175128936768
+    Test  Domain Loss = 18992.03408432007
+    Test  Regularization Loss = 1240.658938407898
+    Test  Total Loss = 36594.868151664734
+    Test  Composite Score 21700.25
+    Test  Label Accuracy [0.7643711701196382, 0.5164952584479765, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.8117223430425327]
+
+  EPOCH 14
+    Train  Label Loss = 69342.918384552
+    Train  Domain Loss = 73855.53604888916
+    Train  Regularization Loss = 3929.5400228500366
+    Train  Total Loss = 147127.9944562912
+    Train  Composite Score 65637.75
+    Train  Label Accuracy [0.7486801137132801, 0.559225666711791, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5710031135779071, 0.37751004016064255]
+
+    Val  Label Loss = 29899.804901123047
+    Val  Domain Loss = 38953.47152519226
+    Val  Regularization Loss = 2459.74737739563
+    Val  Total Loss = 71313.02380371094
+    Val  Composite Score 44975.0
+    Val  Label Accuracy [0.740437634221371, 0.7161396454030342, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.3386106279507295, 0.7863405629903092]
+
+    Test  Label Loss = 16992.897115707397
+    Test  Domain Loss = 18997.705253601074
+    Test  Regularization Loss = 1225.5124344825745
+    Test  Total Loss = 37216.114803791046
+    Test  Composite Score 21077.0
+    Test  Label Accuracy [0.6928314366306779, 0.6019767597168425, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.7910442440015687]
+
+  EPOCH 15
+    Train  Label Loss = 68666.06574249268
+    Train  Domain Loss = 73975.510471344
+    Train  Regularization Loss = 3852.2773971557617
+    Train  Total Loss = 146493.85361099243
+    Train  Composite Score 65769.75
+    Train  Label Accuracy [0.7468300166959975, 0.565046703668607, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5704390596092234, 0.37448671088849783]
+
+    Val  Label Loss = 29359.919414520264
+    Val  Domain Loss = 38884.032720565796
+    Val  Regularization Loss = 2381.0421352386475
+    Val  Total Loss = 70624.9942703247
+    Val  Composite Score 45322.25
+    Val  Label Accuracy [0.7744790759765512, 0.683695850849936, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 16788.04937362671
+    Test  Domain Loss = 18841.71590423584
+    Test  Regularization Loss = 1186.29936170578
+    Test  Total Loss = 36816.06463956833
+    Test  Composite Score 21404.75
+    Test  Label Accuracy [0.7276529520474662, 0.5647121677574463, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 16
+    Train  Label Loss = 68702.76905822754
+    Train  Domain Loss = 73812.95258712769
+    Train  Regularization Loss = 3798.3795642852783
+    Train  Total Loss = 146314.1012096405
+    Train  Composite Score 66004.5
+    Train  Label Accuracy [0.7536437886376969, 0.5652948874148278, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5446956364784983, 0.39824466404945624]
+
+    Val  Label Loss = 28736.026523590088
+    Val  Domain Loss = 39029.479511260986
+    Val  Regularization Loss = 2400.2812900543213
+    Val  Total Loss = 70165.7873249054
+    Val  Composite Score 45835.25
+    Val  Label Accuracy [0.8120030181670439, 0.6558673003107293, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.3180930744382521, 0.788470412835895]
+
+    New Best Val Loss
+
+    Test  Label Loss = 16017.475784301758
+    Test  Domain Loss = 19065.039642333984
+    Test  Regularization Loss = 1195.8848271369934
+    Test  Total Loss = 36278.400253772736
+    Test  Composite Score 21896.0
+    Test  Label Accuracy [0.7790098239470868, 0.5111526646186724, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.790759028842383]
+
+  EPOCH 17
+    Train  Label Loss = 68126.97136306763
+    Train  Domain Loss = 73917.7290802002
+    Train  Regularization Loss = 3760.7652106285095
+    Train  Total Loss = 145805.46565389633
+    Train  Composite Score 65933.25
+    Train  Label Accuracy [0.7537114751139389, 0.5630837958575876, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5864807544785885, 0.35330084382473714]
+
+    Val  Label Loss = 27988.30153274536
+    Val  Domain Loss = 39424.0037689209
+    Val  Regularization Loss = 2368.0310039520264
+    Val  Total Loss = 69780.33630561829
+    Val  Composite Score 46373.75
+    Val  Label Accuracy [0.8594811074351384, 0.613918844818132, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.48209151254836535, 0.1852969365659721]
+
+    New Best Val Loss
+
+    Test  Label Loss = 15481.605451583862
+    Test  Domain Loss = 19815.452781677246
+    Test  Regularization Loss = 1179.8168654441833
+    Test  Total Loss = 36476.87509870529
+    Test  Composite Score 22495.25
+    Test  Label Accuracy [0.8492364555977046, 0.4250033391211433, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.182894220827837]
+
+  EPOCH 18
+    Train  Label Loss = 67922.1812171936
+    Train  Domain Loss = 73898.53119277954
+    Train  Regularization Loss = 3689.6163849830627
+    Train  Total Loss = 145510.3287949562
+    Train  Composite Score 66380.25
+    Train  Label Accuracy [0.7600063174044492, 0.5702360001804972, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5546229863273318, 0.3800821262578403]
+
+    Val  Label Loss = 28343.59774208069
+    Val  Domain Loss = 39059.605602264404
+    Val  Regularization Loss = 2292.1762161254883
+    Val  Total Loss = 69695.37956047058
+    Val  Composite Score 46055.75
+    Val  Label Accuracy [0.8089558302861455, 0.6740997989398647, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 15888.654558181763
+    Test  Domain Loss = 19639.45090484619
+    Test  Regularization Loss = 1142.0239658355713
+    Test  Total Loss = 36670.129428863525
+    Test  Composite Score 22121.0
+    Test  Label Accuracy [0.7983659177122848, 0.49806330973687724, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 19
+    Train  Label Loss = 68128.59586334229
+    Train  Domain Loss = 74032.33738708496
+    Train  Regularization Loss = 3591.6974387168884
+    Train  Total Loss = 145752.63068914413
+    Train  Composite Score 66359.25
+    Train  Label Accuracy [0.7619692252154686, 0.5676413519245521, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5482153332430847, 0.38759532512070755]
+
+    Val  Label Loss = 28907.35227203369
+    Val  Domain Loss = 39057.33166885376
+    Val  Regularization Loss = 2263.528329849243
+    Val  Total Loss = 70228.2122707367
+    Val  Composite Score 45469.25
+    Val  Label Accuracy [0.7674850542689651, 0.7036647779199415, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 16663.754989624023
+    Test  Domain Loss = 19374.398635864258
+    Test  Regularization Loss = 1127.750816822052
+    Test  Total Loss = 37165.90444231033
+    Test  Composite Score 21416.0
+    Test  Label Accuracy [0.7252699153778815, 0.5732603178843328, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 20
+    Train  Label Loss = 67641.8122291565
+    Train  Domain Loss = 73877.32495117188
+    Train  Regularization Loss = 3528.086423397064
+    Train  Total Loss = 145047.22360372543
+    Train  Composite Score 66547.5
+    Train  Label Accuracy [0.7602996254681648, 0.5749740535174406, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5509227922927665, 0.3900094761066739]
+
+    Val  Label Loss = 28281.5301322937
+    Val  Domain Loss = 39058.42995452881
+    Val  Regularization Loss = 2218.7448120117188
+    Val  Total Loss = 69558.70489883423
+    Val  Composite Score 46044.5
+    Val  Label Accuracy [0.8158918103198096, 0.6624931456772071, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 15999.194393157959
+    Test  Domain Loss = 19201.133922576904
+    Test  Regularization Loss = 1105.438461303711
+    Test  Total Loss = 36305.766777038574
+    Test  Composite Score 22033.25
+    Test  Label Accuracy [0.7936971111759556, 0.4952584479764926, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 21
+    Train  Label Loss = 67783.47096824646
+    Train  Domain Loss = 73801.82306671143
+    Train  Regularization Loss = 3479.9311254024506
+    Train  Total Loss = 145065.22516036034
+    Train  Composite Score 66355.5
+    Train  Label Accuracy [0.7621948468029421, 0.5673029195433419, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5310906547538469, 0.40677316005595415]
+
+    Val  Label Loss = 28808.70949935913
+    Val  Domain Loss = 39056.09679412842
+    Val  Regularization Loss = 2188.944803237915
+    Val  Total Loss = 70053.75109672546
+    Val  Composite Score 45497.0
+    Val  Label Accuracy [0.7734633466829184, 0.6959422409065984, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 16580.84347343445
+    Test  Domain Loss = 19333.022346496582
+    Test  Regularization Loss = 1090.591293811798
+    Test  Total Loss = 37004.45711374283
+    Test  Composite Score 21428.75
+    Test  Label Accuracy [0.7274097850403657, 0.5696540670495526, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 22
+    Train  Label Loss = 67226.85510253906
+    Train  Domain Loss = 73747.49718093872
+    Train  Regularization Loss = 3434.5095546245575
+    Train  Total Loss = 144408.86183810234
+    Train  Composite Score 66682.5
+    Train  Label Accuracy [0.7649925544876134, 0.5743423130725148, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5264879743693877, 0.41148865123415007]
+
+    Val  Label Loss = 28874.98236846924
+    Val  Domain Loss = 39055.42957115173
+    Val  Regularization Loss = 2170.806941986084
+    Val  Total Loss = 70101.21888160706
+    Val  Composite Score 45785.0
+    Val  Label Accuracy [0.7880318068373092, 0.6905501736428441, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 16653.127193450928
+    Test  Domain Loss = 19531.560096740723
+    Test  Regularization Loss = 1081.5545225143433
+    Test  Total Loss = 37266.241812705994
+    Test  Composite Score 21533.75
+    Test  Label Accuracy [0.7381577667542067, 0.5588353145452117, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 23
+    Train  Label Loss = 67330.63051223755
+    Train  Domain Loss = 73824.50845336914
+    Train  Regularization Loss = 3400.5528090000153
+    Train  Total Loss = 144555.6917746067
+    Train  Composite Score 66826.5
+    Train  Label Accuracy [0.7653986733450656, 0.5782681286945535, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.4668561888001444, 0.4724290420107396]
+
+    Val  Label Loss = 28832.836908340454
+    Val  Domain Loss = 39055.81428909302
+    Val  Regularization Loss = 2145.3320989608765
+    Val  Total Loss = 70033.98329639435
+    Val  Composite Score 45601.25
+    Val  Label Accuracy [0.7724185965523246, 0.7039389508316578, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 16651.894592285156
+    Test  Domain Loss = 19613.416046142578
+    Test  Regularization Loss = 1068.8622691631317
+    Test  Total Loss = 37334.172907590866
+    Test  Composite Score 21575.75
+    Test  Label Accuracy [0.7334403268164575, 0.5792707359422999, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 24
+    Train  Label Loss = 67078.71254348755
+    Train  Domain Loss = 73835.00602722168
+    Train  Regularization Loss = 3388.3579511642456
+    Train  Total Loss = 144302.07652187347
+    Train  Composite Score 66819.0
+    Train  Label Accuracy [0.7665944677586751, 0.5768467126934705, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5160416948693651, 0.4206263255268264]
+
+    Val  Label Loss = 29086.95023536682
+    Val  Domain Loss = 39060.79845428467
+    Val  Regularization Loss = 2147.667137145996
+    Val  Total Loss = 70295.41582679749
+    Val  Composite Score 45299.75
+    Val  Label Accuracy [0.7477508851355273, 0.7244105282398099, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 16954.161588668823
+    Test  Domain Loss = 19025.145023345947
+    Test  Regularization Loss = 1070.0256481170654
+    Test  Total Loss = 37049.332260131836
+    Test  Composite Score 21266.0
+    Test  Label Accuracy [0.7039198521544597, 0.605182316014425, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 25
+    Train  Label Loss = 66898.78021240234
+    Train  Domain Loss = 73906.58930206299
+    Train  Regularization Loss = 3373.327066421509
+    Train  Total Loss = 144178.69658088684
+    Train  Composite Score 66888.75
+    Train  Label Accuracy [0.7671585217273589, 0.5783809394882903, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.4734443391543703, 0.4657055187040296]
+
+    Val  Label Loss = 28581.58551979065
+    Val  Domain Loss = 39058.726554870605
+    Val  Regularization Loss = 2122.6371145248413
+    Val  Total Loss = 69762.9491891861
+    Val  Composite Score 45641.0
+    Val  Label Accuracy [0.772215450693598, 0.7066806799488211, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 16504.37254714966
+    Test  Domain Loss = 19799.843711853027
+    Test  Regularization Loss = 1057.5550162792206
+    Test  Total Loss = 37361.771275281906
+    Test  Composite Score 21455.75
+    Test  Label Accuracy [0.725999416399183, 0.5783357820221717, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 26
+    Train  Label Loss = 66490.90910339355
+    Train  Domain Loss = 73911.62711334229
+    Train  Regularization Loss = 3349.2119834423065
+    Train  Total Loss = 143751.74820017815
+    Train  Composite Score 67130.25
+    Train  Label Accuracy [0.7711294616668923, 0.5816750146654032, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5537656242949326, 0.3780289698118316]
+
+    Val  Label Loss = 27672.65999031067
+    Val  Domain Loss = 39058.87055015564
+    Val  Regularization Loss = 2106.0402574539185
+    Val  Total Loss = 68837.57079792023
+    Val  Composite Score 46363.25
+    Val  Label Accuracy [0.8356550002902083, 0.6507951014439773, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    New Best Val Loss
+
+    Test  Label Loss = 15690.733943939209
+    Test  Domain Loss = 19076.761070251465
+    Test  Regularization Loss = 1049.2860147953033
+    Test  Total Loss = 35816.78102898598
+    Test  Composite Score 22200.5
+    Test  Label Accuracy [0.808189864799144, 0.48524108454654735, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 27
+    Train  Label Loss = 66743.23951721191
+    Train  Domain Loss = 73823.12266159058
+    Train  Regularization Loss = 3316.1519916057587
+    Train  Total Loss = 143882.51417040825
+    Train  Composite Score 66995.25
+    Train  Label Accuracy [0.7692116781733677, 0.5795316095844051, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.49079463923108163, 0.4499345697396327]
+
+    Val  Label Loss = 28626.338285446167
+    Val  Domain Loss = 39055.14800643921
+    Val  Regularization Loss = 2098.748860359192
+    Val  Total Loss = 69780.23515224457
+    Val  Composite Score 45615.5
+    Val  Label Accuracy [0.7630448662139416, 0.7195668067994883, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 16638.176906585693
+    Test  Domain Loss = 19254.37420654297
+    Test  Regularization Loss = 1045.6532442569733
+    Test  Total Loss = 36938.204357385635
+    Test  Composite Score 21404.75
+    Test  Label Accuracy [0.7146678338683008, 0.6003739815680513, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 28
+    Train  Label Loss = 66740.34553718567
+    Train  Domain Loss = 73829.99461746216
+    Train  Regularization Loss = 3316.7184224128723
+    Train  Total Loss = 143887.0585770607
+    Train  Composite Score 66996.75
+    Train  Label Accuracy [0.7700690402057669, 0.5787193718695005, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5441992689860566, 0.39095708677406255]
+
+    Val  Label Loss = 27961.236406326294
+    Val  Domain Loss = 39057.59603881836
+    Val  Regularization Loss = 2092.5307874679565
+    Val  Total Loss = 69111.36323261261
+    Val  Composite Score 46241.0
+    Val  Label Accuracy [0.8156596436241221, 0.6748309267044416, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 16041.297969818115
+    Test  Domain Loss = 19116.88120651245
+    Test  Regularization Loss = 1042.5552327632904
+    Test  Total Loss = 36200.73440909386
+    Test  Composite Score 22073.75
+    Test  Label Accuracy [0.7866452679700419, 0.5218378522772806, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 29
+    Train  Label Loss = 66144.93126678467
+    Train  Domain Loss = 73948.74048233032
+    Train  Regularization Loss = 3316.3506655693054
+    Train  Total Loss = 143410.0224146843
+    Train  Composite Score 67265.25
+    Train  Label Accuracy [0.7738369207165742, 0.5830287441902441, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.4715265556608456, 0.4610802761608231]
+
+    Val  Label Loss = 28125.584314346313
+    Val  Domain Loss = 39053.6821937561
+    Val  Regularization Loss = 2083.8152389526367
+    Val  Total Loss = 69263.08174705505
+    Val  Composite Score 45839.75
+    Val  Label Accuracy [0.7790643682163794, 0.7080058490221166, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 16234.09514427185
+    Test  Domain Loss = 19416.917682647705
+    Test  Regularization Loss = 1038.212911605835
+    Test  Total Loss = 36689.22573852539
+    Test  Composite Score 21775.25
+    Test  Label Accuracy [0.75002431670071, 0.5692533725123547, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+Training model 1
+Defining Model...
+Training Model...
+
+  EPOCH 0
+    Train  Label Loss = 75593.26585388184
+    Train  Domain Loss = 36897.10112762451
+    Train  Regularization Loss = 8036.836363375187
+    Train  Total Loss = 120527.20334488153
+    Train  Composite Score 62083.25
+    Train  Label Accuracy [0.6889355173503001, 0.5121610035648211, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.7671133974098642, 0.6867469879518072]
+
+    Val  Label Loss = 32444.17817878723
+    Val  Domain Loss = 6900.086634397507
+    Val  Regularization Loss = 5510.78263092041
+    Val  Total Loss = 44855.04744410515
+    Val  Composite Score 44198.0
+    Val  Label Accuracy [0.7702420337802542, 0.6218698592579053, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.9847715736040609, 0.9533917858790956]
+
+    Test  Label Loss = 17912.987035751343
+    Test  Domain Loss = 5007.087278842926
+    Test  Regularization Loss = 2745.62042427063
+    Test  Total Loss = 25665.6947388649
+    Test  Composite Score 21098.75
+    Test  Label Accuracy [0.7343643614434393, 0.4917857619874449, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9526186316802738]
+
+  EPOCH 1
+    Train  Label Loss = 74285.06756973267
+    Train  Domain Loss = 71744.82882499695
+    Train  Regularization Loss = 7805.371292591095
+    Train  Total Loss = 153835.2676873207
+    Train  Composite Score 62839.5
+    Train  Label Accuracy [0.7045936555209602, 0.5191327106177519, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.6139163395153648, 0.4247777627363386]
+
+    Val  Label Loss = 31296.573204040527
+    Val  Domain Loss = 39595.53750991821
+    Val  Regularization Loss = 4643.592613220215
+    Val  Total Loss = 75535.70332717896
+    Val  Composite Score 44969.75
+    Val  Label Accuracy [0.8263393116257473, 0.5805611405593127, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.41954492208299315, 0.39366724645912465]
+
+    Test  Label Loss = 17001.49502182007
+    Test  Domain Loss = 19746.11385345459
+    Test  Regularization Loss = 2313.5629863739014
+    Test  Total Loss = 39061.17186164856
+    Test  Composite Score 21958.25
+    Test  Label Accuracy [0.8188405797101449, 0.41284893815947643, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.3866448001711291]
+
+  EPOCH 2
+    Train  Label Loss = 73132.87134170532
+    Train  Domain Loss = 73159.46187210083
+    Train  Regularization Loss = 6505.242283821106
+    Train  Total Loss = 152797.57549762726
+    Train  Composite Score 63276.0
+    Train  Label Accuracy [0.7111592437164388, 0.5256982988132305, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5483732683543161, 0.4222733631153829]
+
+    Val  Label Loss = 31626.402048110962
+    Val  Domain Loss = 39178.24501037598
+    Val  Regularization Loss = 4092.906297683716
+    Val  Total Loss = 74897.55335617065
+    Val  Composite Score 43994.0
+    Val  Label Accuracy [0.7157409019676128, 0.6952568086273077, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.16059067835717583, 0.9079904866706897]
+
+    Test  Label Loss = 17621.37071609497
+    Test  Domain Loss = 18544.314056396484
+    Test  Regularization Loss = 2039.196222782135
+    Test  Total Loss = 38204.88099527359
+    Test  Composite Score 20732.0
+    Test  Label Accuracy [0.6864118276432254, 0.5581674903165487, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9139363257157118]
+
+  EPOCH 3
+    Train  Label Loss = 72883.83030700684
+    Train  Domain Loss = 73524.44129562378
+    Train  Regularization Loss = 5740.005957603455
+    Train  Total Loss = 152148.27756023407
+    Train  Composite Score 63693.75
+    Train  Label Accuracy [0.7179504534993908, 0.5314742114525518, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5268264067505979, 0.42897432426334553]
+
+    Val  Label Loss = 31349.518062591553
+    Val  Domain Loss = 38825.845249176025
+    Val  Regularization Loss = 3529.334981918335
+    Val  Total Loss = 73704.69829368591
+    Val  Composite Score 44453.75
+    Val  Label Accuracy [0.7403505717104881, 0.6845183695850849, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.20567250008874374, 0.9632245926662171]
+
+    Test  Label Loss = 17530.747772216797
+    Test  Domain Loss = 19203.709754943848
+    Test  Regularization Loss = 1758.4098048210144
+    Test  Total Loss = 38492.86733198166
+    Test  Composite Score 21131.0
+    Test  Label Accuracy [0.7172454041435657, 0.5445438760518232, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9648472316303611]
+
+  EPOCH 4
+    Train  Label Loss = 72497.85012817383
+    Train  Domain Loss = 73665.89971160889
+    Train  Regularization Loss = 5302.323887825012
+    Train  Total Loss = 151466.07372760773
+    Train  Composite Score 63947.25
+    Train  Label Accuracy [0.7205676639140833, 0.5364830106944632, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5079193177203195, 0.44673074319750916]
+
+    Val  Label Loss = 30551.691553115845
+    Val  Domain Loss = 36912.07158660889
+    Val  Regularization Loss = 3278.0181770324707
+    Val  Total Loss = 70741.7813167572
+    Val  Composite Score 45342.5
+    Val  Label Accuracy [0.8151372685588253, 0.6209102540668981, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.14443931702814952, 0.992510028043023]
+
+    Test  Label Loss = 16741.26860809326
+    Test  Domain Loss = 15994.355648040771
+    Test  Regularization Loss = 1633.1969995498657
+    Test  Total Loss = 34368.8212556839
+    Test  Composite Score 22057.25
+    Test  Label Accuracy [0.8237525532535745, 0.4169894483771871, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9949374309244536]
+
+  EPOCH 5
+    Train  Label Loss = 72244.5201625824
+    Train  Domain Loss = 73796.67681121826
+    Train  Regularization Loss = 4960.210344314575
+    Train  Total Loss = 151001.40731811523
+    Train  Composite Score 63891.0
+    Train  Label Accuracy [0.7209060962952936, 0.5344524164072019, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5742971887550201, 0.37681061323947473]
+
+    Val  Label Loss = 31171.509353637695
+    Val  Domain Loss = 38763.550636291504
+    Val  Regularization Loss = 3133.344778060913
+    Val  Total Loss = 73068.40476799011
+    Val  Composite Score 44366.75
+    Val  Label Accuracy [0.7326600499158396, 0.691326996892707, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.8208796279862269, 0.3467040573639558]
+
+    Test  Label Loss = 17557.037139892578
+    Test  Domain Loss = 19756.369495391846
+    Test  Regularization Loss = 1561.1168131828308
+    Test  Total Loss = 38874.523448467255
+    Test  Composite Score 20957.0
+    Test  Label Accuracy [0.6927341698278378, 0.5808735140910912, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.3506363863239331]
+
+  EPOCH 6
+    Train  Label Loss = 71387.98257446289
+    Train  Domain Loss = 73723.15209960938
+    Train  Regularization Loss = 4725.7424573898315
+    Train  Total Loss = 149836.8771314621
+    Train  Composite Score 64422.75
+    Train  Label Accuracy [0.7269301926808357, 0.54442489057353, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5577591263932133, 0.3907540273453364]
+
+    Val  Label Loss = 30885.92004585266
+    Val  Domain Loss = 39165.19498825073
+    Val  Regularization Loss = 3196.491256713867
+    Val  Total Loss = 73247.60629081726
+    Val  Composite Score 44661.5
+    Val  Label Accuracy [0.7434558012653085, 0.6922866020837142, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 17361.814792633057
+    Test  Domain Loss = 18334.673917770386
+    Test  Regularization Loss = 1592.5780906677246
+    Test  Total Loss = 37289.06680107117
+    Test  Composite Score 21008.75
+    Test  Label Accuracy [0.6995914794280712, 0.5712568451983437, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 7
+    Train  Label Loss = 71070.1257019043
+    Train  Domain Loss = 73428.39496231079
+    Train  Regularization Loss = 4836.095243930817
+    Train  Total Loss = 149334.6159081459
+    Train  Composite Score 64573.5
+    Train  Label Accuracy [0.732119489192726, 0.543770587969857, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5132214250259465, 0.4379089391272957]
+
+    Val  Label Loss = 30505.292573928833
+    Val  Domain Loss = 39145.50605583191
+    Val  Regularization Loss = 2974.040445327759
+    Val  Total Loss = 72624.8390750885
+    Val  Composite Score 44606.75
+    Val  Label Accuracy [0.7465900516570898, 0.6840157192469384, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 17248.30270576477
+    Test  Domain Loss = 20179.497524261475
+    Test  Regularization Loss = 1481.7471013069153
+    Test  Total Loss = 38909.54733133316
+    Test  Composite Score 21066.5
+    Test  Label Accuracy [0.7073728236552864, 0.5601709630025378, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 8
+    Train  Label Loss = 70594.03974151611
+    Train  Domain Loss = 73778.6090965271
+    Train  Regularization Loss = 4362.70338010788
+    Train  Total Loss = 148735.3522181511
+    Train  Composite Score 64814.25
+    Train  Label Accuracy [0.7358422453860385, 0.5472902847344434, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5321736383737196, 0.4121429538378232]
+
+    Val  Label Loss = 30637.383682250977
+    Val  Domain Loss = 39114.659326553345
+    Val  Regularization Loss = 2655.229539871216
+    Val  Total Loss = 72407.27254867554
+    Val  Composite Score 44706.5
+    Val  Label Accuracy [0.73855127981891, 0.7027508682142204, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 17523.81438446045
+    Test  Domain Loss = 19252.373332977295
+    Test  Regularization Loss = 1322.90691614151
+    Test  Total Loss = 38099.094633579254
+    Test  Composite Score 20821.25
+    Test  Label Accuracy [0.6792140842330513, 0.5938293041271537, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 9
+    Train  Label Loss = 70464.28256225586
+    Train  Domain Loss = 73757.92776489258
+    Train  Regularization Loss = 4307.663908004761
+    Train  Total Loss = 148529.8742351532
+    Train  Composite Score 64768.5
+    Train  Label Accuracy [0.7373990343396056, 0.544357204097288, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5645052118586706, 0.3839628175623844]
+
+    Val  Label Loss = 31162.381023406982
+    Val  Domain Loss = 39176.29535293579
+    Val  Regularization Loss = 2725.7991943359375
+    Val  Total Loss = 73064.47557067871
+    Val  Composite Score 44357.75
+    Val  Label Accuracy [0.702072087759011, 0.738941692560775, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.976465159206276, 0.002200844840438749]
+
+    Test  Label Loss = 17846.182216644287
+    Test  Domain Loss = 20626.89354324341
+    Test  Regularization Loss = 1358.0666198730469
+    Test  Total Loss = 39831.14237976074
+    Test  Composite Score 20444.0
+    Test  Label Accuracy [0.6364653243847874, 0.6440496861226125, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.002281721273485686]
+
+  EPOCH 10
+    Train  Label Loss = 69822.82579421997
+    Train  Domain Loss = 73812.16748046875
+    Train  Regularization Loss = 4143.313013553619
+    Train  Total Loss = 147778.30628824234
+    Train  Composite Score 65255.25
+    Train  Label Accuracy [0.7435585036776319, 0.5528405757862912, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.6047109787464464, 0.3443436668020396]
+
+    Val  Label Loss = 29133.89313697815
+    Val  Domain Loss = 39112.935607910156
+    Val  Regularization Loss = 2623.6895141601562
+    Val  Total Loss = 70870.51825904846
+    Val  Composite Score 45683.0
+    Val  Label Accuracy [0.8239015613210285, 0.6278559678303783, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 16194.641269683838
+    Test  Domain Loss = 20251.670318603516
+    Test  Regularization Loss = 1307.1928253173828
+    Test  Total Loss = 37753.504413604736
+    Test  Composite Score 22044.5
+    Test  Label Accuracy [0.7960801478455403, 0.49071724322158405, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 11
+    Train  Label Loss = 69687.35941696167
+    Train  Domain Loss = 73624.35310745239
+    Train  Regularization Loss = 4085.287118911743
+    Train  Total Loss = 147396.9996433258
+    Train  Composite Score 65337.75
+    Train  Label Accuracy [0.7452957899011777, 0.5535851270249538, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5685438382744461, 0.38075899102026084]
+
+    Val  Label Loss = 29495.310012817383
+    Val  Domain Loss = 39209.44235992432
+    Val  Regularization Loss = 2641.1224937438965
+    Val  Total Loss = 71345.8748664856
+    Val  Composite Score 45530.75
+    Val  Label Accuracy [0.7894248070114342, 0.6728660208371413, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.6789251357779277, 0.15100635405203933]
+
+    Test  Label Loss = 16545.496631622314
+    Test  Domain Loss = 20078.91241455078
+    Test  Regularization Loss = 1315.878405570984
+    Test  Total Loss = 37940.28745174408
+    Test  Composite Score 21618.5
+    Test  Label Accuracy [0.7510456181305321, 0.538533457993856, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.14731362971941958]
+
+  EPOCH 12
+    Train  Label Loss = 69472.45606994629
+    Train  Domain Loss = 73788.98053741455
+    Train  Regularization Loss = 4033.389898777008
+    Train  Total Loss = 147294.82650613785
+    Train  Composite Score 65462.25
+    Train  Label Accuracy [0.7440774333288209, 0.5585488019493705, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.6138937773566174, 0.33854519200397093]
+
+    Val  Label Loss = 29518.01691055298
+    Val  Domain Loss = 38791.6854095459
+    Val  Regularization Loss = 2495.8066062927246
+    Val  Total Loss = 70805.5089263916
+    Val  Composite Score 45282.5
+    Val  Label Accuracy [0.7648151372685589, 0.6964905867300311, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.4311171062440098, 0.881438358595719]
+
+    Test  Label Loss = 16841.056100845337
+    Test  Domain Loss = 18810.684970855713
+    Test  Regularization Loss = 1243.4781141281128
+    Test  Total Loss = 36895.21918582916
+    Test  Composite Score 21494.0
+    Test  Label Accuracy [0.7348506954576403, 0.5608387872312007, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.8869834931726621]
+
+  EPOCH 13
+    Train  Label Loss = 69149.88292503357
+    Train  Domain Loss = 73954.81573486328
+    Train  Regularization Loss = 3871.376549243927
+    Train  Total Loss = 146976.07520914078
+    Train  Composite Score 65760.0
+    Train  Label Accuracy [0.7550877667975272, 0.5564956455033617, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5476964035918956, 0.3870763954695185]
+
+    Val  Label Loss = 29561.101707458496
+    Val  Domain Loss = 39084.3343334198
+    Val  Regularization Loss = 2452.9927768707275
+    Val  Total Loss = 71098.42881774902
+    Val  Composite Score 45108.5
+    Val  Label Accuracy [0.7542515526147774, 0.7025223907877902, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.9333711973305882, 0.005821589577934756]
+
+    Test  Label Loss = 16968.9245262146
+    Test  Domain Loss = 19687.498733520508
+    Test  Regularization Loss = 1222.1471104621887
+    Test  Total Loss = 37878.570370197296
+    Test  Composite Score 21284.0
+    Test  Label Accuracy [0.7105339947475926, 0.5902230532923735, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.005811258868408856]
+
+  EPOCH 14
+    Train  Label Loss = 69209.28267669678
+    Train  Domain Loss = 73872.99032211304
+    Train  Regularization Loss = 3992.596962928772
+    Train  Total Loss = 147074.8699617386
+    Train  Composite Score 65727.0
+    Train  Label Accuracy [0.7515680700329408, 0.5590226072830649, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5899102026081855, 0.35535400027074593]
+
+    Val  Label Loss = 28600.007720947266
+    Val  Domain Loss = 39669.36147689819
+    Val  Regularization Loss = 2628.0710220336914
+    Val  Total Loss = 70897.44021987915
+    Val  Composite Score 46082.75
+    Val  Label Accuracy [0.8306634163329271, 0.6415646134161945, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 0.9313123424798552]
+
+    Test  Label Loss = 16049.24024772644
+    Test  Domain Loss = 18414.1103515625
+    Test  Regularization Loss = 1309.375810623169
+    Test  Total Loss = 35772.72640991211
+    Test  Composite Score 22199.75
+    Test  Label Accuracy [0.8126155043283727, 0.47295311873914786, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9303361973688902]
+
+  EPOCH 15
+    Train  Label Loss = 68824.7081413269
+    Train  Domain Loss = 73831.76094055176
+    Train  Regularization Loss = 3802.332531452179
+    Train  Total Loss = 146458.80161333084
+    Train  Composite Score 65902.5
+    Train  Label Accuracy [0.7552231397500113, 0.560647082712874, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.41985921212941657, 0.5186363431253103]
+
+    Val  Label Loss = 28917.295068740845
+    Val  Domain Loss = 39065.96649360657
+    Val  Regularization Loss = 2359.4393005371094
+    Val  Total Loss = 70342.70086288452
+    Val  Composite Score 45768.5
+    Val  Label Accuracy [0.808694642753497, 0.6570096874428807, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.00042596996911717724, 0.9993255475488978]
+
+    Test  Label Loss = 16202.760864257812
+    Test  Domain Loss = 19321.847785949707
+    Test  Regularization Loss = 1175.536247253418
+    Test  Total Loss = 36700.14489746094
+    Test  Composite Score 21899.0
+    Test  Label Accuracy [0.772930648769575, 0.5283825297181782, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9992513102071375]
+
+  EPOCH 16
+    Train  Label Loss = 68890.66408538818
+    Train  Domain Loss = 73827.7261428833
+    Train  Regularization Loss = 3708.9351296424866
+    Train  Total Loss = 146427.32535791397
+    Train  Composite Score 65836.5
+    Train  Label Accuracy [0.7507783944767835, 0.563106358016335, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5080772528315509, 0.4281395243896936]
+
+    Val  Label Loss = 29128.693161010742
+    Val  Domain Loss = 39062.86869812012
+    Val  Regularization Loss = 2339.5759449005127
+    Val  Total Loss = 70531.13780403137
+    Val  Composite Score 45671.0
+    Val  Label Accuracy [0.7795287016077543, 0.6969932370681776, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.9999645025025735, 0.0]
+
+    Test  Label Loss = 16471.683799743652
+    Test  Domain Loss = 19531.84748840332
+    Test  Regularization Loss = 1165.6397881507874
+    Test  Total Loss = 37169.17107629776
+    Test  Composite Score 21725.0
+    Test  Label Accuracy [0.7507051843205914, 0.5584346200080139, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 3.565189489821384e-05]
+
+  EPOCH 17
+    Train  Label Loss = 68604.92638778687
+    Train  Domain Loss = 73799.99339294434
+    Train  Regularization Loss = 3614.000111103058
+    Train  Total Loss = 146018.91989183426
+    Train  Composite Score 66118.5
+    Train  Label Accuracy [0.7555615721312215, 0.5668065520509002, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5416948693651008, 0.3965073778259104]
+
+    Val  Label Loss = 29316.15071105957
+    Val  Domain Loss = 39061.17887878418
+    Val  Regularization Loss = 2266.1119995117188
+    Val  Total Loss = 70643.44158935547
+    Val  Composite Score 45538.25
+    Val  Label Accuracy [0.7757850136397934, 0.6947998537744471, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 16767.790908813477
+    Test  Domain Loss = 19584.254692077637
+    Test  Regularization Loss = 1129.038070678711
+    Test  Total Loss = 37481.083671569824
+    Test  Composite Score 21643.25
+    Test  Label Accuracy [0.7448691761501799, 0.5599038333110725, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 18
+    Train  Label Loss = 68273.92997169495
+    Train  Domain Loss = 73804.95770263672
+    Train  Regularization Loss = 3563.3273153305054
+    Train  Total Loss = 145642.21498966217
+    Train  Composite Score 66157.5
+    Train  Label Accuracy [0.7562609990523893, 0.5672803573845946, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.4808672893822481, 0.4572672713325211]
+
+    Val  Label Loss = 28030.18354034424
+    Val  Domain Loss = 39065.571994781494
+    Val  Regularization Loss = 2257.2258110046387
+    Val  Total Loss = 69352.98134613037
+    Val  Composite Score 46525.25
+    Val  Label Accuracy [0.8537349817168727, 0.6321970389325534, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 15633.022100448608
+    Test  Domain Loss = 19016.561603546143
+    Test  Regularization Loss = 1124.6107320785522
+    Test  Total Loss = 35774.1944360733
+    Test  Composite Score 22556.75
+    Test  Label Accuracy [0.8513276918587686, 0.43021236810471486, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 19
+    Train  Label Loss = 68267.4383392334
+    Train  Domain Loss = 73963.04681396484
+    Train  Regularization Loss = 3520.4863517284393
+    Train  Total Loss = 145750.97150492668
+    Train  Composite Score 66212.25
+    Train  Label Accuracy [0.7572988583547674, 0.5678895356707729, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.4748431929967059, 0.4586661251748567]
+
+    Val  Label Loss = 28832.757875442505
+    Val  Domain Loss = 39060.85648727417
+    Val  Regularization Loss = 2205.9059343338013
+    Val  Total Loss = 70099.52029705048
+    Val  Composite Score 45844.25
+    Val  Label Accuracy [0.7961576411863718, 0.6813653811003473, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 16567.67621612549
+    Test  Domain Loss = 19745.18462753296
+    Test  Regularization Loss = 1099.0417864322662
+    Test  Total Loss = 37411.90263009071
+    Test  Composite Score 21841.25
+    Test  Label Accuracy [0.7716175469312324, 0.5217042874315481, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 20
+    Train  Label Loss = 67755.00246810913
+    Train  Domain Loss = 73856.71842956543
+    Train  Regularization Loss = 3543.6653378009796
+    Train  Total Loss = 145155.38623547554
+    Train  Composite Score 66389.25
+    Train  Label Accuracy [0.7617436036279951, 0.5687694598619196, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.517395424394206, 0.4227020441315825]
+
+    Val  Label Loss = 29191.494583129883
+    Val  Domain Loss = 39061.14380264282
+    Val  Regularization Loss = 2216.775661468506
+    Val  Total Loss = 70469.41404724121
+    Val  Composite Score 45247.25
+    Val  Label Accuracy [0.7508270938533868, 0.7163681228294645, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 16930.509609222412
+    Test  Domain Loss = 19093.10397720337
+    Test  Regularization Loss = 1104.4573774337769
+    Test  Total Loss = 37128.07096385956
+    Test  Composite Score 21247.25
+    Test  Label Accuracy [0.7048438867814415, 0.5993054628021904, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 21
+    Train  Label Loss = 67672.49000549316
+    Train  Domain Loss = 73916.84948730469
+    Train  Regularization Loss = 3650.0653326511383
+    Train  Total Loss = 145239.404825449
+    Train  Composite Score 66519.75
+    Train  Label Accuracy [0.7638644465502459, 0.5705744325617075, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5174405487117008, 0.4164748883173142]
+
+    Val  Label Loss = 28630.437356948853
+    Val  Domain Loss = 39055.88665390015
+    Val  Regularization Loss = 2208.082300186157
+    Val  Total Loss = 69894.40631103516
+    Val  Composite Score 45920.0
+    Val  Label Accuracy [0.8061408091009344, 0.6702613781758362, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 16401.147367477417
+    Test  Domain Loss = 19408.36019897461
+    Test  Regularization Loss = 1100.1261105537415
+    Test  Total Loss = 36909.63367700577
+    Test  Composite Score 21786.5
+    Test  Label Accuracy [0.7701099114872094, 0.5160945639107787, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 22
+    Train  Label Loss = 67901.09386444092
+    Train  Domain Loss = 73893.74586486816
+    Train  Regularization Loss = 3432.8219192028046
+    Train  Total Loss = 145227.6616485119
+    Train  Composite Score 66492.75
+    Train  Label Accuracy [0.7649248680113713, 0.5687017733856775, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5003158702224629, 0.4362619015387392]
+
+    Val  Label Loss = 28671.590488433838
+    Val  Domain Loss = 39053.28662490845
+    Val  Regularization Loss = 2161.17351436615
+    Val  Total Loss = 69886.05062770844
+    Val  Composite Score 45852.5
+    Val  Label Accuracy [0.7935167450229265, 0.6860263205995247, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0067800220084484044]
+
+    Test  Label Loss = 16484.862909317017
+    Test  Domain Loss = 19776.541679382324
+    Test  Regularization Loss = 1076.7548892498016
+    Test  Total Loss = 37338.15947794914
+    Test  Composite Score 21612.5
+    Test  Label Accuracy [0.7465713451998833, 0.5497529050353946, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.007629505508217762]
+
+  EPOCH 23
+    Train  Label Loss = 67351.74737358093
+    Train  Domain Loss = 73786.12148666382
+    Train  Regularization Loss = 3490.656840324402
+    Train  Total Loss = 144628.52570056915
+    Train  Composite Score 66604.5
+    Train  Label Accuracy [0.7637967600740039, 0.5731916429764, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5359640810432742, 0.40677316005595415]
+
+    Val  Label Loss = 29012.85594558716
+    Val  Domain Loss = 37869.19362068176
+    Val  Regularization Loss = 2282.4189434051514
+    Val  Total Loss = 69164.46850967407
+    Val  Composite Score 45572.0
+    Val  Label Accuracy [0.7691392419757386, 0.7073204167428259, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.36747009335841824, 0.9104398139931135]
+
+    Test  Label Loss = 16693.326305389404
+    Test  Domain Loss = 17216.53303718567
+    Test  Regularization Loss = 1137.1626296043396
+    Test  Total Loss = 35047.02197217941
+    Test  Composite Score 21404.75
+    Test  Label Accuracy [0.7199688746230911, 0.5858154133831975, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9167884773075688]
+
+  EPOCH 24
+    Train  Label Loss = 67200.41425323486
+    Train  Domain Loss = 73872.68444824219
+    Train  Regularization Loss = 3577.372076034546
+    Train  Total Loss = 144650.4707775116
+    Train  Composite Score 66670.5
+    Train  Label Accuracy [0.7662785975362123, 0.5726952754839583, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5866838139073146, 0.35248860610983257]
+
+    Val  Label Loss = 28240.183418273926
+    Val  Domain Loss = 39058.21689224243
+    Val  Regularization Loss = 2176.2937774658203
+    Val  Total Loss = 69474.69408798218
+    Val  Composite Score 46262.75
+    Val  Label Accuracy [0.825091415636427, 0.6613050630597697, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 16114.275478363037
+    Test  Domain Loss = 19128.05177307129
+    Test  Regularization Loss = 1084.2882118225098
+    Test  Total Loss = 36326.615463256836
+    Test  Composite Score 22131.5
+    Test  Label Accuracy [0.7968582822682618, 0.5040737277948444, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 25
+    Train  Label Loss = 67006.24619865417
+    Train  Domain Loss = 73937.88357162476
+    Train  Regularization Loss = 3452.7416257858276
+    Train  Total Loss = 144396.87139606476
+    Train  Composite Score 66852.0
+    Train  Label Accuracy [0.7707684671269347, 0.5736654483100944, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.4839808672893822, 0.4508821804070213]
+
+    Val  Label Loss = 28679.38143157959
+    Val  Domain Loss = 39055.805683135986
+    Val  Regularization Loss = 2146.57781124115
+    Val  Total Loss = 69881.76492595673
+    Val  Composite Score 45615.5
+    Val  Label Accuracy [0.773144117476348, 0.7036647779199415, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 16706.55986404419
+    Test  Domain Loss = 19242.647178649902
+    Test  Regularization Loss = 1069.4829165935516
+    Test  Total Loss = 37018.68995928764
+    Test  Composite Score 21343.25
+    Test  Label Accuracy [0.7172940375449859, 0.5822091625484173, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 26
+    Train  Label Loss = 67037.57915306091
+    Train  Domain Loss = 73941.19826507568
+    Train  Regularization Loss = 3381.781810283661
+    Train  Total Loss = 144360.55922842026
+    Train  Composite Score 66780.0
+    Train  Label Accuracy [0.7679030729660213, 0.5743648752312621, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.4766932900139885, 0.45428906637787103]
+
+    Val  Label Loss = 28633.415573120117
+    Val  Domain Loss = 39055.3178024292
+    Val  Regularization Loss = 2131.516848564148
+    Val  Total Loss = 69820.25022411346
+    Val  Composite Score 45746.0
+    Val  Label Accuracy [0.782024493586395, 0.6976329738621824, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 16652.9542427063
+    Test  Domain Loss = 19625.650245666504
+    Test  Regularization Loss = 1061.9791390895844
+    Test  Total Loss = 37340.58362746239
+    Test  Composite Score 21564.5
+    Test  Label Accuracy [0.7384009337613072, 0.5636436489915854, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 27
+    Train  Label Loss = 66710.79992675781
+    Train  Domain Loss = 73841.48331832886
+    Train  Regularization Loss = 3364.536476135254
+    Train  Total Loss = 143916.81972122192
+    Train  Composite Score 67011.75
+    Train  Label Accuracy [0.7701592888407562, 0.579080366409458, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5131086142322098, 0.4243716438788863]
+
+    Val  Label Loss = 28329.341772079468
+    Val  Domain Loss = 39054.17868614197
+    Val  Regularization Loss = 2119.466088294983
+    Val  Total Loss = 69502.98654651642
+    Val  Composite Score 45906.5
+    Val  Label Accuracy [0.7938649950664577, 0.688768049716688, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 16258.707504272461
+    Test  Domain Loss = 19362.37201690674
+    Test  Regularization Loss = 1055.9751255512238
+    Test  Total Loss = 36677.05464673042
+    Test  Composite Score 21752.0
+    Test  Label Accuracy [0.7511915183347924, 0.5619073059970616, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 28
+    Train  Label Loss = 66729.22331237793
+    Train  Domain Loss = 73860.58102035522
+    Train  Regularization Loss = 3346.668030977249
+    Train  Total Loss = 143936.4723637104
+    Train  Composite Score 66954.75
+    Train  Label Accuracy [0.770655656333198, 0.5768692748522178, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.4900952123099138, 0.4443617165290375]
+
+    Val  Label Loss = 28939.340063095093
+    Val  Domain Loss = 39053.99182319641
+    Val  Regularization Loss = 2113.9059677124023
+    Val  Total Loss = 70107.2378540039
+    Val  Composite Score 45282.5
+    Val  Label Accuracy [0.7469092808636602, 0.7246847011515263, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.9998580100102943, 0.0]
+
+    Test  Label Loss = 16881.29592514038
+    Test  Domain Loss = 19504.71364212036
+    Test  Regularization Loss = 1053.2049236297607
+    Test  Total Loss = 37439.2144908905
+    Test  Composite Score 21195.5
+    Test  Label Accuracy [0.6971598093570665, 0.6111927340723922, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 29
+    Train  Label Loss = 66399.78408432007
+    Train  Domain Loss = 73807.02505111694
+    Train  Regularization Loss = 3318.3272931575775
+    Train  Total Loss = 143525.1364285946
+    Train  Composite Score 67182.0
+    Train  Label Accuracy [0.7722575696042597, 0.5821036956816028, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5378593023780516, 0.4004783177654438]
+
+    Val  Label Loss = 27896.810485839844
+    Val  Domain Loss = 39054.18565750122
+    Val  Regularization Loss = 2087.0990839004517
+    Val  Total Loss = 69038.09522724152
+    Val  Composite Score 46340.75
+    Val  Label Accuracy [0.8145858726565675, 0.6825991592030707, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 15963.452993392944
+    Test  Domain Loss = 19328.673400878906
+    Test  Regularization Loss = 1039.8490116596222
+    Test  Total Loss = 36331.97540593147
+    Test  Composite Score 22077.5
+    Test  Label Accuracy [0.7867911681743021, 0.5221049819687458, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+Training model 2
+Defining Model...
+Training Model...
+
+  EPOCH 0
+    Train  Label Loss = 75540.17768859863
+    Train  Domain Loss = 36357.16883087158
+    Train  Regularization Loss = 7962.667283952236
+    Train  Total Loss = 119860.01380342245
+    Train  Composite Score 62199.5
+    Train  Label Accuracy [0.6898831280176887, 0.5146202788682821, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.7691891160146203, 0.689770317223952]
+
+    Val  Label Loss = 33864.58288383484
+    Val  Domain Loss = 9430.278210163116
+    Val  Regularization Loss = 5182.387916564941
+    Val  Total Loss = 48477.2490105629
+    Val  Composite Score 42035.0
+    Val  Label Accuracy [0.6420279760868304, 0.6919667336867118, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.9468957438500586, 0.9419615917077846]
+
+    Test  Label Loss = 19152.334405899048
+    Test  Domain Loss = 5513.194933891296
+    Test  Regularization Loss = 2582.0053272247314
+    Test  Total Loss = 27247.534667015076
+    Test  Composite Score 19067.0
+    Test  Label Accuracy [0.5332166131699251, 0.6823827968478696, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9427787086883668]
+
+  EPOCH 1
+    Train  Label Loss = 73711.93048858643
+    Train  Domain Loss = 70107.84616470337
+    Train  Regularization Loss = 7886.2935218811035
+    Train  Total Loss = 151706.0701751709
+    Train  Composite Score 63157.5
+    Train  Label Accuracy [0.70425522313975, 0.5290374983078381, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.552502143405081, 0.48932809891250395]
+
+    Val  Label Loss = 30659.27383041382
+    Val  Domain Loss = 37798.79497718811
+    Val  Regularization Loss = 4889.009227752686
+    Val  Total Loss = 73347.07803535461
+    Val  Composite Score 45604.25
+    Val  Label Accuracy [0.8883278193743107, 0.5216139645403034, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.3273579212665507, 0.9501970111107167]
+
+    Test  Label Loss = 16173.390937805176
+    Test  Domain Loss = 18768.696250915527
+    Test  Regularization Loss = 2435.836157798767
+    Test  Total Loss = 37377.92334651947
+    Test  Composite Score 22618.25
+    Test  Label Accuracy [0.9075479039003987, 0.28676372378789905, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9554351313772327]
+
+  EPOCH 2
+    Train  Label Loss = 73179.91423797607
+    Train  Domain Loss = 72736.19727706909
+    Train  Regularization Loss = 6811.01053237915
+    Train  Total Loss = 152727.12204742432
+    Train  Composite Score 63522.0
+    Train  Label Accuracy [0.7121294165425748, 0.5321285140562249, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5280673254817021, 0.45361220161545057]
+
+    Val  Label Loss = 31436.579383850098
+    Val  Domain Loss = 39477.32956314087
+    Val  Regularization Loss = 3994.964590072632
+    Val  Total Loss = 74908.8735370636
+    Val  Composite Score 44297.75
+    Val  Label Accuracy [0.7516686981252539, 0.6571924693840249, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 17303.996517181396
+    Test  Domain Loss = 21745.948837280273
+    Test  Regularization Loss = 1990.3990244865417
+    Test  Total Loss = 41040.34437894821
+    Test  Composite Score 21013.25
+    Test  Label Accuracy [0.7116039295788348, 0.5390677173767864, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 3
+    Train  Label Loss = 72866.99814224243
+    Train  Domain Loss = 73588.03341293335
+    Train  Regularization Loss = 5678.95942735672
+    Train  Total Loss = 152133.9909825325
+    Train  Composite Score 63603.0
+    Train  Label Accuracy [0.7138667027661206, 0.5328279409773927, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.533098686882361, 0.4177609313659131]
+
+    Val  Label Loss = 31519.91742515564
+    Val  Domain Loss = 39333.27098083496
+    Val  Regularization Loss = 3484.1147117614746
+    Val  Total Loss = 74337.30311775208
+    Val  Composite Score 44717.0
+    Val  Label Accuracy [0.7536711358755587, 0.6795832571741912, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.9999290050051471, 0.0]
+
+    Test  Label Loss = 17379.21726989746
+    Test  Domain Loss = 21158.824001312256
+    Test  Regularization Loss = 1735.8798475265503
+    Test  Total Loss = 40273.92111873627
+    Test  Composite Score 21356.0
+    Test  Label Accuracy [0.7462309113899426, 0.5050086817149726, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 4
+    Train  Label Loss = 72012.52334213257
+    Train  Domain Loss = 73824.10261154175
+    Train  Regularization Loss = 5261.083816051483
+    Train  Total Loss = 151097.7097697258
+    Train  Composite Score 64065.75
+    Train  Label Accuracy [0.7251252199810478, 0.5354902757095799, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.525156807003294, 0.4162943910473354]
+
+    Val  Label Loss = 30686.379461288452
+    Val  Domain Loss = 39197.96904182434
+    Val  Regularization Loss = 3271.4499492645264
+    Val  Total Loss = 73155.79845237732
+    Val  Composite Score 45280.25
+    Val  Label Accuracy [0.8024261419699344, 0.6371321513434473, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0023428348301444747, 1.0]
+
+    Test  Label Loss = 17045.518701553345
+    Test  Domain Loss = 19056.645347595215
+    Test  Regularization Loss = 1629.9245314598083
+    Test  Total Loss = 37732.08858060837
+    Test  Composite Score 21765.5
+    Test  Label Accuracy [0.7884447038225854, 0.4620008013890744, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9999643481051018]
+
+  EPOCH 5
+    Train  Label Loss = 71725.40431213379
+    Train  Domain Loss = 73527.24690818787
+    Train  Regularization Loss = 4998.1180720329285
+    Train  Total Loss = 150250.76929235458
+    Train  Composite Score 64224.0
+    Train  Label Accuracy [0.7286674789043815, 0.5367086322819368, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5335499300573079, 0.4199043364469112]
+
+    Val  Label Loss = 31694.04030609131
+    Val  Domain Loss = 36894.13205718994
+    Val  Regularization Loss = 3192.560754776001
+    Val  Total Loss = 71780.73311805725
+    Val  Composite Score 43385.0
+    Val  Label Accuracy [0.6738928550699402, 0.7240449643575215, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.40783074793227075]
+
+    Test  Label Loss = 18187.35417366028
+    Test  Domain Loss = 18473.27607345581
+    Test  Regularization Loss = 1590.6198086738586
+    Test  Total Loss = 38251.25005578995
+    Test  Composite Score 19738.25
+    Test  Label Accuracy [0.5828226826184223, 0.6656871911312943, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.4183393347356412]
+
+  EPOCH 6
+    Train  Label Loss = 71430.22878265381
+    Train  Domain Loss = 73612.13751220703
+    Train  Regularization Loss = 4787.620425224304
+    Train  Total Loss = 149829.98672008514
+    Train  Composite Score 64420.5
+    Train  Label Accuracy [0.7296150895717702, 0.5416723072063535, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.6243174946978927, 0.32992644736248367]
+
+    Val  Label Loss = 29707.66904258728
+    Val  Domain Loss = 39139.70915031433
+    Val  Regularization Loss = 2960.2171268463135
+    Val  Total Loss = 71807.59531974792
+    Val  Composite Score 45731.0
+    Val  Label Accuracy [0.8253235823321144, 0.6285414001096692, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 16339.63509941101
+    Test  Domain Loss = 19714.681510925293
+    Test  Regularization Loss = 1474.8599514961243
+    Test  Total Loss = 37529.17656183243
+    Test  Composite Score 22061.75
+    Test  Label Accuracy [0.8140258729695555, 0.4445038065981034, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 7
+    Train  Label Loss = 71013.70318222046
+    Train  Domain Loss = 73760.59168243408
+    Train  Regularization Loss = 4556.5703592300415
+    Train  Total Loss = 149330.86522388458
+    Train  Composite Score 64625.25
+    Train  Label Accuracy [0.7307206353503903, 0.5467262307657597, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.6251974188890393, 0.3213302648797437]
+
+    Val  Label Loss = 30749.75750732422
+    Val  Domain Loss = 39152.84767913818
+    Val  Regularization Loss = 2817.8958435058594
+    Val  Total Loss = 72720.50102996826
+    Val  Composite Score 44413.25
+    Val  Label Accuracy [0.7290324452957223, 0.699872052641199, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 17282.049507141113
+    Test  Domain Loss = 20448.258560180664
+    Test  Regularization Loss = 1403.9516525268555
+    Test  Total Loss = 39134.25971984863
+    Test  Composite Score 20843.75
+    Test  Label Accuracy [0.6813053204941154, 0.5920929611326299, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 8
+    Train  Label Loss = 70788.61465454102
+    Train  Domain Loss = 73819.01304244995
+    Train  Regularization Loss = 4450.5547795295715
+    Train  Total Loss = 149058.18247652054
+    Train  Composite Score 64569.75
+    Train  Label Accuracy [0.7339695862100086, 0.5418076801588376, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5606019583953793, 0.38477505527728895]
+
+    Val  Label Loss = 30475.62921333313
+    Val  Domain Loss = 39109.82775878906
+    Val  Regularization Loss = 2729.622121810913
+    Val  Total Loss = 72315.0790939331
+    Val  Composite Score 44773.25
+    Val  Label Accuracy [0.7615067618550119, 0.6706726375434107, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 17170.144290924072
+    Test  Domain Loss = 19157.842350006104
+    Test  Regularization Loss = 1359.9713053703308
+    Test  Total Loss = 37687.95794630051
+    Test  Composite Score 21251.0
+    Test  Label Accuracy [0.718898939791849, 0.5613730466141311, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 9
+    Train  Label Loss = 70486.83390045166
+    Train  Domain Loss = 73673.10703277588
+    Train  Regularization Loss = 4233.901396274567
+    Train  Total Loss = 148393.8423295021
+    Train  Composite Score 64796.25
+    Train  Label Accuracy [0.7394070664681197, 0.5431839718424258, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5248634989395785, 0.4305987996931546]
+
+    Val  Label Loss = 29788.12342262268
+    Val  Domain Loss = 39102.49970245361
+    Val  Regularization Loss = 2575.8643283843994
+    Val  Total Loss = 71466.4874534607
+    Val  Composite Score 45613.25
+    Val  Label Accuracy [0.8068663300249579, 0.6504295375616889, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 16783.19599533081
+    Test  Domain Loss = 18993.432823181152
+    Test  Regularization Loss = 1283.3650288581848
+    Test  Total Loss = 37059.99384737015
+    Test  Composite Score 21782.75
+    Test  Label Accuracy [0.78061472619395, 0.4865767330038734, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 10
+    Train  Label Loss = 69998.61549758911
+    Train  Domain Loss = 73744.48069763184
+    Train  Regularization Loss = 4170.162648677826
+    Train  Total Loss = 147913.25884389877
+    Train  Composite Score 65166.0
+    Train  Label Accuracy [0.7447542980912414, 0.5489598844817473, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.48411624024186634, 0.45539461215649113]
+
+    Val  Label Loss = 29560.135471343994
+    Val  Domain Loss = 39091.1119556427
+    Val  Regularization Loss = 2676.9888954162598
+    Val  Total Loss = 71328.23632240295
+    Val  Composite Score 45560.0
+    Val  Label Accuracy [0.8039932671658251, 0.6517090111496984, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 16453.579704284668
+    Test  Domain Loss = 19733.972618103027
+    Test  Regularization Loss = 1333.748013496399
+    Test  Total Loss = 37521.300335884094
+    Test  Composite Score 21898.25
+    Test  Label Accuracy [0.7835327302791557, 0.4991318285027381, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 11
+    Train  Label Loss = 70055.54919052124
+    Train  Domain Loss = 73655.13689804077
+    Train  Regularization Loss = 3994.5711760520935
+    Train  Total Loss = 147705.2572646141
+    Train  Composite Score 65186.25
+    Train  Label Accuracy [0.7441902441225576, 0.5501331167366094, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5147556518207662, 0.4329001398853842]
+
+    Val  Label Loss = 29311.338916778564
+    Val  Domain Loss = 39116.060691833496
+    Val  Regularization Loss = 2604.1513023376465
+    Val  Total Loss = 71031.5509109497
+    Val  Composite Score 45802.25
+    Val  Label Accuracy [0.818097393928841, 0.6442606470480716, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 16322.232032775879
+    Test  Domain Loss = 20494.901809692383
+    Test  Regularization Loss = 1297.4583616256714
+    Test  Total Loss = 38114.59220409393
+    Test  Composite Score 22059.5
+    Test  Label Accuracy [0.7991440521350063, 0.48497395485508216, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 12
+    Train  Label Loss = 69679.70072555542
+    Train  Domain Loss = 73842.71878814697
+    Train  Regularization Loss = 3942.9945497512817
+    Train  Total Loss = 147465.41406345367
+    Train  Composite Score 65348.25
+    Train  Label Accuracy [0.7449347953612202, 0.5542619917873742, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.606425702811245, 0.3385226298452236]
+
+    Val  Label Loss = 28798.85094833374
+    Val  Domain Loss = 39098.12924575806
+    Val  Regularization Loss = 2418.055549621582
+    Val  Total Loss = 70315.03574371338
+    Val  Composite Score 46046.75
+    Val  Label Accuracy [0.8436357304544663, 0.6189453481995979, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 15850.320873260498
+    Test  Domain Loss = 20275.456073760986
+    Test  Regularization Loss = 1204.740442276001
+    Test  Total Loss = 37330.517389297485
+    Test  Composite Score 22287.5
+    Test  Label Accuracy [0.8248711214862368, 0.4549218645652464, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 13
+    Train  Label Loss = 69429.71098709106
+    Train  Domain Loss = 73752.23220825195
+    Train  Regularization Loss = 3775.7705869674683
+    Train  Total Loss = 146957.7137823105
+    Train  Composite Score 65572.5
+    Train  Label Accuracy [0.7457921573936194, 0.5601507152204322, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.6404494382022472, 0.30553675375659944]
+
+    Val  Label Loss = 29408.370992660522
+    Val  Domain Loss = 39070.29181289673
+    Val  Regularization Loss = 2373.4212913513184
+    Val  Total Loss = 70852.08409690857
+    Val  Composite Score 45559.25
+    Val  Label Accuracy [0.792297869870567, 0.670078596234692, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 16630.25378227234
+    Test  Domain Loss = 19355.36789703369
+    Test  Regularization Loss = 1182.5024518966675
+    Test  Total Loss = 37168.1241312027
+    Test  Composite Score 21733.25
+    Test  Label Accuracy [0.7626690010699348, 0.5270468812608522, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 14
+    Train  Label Loss = 69354.22463607788
+    Train  Domain Loss = 73741.22964859009
+    Train  Regularization Loss = 3856.98415517807
+    Train  Total Loss = 146952.43843984604
+    Train  Composite Score 65606.25
+    Train  Label Accuracy [0.7500112810793736, 0.5569468886783088, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.49600649790171925, 0.4463471864988042]
+
+    Val  Label Loss = 29767.019229888916
+    Val  Domain Loss = 39086.68176269531
+    Val  Regularization Loss = 2444.1504249572754
+    Val  Total Loss = 71297.8514175415
+    Val  Composite Score 44997.5
+    Val  Label Accuracy [0.7487375935921992, 0.7044416011698045, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.9997160200205886, 0.0]
+
+    Test  Label Loss = 17056.49907875061
+    Test  Domain Loss = 20175.425369262695
+    Test  Regularization Loss = 1217.7416124343872
+    Test  Total Loss = 38449.66606044769
+    Test  Composite Score 21224.75
+    Test  Label Accuracy [0.7078591576694874, 0.587017496994791, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 15
+    Train  Label Loss = 69205.28165817261
+    Train  Domain Loss = 73762.88399505615
+    Train  Regularization Loss = 3745.6603140830994
+    Train  Total Loss = 146713.82596731186
+    Train  Composite Score 65588.25
+    Train  Label Accuracy [0.7484319299670592, 0.5579847479806868, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.4386986146834529, 0.5050539235594061]
+
+    Val  Label Loss = 29082.502689361572
+    Val  Domain Loss = 39076.379009246826
+    Val  Regularization Loss = 2310.522771835327
+    Val  Total Loss = 70469.40447044373
+    Val  Composite Score 45700.25
+    Val  Label Accuracy [0.7946195368274421, 0.6750137086455859, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0004969649639700401, 0.9998580100102943]
+
+    Test  Label Loss = 16429.075832366943
+    Test  Domain Loss = 18920.551761627197
+    Test  Regularization Loss = 1151.1647143363953
+    Test  Total Loss = 36500.792308330536
+    Test  Composite Score 21824.75
+    Test  Label Accuracy [0.7711312129170315, 0.5201015092827568, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9995365253663232]
+
+  EPOCH 16
+    Train  Label Loss = 69025.94214057922
+    Train  Domain Loss = 73849.46069335938
+    Train  Regularization Loss = 3645.0050868988037
+    Train  Total Loss = 146520.4079208374
+    Train  Composite Score 65688.75
+    Train  Label Accuracy [0.7524705563828347, 0.5569694508370561, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.47994224087360676, 0.45789901177744685]
+
+    Val  Label Loss = 29530.61623764038
+    Val  Domain Loss = 39061.53255844116
+    Val  Regularization Loss = 2327.1180152893066
+    Val  Total Loss = 70919.26681137085
+    Val  Composite Score 45235.25
+    Val  Label Accuracy [0.7503917812989727, 0.7163224273441784, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0018458698661744347, 0.9981186326363991]
+
+    Test  Label Loss = 16858.299312591553
+    Test  Domain Loss = 19381.61121749878
+    Test  Regularization Loss = 1159.4329118728638
+    Test  Total Loss = 37399.343441963196
+    Test  Composite Score 21337.25
+    Test  Label Accuracy [0.7204552086372921, 0.5724589288099372, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9989660950479518]
+
+  EPOCH 17
+    Train  Label Loss = 68445.46789169312
+    Train  Domain Loss = 73875.03028488159
+    Train  Regularization Loss = 3607.828013420105
+    Train  Total Loss = 145928.3261899948
+    Train  Composite Score 66039.75
+    Train  Label Accuracy [0.754817020892559, 0.5651820766210911, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.47838545192003973, 0.45954604936600335]
+
+    Val  Label Loss = 29301.25281906128
+    Val  Domain Loss = 39017.22143745422
+    Val  Regularization Loss = 2256.896095275879
+    Val  Total Loss = 70575.37035179138
+    Val  Composite Score 45449.0
+    Val  Label Accuracy [0.7762203261942074, 0.6886766587461158, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.08121827411167512, 0.9687976997621668]
+
+    Test  Label Loss = 16701.7120552063
+    Test  Domain Loss = 19003.53625869751
+    Test  Regularization Loss = 1124.4464588165283
+    Test  Total Loss = 36829.69477272034
+    Test  Composite Score 21476.75
+    Test  Label Accuracy [0.7304736893298317, 0.5697876318952851, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9759349709437056]
+
+  EPOCH 18
+    Train  Label Loss = 68594.90141296387
+    Train  Domain Loss = 73668.71145629883
+    Train  Regularization Loss = 3556.4226949214935
+    Train  Total Loss = 145820.0355641842
+    Train  Composite Score 65958.75
+    Train  Label Accuracy [0.7581336582284193, 0.5594287261405171, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.45826000631740443, 0.491268444564776]
+
+    Val  Label Loss = 28301.325784683228
+    Val  Domain Loss = 39079.218101501465
+    Val  Regularization Loss = 2227.065831184387
+    Val  Total Loss = 69607.60971736908
+    Val  Composite Score 46063.25
+    Val  Label Accuracy [0.8254686865169192, 0.6485560226649607, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.00014198998970572574, 0.9932199779915516]
+
+    Test  Label Loss = 15931.945760726929
+    Test  Domain Loss = 18969.026027679443
+    Test  Regularization Loss = 1109.5842173099518
+    Test  Total Loss = 36010.556005716324
+    Test  Composite Score 22063.25
+    Test  Label Accuracy [0.7966151152611614, 0.49258715106184053, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9956861207173161]
+
+  EPOCH 19
+    Train  Label Loss = 68271.32457351685
+    Train  Domain Loss = 73751.77299880981
+    Train  Regularization Loss = 3509.2623794078827
+    Train  Total Loss = 145532.35995173454
+    Train  Composite Score 66111.0
+    Train  Label Accuracy [0.7559676909886738, 0.5661748116059745, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.4352240422363612, 0.515003835566987]
+
+    Val  Label Loss = 27986.967834472656
+    Val  Domain Loss = 39098.25441932678
+    Val  Regularization Loss = 2202.7679872512817
+    Val  Total Loss = 69287.99024105072
+    Val  Composite Score 46413.5
+    Val  Label Accuracy [0.8463636891287944, 0.6369950648875891, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0024138298249973375, 0.9886053033261155]
+
+    Test  Label Loss = 15517.003421783447
+    Test  Domain Loss = 18939.722064971924
+    Test  Regularization Loss = 1097.4783766269684
+    Test  Total Loss = 35554.20386338234
+    Test  Composite Score 22382.75
+    Test  Label Accuracy [0.8341114677560548, 0.44650727928409245, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9917644122785126]
+
+  EPOCH 20
+    Train  Label Loss = 67936.79744720459
+    Train  Domain Loss = 73872.77449798584
+    Train  Regularization Loss = 3481.85688829422
+    Train  Total Loss = 145291.42883348465
+    Train  Composite Score 66277.5
+    Train  Label Accuracy [0.7605929335318803, 0.5665583683046794, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.4328775777266369, 0.5111457064211904]
+
+    Val  Label Loss = 28764.790283203125
+    Val  Domain Loss = 39125.16484832764
+    Val  Regularization Loss = 2223.5489530563354
+    Val  Total Loss = 70113.5040845871
+    Val  Composite Score 45737.0
+    Val  Label Accuracy [0.801207266817575, 0.6668799122646683, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 0.9817542863228143]
+
+    Test  Label Loss = 16346.208019256592
+    Test  Domain Loss = 18901.971477508545
+    Test  Regularization Loss = 1107.8320138454437
+    Test  Total Loss = 36356.01151061058
+    Test  Composite Score 21785.75
+    Test  Label Accuracy [0.7623285672599942, 0.5373313743822626, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9847053370886663]
+
+  EPOCH 21
+    Train  Label Loss = 67884.77410507202
+    Train  Domain Loss = 73916.07863616943
+    Train  Regularization Loss = 3450.8281235694885
+    Train  Total Loss = 145251.68086481094
+    Train  Composite Score 66393.0
+    Train  Label Accuracy [0.7633906412165516, 0.5672352330670999, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.47240647985199224, 0.4622309462569379]
+
+    Val  Label Loss = 30196.33083152771
+    Val  Domain Loss = 39084.56691932678
+    Val  Regularization Loss = 2167.3017625808716
+    Val  Total Loss = 71448.19951343536
+    Val  Composite Score 44438.75
+    Val  Label Accuracy [0.6985025248128156, 0.7494973496618534, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.010578254233076569, 0.9864399559831032]
+
+    Test  Label Loss = 17860.510807037354
+    Test  Domain Loss = 19387.56001663208
+    Test  Regularization Loss = 1079.8081476688385
+    Test  Total Loss = 38327.87897133827
+    Test  Composite Score 20476.25
+    Test  Label Accuracy [0.6319424180527186, 0.6622145051422466, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9884131341580805]
+
+  EPOCH 22
+    Train  Label Loss = 67699.55808258057
+    Train  Domain Loss = 73936.8496170044
+    Train  Regularization Loss = 3441.188858985901
+    Train  Total Loss = 145077.59655857086
+    Train  Composite Score 66468.0
+    Train  Label Accuracy [0.7602093768331754, 0.572672713325211, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5154550787419341, 0.42396552502143403]
+
+    Val  Label Loss = 28026.028970718384
+    Val  Domain Loss = 35798.273193359375
+    Val  Regularization Loss = 2247.140839576721
+    Val  Total Loss = 66071.44300365448
+    Val  Composite Score 46210.25
+    Val  Label Accuracy [0.8221893319403332, 0.6626759276183513, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 15606.913040161133
+    Test  Domain Loss = 14065.511177062988
+    Test  Regularization Loss = 1119.5861275196075
+    Test  Total Loss = 30792.01034474373
+    Test  Composite Score 22264.25
+    Test  Label Accuracy [0.8134909055539344, 0.4820355282489649, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 23
+    Train  Label Loss = 67372.85898208618
+    Train  Domain Loss = 73874.07712554932
+    Train  Regularization Loss = 3460.367751121521
+    Train  Total Loss = 144707.30385875702
+    Train  Composite Score 66667.5
+    Train  Label Accuracy [0.7660304137899914, 0.5728532105951898, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.4971797301565814, 0.4371869500473805]
+
+    Val  Label Loss = 28667.02686882019
+    Val  Domain Loss = 39058.32181930542
+    Val  Regularization Loss = 2144.5798845291138
+    Val  Total Loss = 69869.92857265472
+    Val  Composite Score 45609.5
+    Val  Label Accuracy [0.7805734517383481, 0.6916011698044233, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 16515.496061325073
+    Test  Domain Loss = 19083.31227493286
+    Test  Regularization Loss = 1068.4874956607819
+    Test  Total Loss = 36667.29583191872
+    Test  Composite Score 21619.25
+    Test  Label Accuracy [0.740783970430892, 0.5668492052891679, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 24
+    Train  Label Loss = 67584.73722839355
+    Train  Domain Loss = 73638.14475250244
+    Train  Regularization Loss = 3403.9768645763397
+    Train  Total Loss = 144626.85884547234
+    Train  Composite Score 66531.75
+    Train  Label Accuracy [0.7594873877532602, 0.5753124858986508, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.6144803934840486, 0.3339650737782591]
+
+    Val  Label Loss = 28530.86922454834
+    Val  Domain Loss = 39163.76467132568
+    Val  Regularization Loss = 2163.7996759414673
+    Val  Total Loss = 69858.43357181549
+    Val  Composite Score 45745.25
+    Val  Label Accuracy [0.7836786812931685, 0.6949826357155913, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.917148841006709, 3.5497497426431435e-05]
+
+    Test  Label Loss = 16322.583400726318
+    Test  Domain Loss = 19954.0682220459
+    Test  Regularization Loss = 1078.0633137226105
+    Test  Total Loss = 37354.71493649483
+    Test  Composite Score 21663.5
+    Test  Label Accuracy [0.7466686120027235, 0.5585681848537465, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 7.130378979642769e-05]
+
+  EPOCH 25
+    Train  Label Loss = 67137.5621509552
+    Train  Domain Loss = 73741.33340454102
+    Train  Regularization Loss = 3424.0112709999084
+    Train  Total Loss = 144302.90682649612
+    Train  Composite Score 66651.0
+    Train  Label Accuracy [0.7636613871215198, 0.5747258697712198, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5708451784666757, 0.37383240828482467]
+
+    Val  Label Loss = 27958.82105255127
+    Val  Domain Loss = 39087.16371536255
+    Val  Regularization Loss = 2144.8462657928467
+    Val  Total Loss = 69190.83103370667
+    Val  Composite Score 46060.25
+    Val  Label Accuracy [0.8058506007313251, 0.6792633887771888, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.8895317880089454, 0.03088282276099535]
+
+    Test  Label Loss = 15944.454956054688
+    Test  Domain Loss = 19490.538200378418
+    Test  Regularization Loss = 1068.6202139854431
+    Test  Total Loss = 36503.61337041855
+    Test  Composite Score 21896.0
+    Test  Label Accuracy [0.7771617546931232, 0.5162281287565113, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.032550180042069235]
+
+  EPOCH 26
+    Train  Label Loss = 66945.54705810547
+    Train  Domain Loss = 73800.2483291626
+    Train  Regularization Loss = 3374.1009528636932
+    Train  Total Loss = 144119.89634013176
+    Train  Composite Score 67002.75
+    Train  Label Accuracy [0.766459094806191, 0.5825098145390551, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5901809485131537, 0.3493524660439511]
+
+    Val  Label Loss = 28232.428911209106
+    Val  Domain Loss = 39054.52801704407
+    Val  Regularization Loss = 2118.058476448059
+    Val  Total Loss = 69405.01540470123
+    Val  Composite Score 45982.25
+    Val  Label Accuracy [0.7999883916652156, 0.6837415463352221, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.9986865925952221, 0.0]
+
+    Test  Label Loss = 16077.262441635132
+    Test  Domain Loss = 19518.80802154541
+    Test  Regularization Loss = 1055.2738153934479
+    Test  Total Loss = 36651.34427857399
+    Test  Composite Score 21893.0
+    Test  Label Accuracy [0.7721525143468534, 0.529451048484039, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 27
+    Train  Label Loss = 66781.37502288818
+    Train  Domain Loss = 73862.86861801147
+    Train  Regularization Loss = 3379.0134320259094
+    Train  Total Loss = 144023.25707292557
+    Train  Composite Score 66976.5
+    Train  Label Accuracy [0.7695275483958305, 0.5786516853932584, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5523667704525969, 0.3874825143269708]
+
+    Val  Label Loss = 28548.209896087646
+    Val  Domain Loss = 39054.073360443115
+    Val  Regularization Loss = 2112.0536699295044
+    Val  Total Loss = 69714.33692646027
+    Val  Composite Score 45671.75
+    Val  Label Accuracy [0.7801091183469732, 0.6961250228477427, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 16476.330194473267
+    Test  Domain Loss = 19511.358783721924
+    Test  Regularization Loss = 1052.282058954239
+    Test  Total Loss = 37039.97103714943
+    Test  Composite Score 21545.0
+    Test  Label Accuracy [0.7378173329442661, 0.5617737411513289, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 28
+    Train  Label Loss = 66289.5538520813
+    Train  Domain Loss = 73843.18787765503
+    Train  Regularization Loss = 3306.722357749939
+    Train  Total Loss = 143439.46408748627
+    Train  Composite Score 67028.25
+    Train  Label Accuracy [0.7709264022381661, 0.5788096205044899, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5443797662560353, 0.39501827534858536]
+
+    Val  Label Loss = 28500.247159957886
+    Val  Domain Loss = 39054.82346343994
+    Val  Regularization Loss = 2086.429567337036
+    Val  Total Loss = 69641.50019073486
+    Val  Composite Score 45683.75
+    Val  Label Accuracy [0.7679203668233792, 0.7160482544324621, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 16572.166707992554
+    Test  Domain Loss = 19271.463996887207
+    Test  Regularization Loss = 1039.5154404640198
+    Test  Total Loss = 36883.14614534378
+    Test  Composite Score 21435.5
+    Test  Label Accuracy [0.7276043186460461, 0.5703218912782155, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 29
+    Train  Label Loss = 66363.81784439087
+    Train  Domain Loss = 73747.43985366821
+    Train  Regularization Loss = 3302.4631407260895
+    Train  Total Loss = 143413.72083878517
+    Train  Composite Score 67158.75
+    Train  Label Accuracy [0.7704751590632192, 0.5831866793014756, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5608501421416001, 0.38452687153106807]
+
+    Val  Label Loss = 27863.842609405518
+    Val  Domain Loss = 36671.72968292236
+    Val  Regularization Loss = 2143.5590028762817
+    Val  Total Loss = 66679.13129520416
+    Val  Composite Score 46247.0
+    Val  Label Accuracy [0.8259620407452551, 0.6589745933101809, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.14348088459763586, 1.0]
+
+    Test  Label Loss = 15762.215953826904
+    Test  Domain Loss = 16233.52173614502
+    Test  Regularization Loss = 1067.9788649082184
+    Test  Total Loss = 33063.71655488014
+    Test  Composite Score 22101.5
+    Test  Label Accuracy [0.7945725124015174, 0.5050086817149726, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9998930443153053]
+Training model 3
+Defining Model...
+Training Model...
+
+  EPOCH 0
+    Train  Label Loss = 75481.8522567749
+    Train  Domain Loss = 37881.19869804382
+    Train  Regularization Loss = 8103.351604878902
+    Train  Total Loss = 121466.40255969763
+    Train  Composite Score 62316.5
+    Train  Label Accuracy [0.6932674518297911, 0.5148007761382609, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.7626686521366365, 0.6844005234420829]
+
+    Val  Label Loss = 31379.16943359375
+    Val  Domain Loss = 6820.880559921265
+    Val  Regularization Loss = 5567.992881774902
+    Val  Total Loss = 43768.04287528992
+    Val  Composite Score 45164.75
+    Val  Label Accuracy [0.85643391955424, 0.545055748492049, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.9505874835824074, 0.9714245145717227]
+
+    Test  Label Loss = 16756.088361740112
+    Test  Domain Loss = 3259.126723766327
+    Test  Regularization Loss = 2774.1241130828857
+    Test  Total Loss = 22789.339198589325
+    Test  Composite Score 22319.75
+    Test  Label Accuracy [0.8644100768407742, 0.352076933351142, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9739384648294057]
+
+  EPOCH 1
+    Train  Label Loss = 73673.19696044922
+    Train  Domain Loss = 69915.3694896698
+    Train  Regularization Loss = 7800.759717941284
+    Train  Total Loss = 151389.3261680603
+    Train  Composite Score 63177.75
+    Train  Label Accuracy [0.7090835251116827, 0.5248183746220838, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5726275890077163, 0.4741888903930328]
+
+    Val  Label Loss = 32511.34506034851
+    Val  Domain Loss = 38402.66669845581
+    Val  Regularization Loss = 4272.963626861572
+    Val  Total Loss = 75186.9753856659
+    Val  Composite Score 43067.0
+    Val  Label Accuracy [0.6883162110395263, 0.6819594224090659, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.20084484043874906, 0.9503744985978488]
+
+    Test  Label Loss = 18256.77930831909
+    Test  Domain Loss = 17494.992267608643
+    Test  Regularization Loss = 2128.9056367874146
+    Test  Total Loss = 37880.67721271515
+    Test  Composite Score 20120.0
+    Test  Label Accuracy [0.6262036766851473, 0.6145318552157072, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9576098969660237]
+
+  EPOCH 2
+    Train  Label Loss = 73023.5128326416
+    Train  Domain Loss = 73185.80983734131
+    Train  Regularization Loss = 6407.1480832099915
+    Train  Total Loss = 152616.4707531929
+    Train  Composite Score 63525.75
+    Train  Label Accuracy [0.7151527458147195, 0.5292179955778169, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5180271648391318, 0.45257434231307253]
+
+    Val  Label Loss = 30360.806184768677
+    Val  Domain Loss = 39368.056827545166
+    Val  Regularization Loss = 3750.0102767944336
+    Val  Total Loss = 73478.87328910828
+    Val  Composite Score 45212.0
+    Val  Label Accuracy [0.8192582274072784, 0.6064704807165052, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 16503.441272735596
+    Test  Domain Loss = 20733.662593841553
+    Test  Regularization Loss = 1868.3561840057373
+    Test  Total Loss = 39105.460050582886
+    Test  Composite Score 21988.25
+    Test  Label Accuracy [0.8140745063709756, 0.43128088687057564, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 3
+    Train  Label Loss = 72610.79067230225
+    Train  Domain Loss = 73679.52336120605
+    Train  Regularization Loss = 5675.860867500305
+    Train  Total Loss = 151966.1749010086
+    Train  Composite Score 63744.75
+    Train  Label Accuracy [0.7226659446775867, 0.5282929470691756, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5342267948197283, 0.4081043274220477]
+
+    Val  Label Loss = 30474.240516662598
+    Val  Domain Loss = 39259.36231803894
+    Val  Regularization Loss = 3359.442901611328
+    Val  Total Loss = 73093.04573631287
+    Val  Composite Score 45561.5
+    Val  Label Accuracy [0.8248302281037785, 0.6189910436848839, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 16725.99228668213
+    Test  Domain Loss = 20041.307098388672
+    Test  Regularization Loss = 1673.764991760254
+    Test  Total Loss = 38441.064376831055
+    Test  Composite Score 22183.25
+    Test  Label Accuracy [0.8455889504911973, 0.3794577267263256, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 4
+    Train  Label Loss = 72037.21397781372
+    Train  Domain Loss = 73688.43349838257
+    Train  Regularization Loss = 5173.225887775421
+    Train  Total Loss = 150898.8733639717
+    Train  Composite Score 64005.75
+    Train  Label Accuracy [0.7275168088082667, 0.531293714182573, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5329633139298768, 0.4160236451423672]
+
+    Val  Label Loss = 30957.091751098633
+    Val  Domain Loss = 38451.39692878723
+    Val  Regularization Loss = 3445.6678676605225
+    Val  Total Loss = 72854.15654754639
+    Val  Composite Score 44653.25
+    Val  Label Accuracy [0.7485634685704335, 0.6837415463352221, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.3182705619253843, 0.9638635476198928]
+
+    Test  Label Loss = 17267.746809005737
+    Test  Domain Loss = 18991.44194793701
+    Test  Regularization Loss = 1716.7245936393738
+    Test  Total Loss = 37975.91335058212
+    Test  Composite Score 21234.5
+    Test  Label Accuracy [0.7330512596050968, 0.5195672498998264, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9683054654354879]
+
+  EPOCH 5
+    Train  Label Loss = 71979.98450088501
+    Train  Domain Loss = 73344.1110534668
+    Train  Regularization Loss = 5003.155495166779
+    Train  Total Loss = 150327.25104951859
+    Train  Composite Score 64090.5
+    Train  Label Accuracy [0.7273137493795406, 0.5340462975497495, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5448761337484771, 0.4061865439285231]
+
+    Val  Label Loss = 30453.208015441895
+    Val  Domain Loss = 39174.67540740967
+    Val  Regularization Loss = 2989.898265838623
+    Val  Total Loss = 72617.78168869019
+    Val  Composite Score 45155.0
+    Val  Label Accuracy [0.7854779731847467, 0.6561871687077316, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0001774874871321572, 1.0]
+
+    Test  Label Loss = 17052.252044677734
+    Test  Domain Loss = 18999.304428100586
+    Test  Regularization Loss = 1489.647894859314
+    Test  Total Loss = 37541.204367637634
+    Test  Composite Score 21653.75
+    Test  Label Accuracy [0.7605777648088707, 0.5186322959796982, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 6
+    Train  Label Loss = 71327.62652206421
+    Train  Domain Loss = 73789.77702331543
+    Train  Regularization Loss = 4701.433365821838
+    Train  Total Loss = 149818.83691120148
+    Train  Composite Score 64526.25
+    Train  Label Accuracy [0.7307883218266323, 0.5436803393348676, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.49726997879157075, 0.44262443030549165]
+
+    Val  Label Loss = 30062.276237487793
+    Val  Domain Loss = 38941.54650878906
+    Val  Regularization Loss = 2933.800603866577
+    Val  Total Loss = 71937.62335014343
+    Val  Composite Score 45438.5
+    Val  Label Accuracy [0.8143537059608799, 0.6279930542862365, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.24205743495083595, 0.8773916438891058]
+
+    Test  Label Loss = 16457.575035095215
+    Test  Domain Loss = 19162.14719390869
+    Test  Regularization Loss = 1461.6985278129578
+    Test  Total Loss = 37081.420756816864
+    Test  Composite Score 21867.5
+    Test  Label Accuracy [0.7858185001459002, 0.487378122078269, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.8814931013583372]
+
+  EPOCH 7
+    Train  Label Loss = 70975.73462295532
+    Train  Domain Loss = 73741.06183242798
+    Train  Regularization Loss = 4541.3989272117615
+    Train  Total Loss = 149258.19538259506
+    Train  Composite Score 64614.0
+    Train  Label Accuracy [0.7358648075447859, 0.5412436261901539, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.48747800189522134, 0.4587112494923514]
+
+    Val  Label Loss = 30177.825330734253
+    Val  Domain Loss = 39076.031299591064
+    Val  Regularization Loss = 2828.3278770446777
+    Val  Total Loss = 72082.18450737
+    Val  Composite Score 44940.5
+    Val  Label Accuracy [0.7503627604620118, 0.6984097971120453, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.958041958041958, 0.06957509495580562]
+
+    Test  Label Loss = 16937.438926696777
+    Test  Domain Loss = 19552.993167877197
+    Test  Regularization Loss = 1409.149172782898
+    Test  Total Loss = 37899.58126735687
+    Test  Composite Score 21401.75
+    Test  Label Accuracy [0.738790000972668, 0.5335915587017497, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.06713251809333666]
+
+  EPOCH 8
+    Train  Label Loss = 70836.11936187744
+    Train  Domain Loss = 73280.27955627441
+    Train  Regularization Loss = 4553.077917098999
+    Train  Total Loss = 148669.47683525085
+    Train  Composite Score 64823.25
+    Train  Label Accuracy [0.736067866973512, 0.5473354090519381, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5462749875908127, 0.4041333874825143]
+
+    Val  Label Loss = 30283.525911331177
+    Val  Domain Loss = 39109.48817062378
+    Val  Regularization Loss = 2673.0156326293945
+    Val  Total Loss = 72066.02971458435
+    Val  Composite Score 44867.0
+    Val  Label Accuracy [0.7396540716234257, 0.7107932736245659, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 17158.53360748291
+    Test  Domain Loss = 19549.1142578125
+    Test  Regularization Loss = 1331.7684268951416
+    Test  Total Loss = 38039.41629219055
+    Test  Composite Score 21235.25
+    Test  Label Accuracy [0.7139383328469994, 0.5721917991184721, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 9
+    Train  Label Loss = 70079.80088043213
+    Train  Domain Loss = 73847.75550079346
+    Train  Regularization Loss = 4238.401183128357
+    Train  Total Loss = 148165.95756435394
+    Train  Composite Score 65062.5
+    Train  Label Accuracy [0.7420468390415595, 0.5485537656242949, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.4961418708542033, 0.44115788998691396]
+
+    Val  Label Loss = 29612.11494255066
+    Val  Domain Loss = 39098.29046821594
+    Val  Regularization Loss = 2740.3037281036377
+    Val  Total Loss = 71450.70913887024
+    Val  Composite Score 45695.0
+    Val  Label Accuracy [0.8196354982877706, 0.6353043319320051, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 16521.29273033142
+    Test  Domain Loss = 19630.332473754883
+    Test  Regularization Loss = 1365.2931694984436
+    Test  Total Loss = 37516.91837358475
+    Test  Composite Score 21965.75
+    Test  Label Accuracy [0.7999221865577278, 0.46614131160678507, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 10
+    Train  Label Loss = 69842.03603363037
+    Train  Domain Loss = 73758.4186630249
+    Train  Regularization Loss = 4118.8954248428345
+    Train  Total Loss = 147719.3501214981
+    Train  Composite Score 65193.0
+    Train  Label Accuracy [0.7460403411398403, 0.5484860791480529, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5607373313478634, 0.3800821262578403]
+
+    Val  Label Loss = 30925.109174728394
+    Val  Domain Loss = 39092.25312042236
+    Val  Regularization Loss = 2525.357042312622
+    Val  Total Loss = 72542.71933746338
+    Val  Composite Score 44158.25
+    Val  Label Accuracy [0.6942074409425968, 0.7391701699872053, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 18005.496437072754
+    Test  Domain Loss = 19776.378952026367
+    Test  Regularization Loss = 1258.2009377479553
+    Test  Total Loss = 39040.07632684708
+    Test  Composite Score 20409.5
+    Test  Label Accuracy [0.6340822877152028, 0.6444503806598103, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 11
+    Train  Label Loss = 69756.80020523071
+    Train  Domain Loss = 73716.30865478516
+    Train  Regularization Loss = 4100.549472332001
+    Train  Total Loss = 147573.65833234787
+    Train  Composite Score 65293.5
+    Train  Label Accuracy [0.7450024818374622, 0.5525472677225757, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.511123144262443, 0.43438924236270926]
+
+    Val  Label Loss = 29585.75337600708
+    Val  Domain Loss = 39847.48475265503
+    Val  Regularization Loss = 2836.371488571167
+    Val  Total Loss = 72269.60961723328
+    Val  Composite Score 45317.75
+    Val  Label Accuracy [0.7626675953334494, 0.7020197404496435, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.996627737744489, 0.0]
+
+    Test  Label Loss = 16800.217405319214
+    Test  Domain Loss = 24043.23089981079
+    Test  Regularization Loss = 1413.1567168235779
+    Test  Total Loss = 42256.60502195358
+    Test  Composite Score 21481.25
+    Test  Label Accuracy [0.7405408034237915, 0.5429410979030319, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 12
+    Train  Label Loss = 69534.22087478638
+    Train  Domain Loss = 73910.1742553711
+    Train  Regularization Loss = 4014.5661425590515
+    Train  Total Loss = 147458.96127271652
+    Train  Composite Score 65557.5
+    Train  Label Accuracy [0.7492441676819638, 0.5562474617571409, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5483507061955688, 0.3922882541401561]
+
+    Val  Label Loss = 30097.103637695312
+    Val  Domain Loss = 39039.54288101196
+    Val  Regularization Loss = 2456.42036819458
+    Val  Total Loss = 71593.06688690186
+    Val  Composite Score 44912.0
+    Val  Label Accuracy [0.7493470311683789, 0.6982727106561871, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 17361.971645355225
+    Test  Domain Loss = 20112.586639404297
+    Test  Regularization Loss = 1223.8548288345337
+    Test  Total Loss = 38698.413113594055
+    Test  Composite Score 20973.5
+    Test  Label Accuracy [0.6876762960801478, 0.5977026846533993, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 13
+    Train  Label Loss = 69426.57265853882
+    Train  Domain Loss = 73629.19635009766
+    Train  Regularization Loss = 3931.6569957733154
+    Train  Total Loss = 146987.4260044098
+    Train  Composite Score 65598.75
+    Train  Label Accuracy [0.7481837462208384, 0.5585488019493705, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5167636839492803, 0.4260863679436849]
+
+    Val  Label Loss = 29970.29266166687
+    Val  Domain Loss = 39090.74003410339
+    Val  Regularization Loss = 2460.007707595825
+    Val  Total Loss = 71521.04040336609
+    Val  Composite Score 44989.25
+    Val  Label Accuracy [0.7507690521794649, 0.700740266861634, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 17064.151851654053
+    Test  Domain Loss = 20197.58046722412
+    Test  Regularization Loss = 1225.642138004303
+    Test  Total Loss = 38487.37445688248
+    Test  Composite Score 21110.75
+    Test  Label Accuracy [0.7022176831047563, 0.5822091625484173, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 14
+    Train  Label Loss = 69343.33616256714
+    Train  Domain Loss = 73794.89911270142
+    Train  Regularization Loss = 3852.912372112274
+    Train  Total Loss = 146991.14764738083
+    Train  Composite Score 65580.75
+    Train  Label Accuracy [0.7491313568882271, 0.5570596994720455, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5586390505843599, 0.37478001895221336]
+
+    Val  Label Loss = 29300.076974868774
+    Val  Domain Loss = 39068.1231880188
+    Val  Regularization Loss = 2400.3514823913574
+    Val  Total Loss = 70768.55164527893
+    Val  Composite Score 45455.0
+    Val  Label Accuracy [0.7680944918451448, 0.7018369585084994, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 16666.98713684082
+    Test  Domain Loss = 19377.356079101562
+    Test  Regularization Loss = 1195.9197988510132
+    Test  Total Loss = 37240.263014793396
+    Test  Composite Score 21590.75
+    Test  Label Accuracy [0.7465227117984632, 0.5460130893548818, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 15
+    Train  Label Loss = 68822.14834976196
+    Train  Domain Loss = 73798.04441833496
+    Train  Regularization Loss = 3793.1698818206787
+    Train  Total Loss = 146413.3626499176
+    Train  Composite Score 65920.5
+    Train  Label Accuracy [0.7527413022878029, 0.5636704119850188, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5225847209060963, 0.41681332069852445]
+
+    Val  Label Loss = 29366.62141227722
+    Val  Domain Loss = 39068.51271057129
+    Val  Regularization Loss = 2382.5462951660156
+    Val  Total Loss = 70817.68041801453
+    Val  Composite Score 45392.75
+    Val  Label Accuracy [0.766614429160137, 0.7003747029793457, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.005573107095949736, 0.9992545525540449]
+
+    Test  Label Loss = 16953.80142211914
+    Test  Domain Loss = 18909.170608520508
+    Test  Regularization Loss = 1187.0487747192383
+    Test  Total Loss = 37050.02080535889
+    Test  Composite Score 21347.75
+    Test  Label Accuracy [0.7238109133352787, 0.5651128622946441, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9992513102071375]
+
+  EPOCH 16
+    Train  Label Loss = 68508.44821166992
+    Train  Domain Loss = 73830.18690872192
+    Train  Regularization Loss = 3797.1985540390015
+    Train  Total Loss = 146135.83367443085
+    Train  Composite Score 66057.0
+    Train  Label Accuracy [0.7574567934659988, 0.5630612336988403, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.531293714182573, 0.407991516628311]
+
+    Val  Label Loss = 29484.48106765747
+    Val  Domain Loss = 39065.71385192871
+    Val  Regularization Loss = 2343.5177421569824
+    Val  Total Loss = 70893.71266174316
+    Val  Composite Score 45075.5
+    Val  Label Accuracy [0.7401764466887225, 0.7226740997989398, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 17049.471462249756
+    Test  Domain Loss = 19756.990837097168
+    Test  Regularization Loss = 1167.6036977767944
+    Test  Total Loss = 37974.06599712372
+    Test  Composite Score 21139.25
+    Test  Label Accuracy [0.7022663165061764, 0.5871510618405236, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 17
+    Train  Label Loss = 68323.77045059204
+    Train  Domain Loss = 73673.6979598999
+    Train  Regularization Loss = 3735.2623143196106
+    Train  Total Loss = 145732.73072481155
+    Train  Composite Score 66168.0
+    Train  Label Accuracy [0.7599611930869545, 0.5638960335724922, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5292631198953116, 0.40972880285185687]
+
+    Val  Label Loss = 29419.90535545349
+    Val  Domain Loss = 38800.92856216431
+    Val  Regularization Loss = 2371.1138191223145
+    Val  Total Loss = 70591.94773674011
+    Val  Composite Score 45033.5
+    Val  Label Accuracy [0.7426432178304022, 0.7162310363736063, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 17058.061721801758
+    Test  Domain Loss = 20449.214500427246
+    Test  Regularization Loss = 1181.352807044983
+    Test  Total Loss = 38688.62902927399
+    Test  Composite Score 21146.0
+    Test  Label Accuracy [0.6976947767726874, 0.6009082409509817, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 18
+    Train  Label Loss = 67996.1639175415
+    Train  Domain Loss = 73846.48459625244
+    Train  Regularization Loss = 3735.9127526283264
+    Train  Total Loss = 145578.56126642227
+    Train  Composite Score 66323.25
+    Train  Label Accuracy [0.761089301024322, 0.567438292495826, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5179143540453951, 0.4214611254004783]
+
+    Val  Label Loss = 29182.27277946472
+    Val  Domain Loss = 39060.18590736389
+    Val  Regularization Loss = 2312.350461959839
+    Val  Total Loss = 70554.80914878845
+    Val  Composite Score 45442.25
+    Val  Label Accuracy [0.7669336583667073, 0.7028879546700786, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 16787.42636489868
+    Test  Domain Loss = 19625.956260681152
+    Test  Regularization Loss = 1152.075318813324
+    Test  Total Loss = 37565.45794439316
+    Test  Composite Score 21413.75
+    Test  Label Accuracy [0.7301818889213112, 0.5593695739281421, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 19
+    Train  Label Loss = 68124.27908325195
+    Train  Domain Loss = 73760.22775268555
+    Train  Regularization Loss = 3633.0702800750732
+    Train  Total Loss = 145517.57711601257
+    Train  Composite Score 66378.75
+    Train  Label Accuracy [0.7583367176571454, 0.5718604756103064, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5368891295519155, 0.4030278417038942]
+
+    Val  Label Loss = 28919.448970794678
+    Val  Domain Loss = 38978.90784263611
+    Val  Regularization Loss = 2278.4351921081543
+    Val  Total Loss = 70176.79200553894
+    Val  Composite Score 45515.0
+    Val  Label Accuracy [0.7715769922804574, 0.7000091390970572, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.08643640623336055, 0.9844520961272231]
+
+    Test  Label Loss = 16521.97050857544
+    Test  Domain Loss = 19162.740158081055
+    Test  Regularization Loss = 1135.1778173446655
+    Test  Total Loss = 36819.88848400116
+    Test  Composite Score 21645.5
+    Test  Label Accuracy [0.745404143565801, 0.5588353145452117, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9879496595244037]
+
+  EPOCH 20
+    Train  Label Loss = 67851.71867370605
+    Train  Domain Loss = 73721.5463180542
+    Train  Regularization Loss = 3626.913546562195
+    Train  Total Loss = 145200.17853832245
+    Train  Composite Score 66273.75
+    Train  Label Accuracy [0.7576372907359776, 0.5694012003068454, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.4950814493930779, 0.4452642028789315]
+
+    Val  Label Loss = 29117.63755607605
+    Val  Domain Loss = 38919.21109390259
+    Val  Regularization Loss = 2268.545602798462
+    Val  Total Loss = 70305.3942527771
+    Val  Composite Score 45310.25
+    Val  Label Accuracy [0.7512333855708399, 0.7195668067994883, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.11746121898406163, 0.9832451812147244]
+
+    Test  Label Loss = 16718.96018409729
+    Test  Domain Loss = 19127.52484893799
+    Test  Regularization Loss = 1130.250557422638
+    Test  Total Loss = 36976.735590457916
+    Test  Composite Score 21415.25
+    Test  Label Accuracy [0.7245890477580001, 0.5749966608788567, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9863096723590858]
+
+  EPOCH 21
+    Train  Label Loss = 67720.19250297546
+    Train  Domain Loss = 73778.81604003906
+    Train  Regularization Loss = 3620.3115820884705
+    Train  Total Loss = 145119.320125103
+    Train  Composite Score 66453.75
+    Train  Label Accuracy [0.7600965660394386, 0.572356843102748, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.4961418708542033, 0.44623437570506747]
+
+    Val  Label Loss = 28320.264657974243
+    Val  Domain Loss = 38847.346197128296
+    Val  Regularization Loss = 2285.959218978882
+    Val  Total Loss = 69453.57007408142
+    Val  Composite Score 46112.75
+    Val  Label Accuracy [0.8294155203436067, 0.6453573386949369, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.9478896737779986, 0.27120088033793616]
+
+    Test  Label Loss = 16001.333541870117
+    Test  Domain Loss = 19288.895336151123
+    Test  Regularization Loss = 1138.9264903068542
+    Test  Total Loss = 36429.155368328094
+    Test  Composite Score 22119.5
+    Test  Label Accuracy [0.8017216224102713, 0.48858020568986243, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.2725230846019466]
+
+  EPOCH 22
+    Train  Label Loss = 67510.03729629517
+    Train  Domain Loss = 73834.38816452026
+    Train  Regularization Loss = 3588.388751268387
+    Train  Total Loss = 144932.81421208382
+    Train  Composite Score 66561.75
+    Train  Label Accuracy [0.7608185551193538, 0.5748838048824512, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5763954695185235, 0.36067866973512025]
+
+    Val  Label Loss = 28249.78676223755
+    Val  Domain Loss = 39056.83961105347
+    Val  Regularization Loss = 2259.136064529419
+    Val  Total Loss = 69565.76243782043
+    Val  Composite Score 46021.25
+    Val  Label Accuracy [0.8227697486795519, 0.6502467556205447, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 16036.511165618896
+    Test  Domain Loss = 19606.240100860596
+    Test  Regularization Loss = 1125.5624718666077
+    Test  Total Loss = 36768.3137383461
+    Test  Composite Score 22043.75
+    Test  Label Accuracy [0.7921408423305126, 0.5014024308801923, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 23
+    Train  Label Loss = 67532.81782531738
+    Train  Domain Loss = 73749.34812164307
+    Train  Regularization Loss = 3568.4590504169464
+    Train  Total Loss = 144850.6249973774
+    Train  Composite Score 66555.75
+    Train  Label Accuracy [0.764969992328866, 0.5705518704029602, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5354225892333379, 0.4027796579576734]
+
+    Val  Label Loss = 28540.78108215332
+    Val  Domain Loss = 39057.21062850952
+    Val  Regularization Loss = 2249.2740411758423
+    Val  Total Loss = 69847.26575183868
+    Val  Composite Score 45941.0
+    Val  Label Accuracy [0.812902664112833, 0.6608938036921952, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 16195.531650543213
+    Test  Domain Loss = 19689.56991958618
+    Test  Regularization Loss = 1120.6489460468292
+    Test  Total Loss = 37005.750516176224
+    Test  Composite Score 21874.25
+    Test  Label Accuracy [0.7677268748176247, 0.5382663283023909, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 24
+    Train  Label Loss = 67117.54802703857
+    Train  Domain Loss = 73900.54166412354
+    Train  Regularization Loss = 3504.320778608322
+    Train  Total Loss = 144522.41046977043
+    Train  Composite Score 66740.25
+    Train  Label Accuracy [0.7671359595686115, 0.5739361942150625, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5256982988132305, 0.40893912729569964]
+
+    Val  Label Loss = 28737.718786239624
+    Val  Domain Loss = 39047.42370223999
+    Val  Regularization Loss = 2252.4312171936035
+    Val  Total Loss = 70037.57370567322
+    Val  Composite Score 45738.5
+    Val  Label Accuracy [0.7849846189564107, 0.6925150795101443, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.020482056015050938, 0.9919775655816265]
+
+    Test  Label Loss = 16552.769063949585
+    Test  Domain Loss = 19278.676124572754
+    Test  Regularization Loss = 1122.221936225891
+    Test  Total Loss = 36953.66712474823
+    Test  Composite Score 21616.25
+    Test  Label Accuracy [0.7417566384592938, 0.5636436489915854, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9936183108132197]
+
+  EPOCH 25
+    Train  Label Loss = 67412.66403961182
+    Train  Domain Loss = 73867.06475448608
+    Train  Regularization Loss = 3519.482139825821
+    Train  Total Loss = 144799.21093392372
+    Train  Composite Score 66810.75
+    Train  Label Accuracy [0.7655114841388024, 0.5776815125671224, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.4882902396101259, 0.45182979107441]
+
+    Val  Label Loss = 27632.81784439087
+    Val  Domain Loss = 39057.333976745605
+    Val  Regularization Loss = 2204.2232007980347
+    Val  Total Loss = 68894.37502193451
+    Val  Composite Score 46393.25
+    Val  Label Accuracy [0.8411109176388647, 0.6440321696216413, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    New Best Val Loss
+
+    Test  Label Loss = 15561.091680526733
+    Test  Domain Loss = 19742.63748550415
+    Test  Regularization Loss = 1098.2034032344818
+    Test  Total Loss = 36401.932569265366
+    Test  Composite Score 22310.75
+    Test  Label Accuracy [0.8164089096391401, 0.4823026579404301, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 26
+    Train  Label Loss = 67070.87847328186
+    Train  Domain Loss = 73655.18441009521
+    Train  Regularization Loss = 3488.0886194705963
+    Train  Total Loss = 144214.15150284767
+    Train  Composite Score 66696.75
+    Train  Label Accuracy [0.764586435630161, 0.5751771129461667, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5307973466901313, 0.4140381751726005]
+
+    Val  Label Loss = 27766.930181503296
+    Val  Domain Loss = 39053.43285751343
+    Val  Regularization Loss = 2187.0377769470215
+    Val  Total Loss = 69007.40081596375
+    Val  Composite Score 46252.25
+    Val  Label Accuracy [0.8159788728306925, 0.6750137086455859, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 15766.92204284668
+    Test  Domain Loss = 19709.033237457275
+    Test  Regularization Loss = 1089.6411619186401
+    Test  Total Loss = 36565.596442222595
+    Test  Composite Score 22163.75
+    Test  Label Accuracy [0.7971500826767824, 0.5090156270869507, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 27
+    Train  Label Loss = 66894.47151184082
+    Train  Domain Loss = 73818.47848129272
+    Train  Regularization Loss = 3462.261855363846
+    Train  Total Loss = 144175.2118484974
+    Train  Composite Score 66829.5
+    Train  Label Accuracy [0.7686476242046839, 0.5751094264699247, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5416046207301115, 0.39289743242633457]
+
+    Val  Label Loss = 28368.791467666626
+    Val  Domain Loss = 38791.726387023926
+    Val  Regularization Loss = 2166.4847345352173
+    Val  Total Loss = 69327.00258922577
+    Val  Composite Score 45907.25
+    Val  Label Accuracy [0.7901213070984967, 0.694708462803875, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.7357566291576444, 0.5496432501508643]
+
+    Test  Label Loss = 16278.57373046875
+    Test  Domain Loss = 19673.649974822998
+    Test  Regularization Loss = 1079.401082277298
+    Test  Total Loss = 37031.624787569046
+    Test  Composite Score 21743.75
+    Test  Label Accuracy [0.7574652271179846, 0.5432082275944972, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.544012264251845]
+
+  EPOCH 28
+    Train  Label Loss = 66947.98888778687
+    Train  Domain Loss = 73938.2250366211
+    Train  Regularization Loss = 3444.7665379047394
+    Train  Total Loss = 144330.9804623127
+    Train  Composite Score 66861.0
+    Train  Label Accuracy [0.7674518297910744, 0.5772528315509228, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.4948783899643518, 0.4446775867515004]
+
+    Val  Label Loss = 28442.350484848022
+    Val  Domain Loss = 38929.8519859314
+    Val  Regularization Loss = 2156.104067802429
+    Val  Total Loss = 69528.30653858185
+    Val  Composite Score 45780.5
+    Val  Label Accuracy [0.783011202043067, 0.698181319685615, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.3686770082709169, 0.9266266728195662]
+
+    Test  Label Loss = 16454.55125427246
+    Test  Domain Loss = 19362.206436157227
+    Test  Regularization Loss = 1074.2291543483734
+    Test  Total Loss = 36890.98684477806
+    Test  Composite Score 21614.0
+    Test  Label Accuracy [0.7402003696138508, 0.5675170295178309, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9357909372883169]
+
+  EPOCH 29
+    Train  Label Loss = 66522.07061004639
+    Train  Domain Loss = 73892.97467041016
+    Train  Regularization Loss = 3412.4923980236053
+    Train  Total Loss = 143827.53767848015
+    Train  Composite Score 67164.75
+    Train  Label Accuracy [0.7698885429357881, 0.5839537926988855, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.44664049456251975, 0.49740535174405487]
+
+    Val  Label Loss = 28607.816080093384
+    Val  Domain Loss = 39040.10405921936
+    Val  Regularization Loss = 2152.8465785980225
+    Val  Total Loss = 69800.76671791077
+    Val  Composite Score 45614.0
+    Val  Label Accuracy [0.7640025538336526, 0.7179674648144764, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 16539.278747558594
+    Test  Domain Loss = 19936.784072875977
+    Test  Regularization Loss = 1072.6061854362488
+    Test  Total Loss = 37548.66900587082
+    Test  Composite Score 21395.75
+    Test  Label Accuracy [0.7179262717634471, 0.5898223587551756, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+Training model 4
+Defining Model...
+Training Model...
+
+  EPOCH 0
+    Train  Label Loss = 75809.03684997559
+    Train  Domain Loss = 37188.904512405396
+    Train  Regularization Loss = 7685.0705114007
+    Train  Total Loss = 120683.01187378168
+    Train  Composite Score 62072.25
+    Train  Label Accuracy [0.688867830874058, 0.5119128198186003, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.7694372997608411, 0.6801588375975813]
+
+    Val  Label Loss = 33353.49841117859
+    Val  Domain Loss = 7191.688185214996
+    Val  Regularization Loss = 5326.243480682373
+    Val  Total Loss = 45871.43007707596
+    Val  Composite Score 43735.25
+    Val  Label Accuracy [0.7392477799059725, 0.6424785231219156, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.9859784885165596, 0.9378083845088921]
+
+    Test  Label Loss = 18415.642456054688
+    Test  Domain Loss = 5499.135260105133
+    Test  Regularization Loss = 2653.6780462265015
+    Test  Total Loss = 26568.455762386322
+    Test  Composite Score 20714.75
+    Test  Label Accuracy [0.6977920435755277, 0.5238413249632696, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9377161396128204]
+
+  EPOCH 1
+    Train  Label Loss = 73915.47784423828
+    Train  Domain Loss = 71775.1929321289
+    Train  Regularization Loss = 7845.910261154175
+    Train  Total Loss = 153536.58103752136
+    Train  Composite Score 63177.0
+    Train  Label Accuracy [0.7058796985695591, 0.5279996390054601, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5751771129461667, 0.4817020892559]
+
+    Val  Label Loss = 33154.925956726074
+    Val  Domain Loss = 36964.078983306885
+    Val  Regularization Loss = 4745.950790405273
+    Val  Total Loss = 74864.95573043823
+    Val  Composite Score 42452.0
+    Val  Label Accuracy [0.6210168901271113, 0.7504569548528606, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.47939370274395654, 0.8222285328884313]
+
+    Test  Label Loss = 18805.387382507324
+    Test  Domain Loss = 17212.88235092163
+    Test  Regularization Loss = 2364.56058883667
+    Test  Total Loss = 38382.830322265625
+    Test  Composite Score 19360.25
+    Test  Label Accuracy [0.5565120124501508, 0.6706290904234006, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.8274091767977468]
+
+  EPOCH 2
+    Train  Label Loss = 73355.08096694946
+    Train  Domain Loss = 73605.03860473633
+    Train  Regularization Loss = 6569.713963985443
+    Train  Total Loss = 153529.83353567123
+    Train  Composite Score 63275.25
+    Train  Label Accuracy [0.7142502594648256, 0.5225847209060963, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5313839628175624, 0.4234240332114977]
+
+    Val  Label Loss = 32753.23872756958
+    Val  Domain Loss = 34567.7280960083
+    Val  Regularization Loss = 3801.9975185394287
+    Val  Total Loss = 71122.96434211731
+    Val  Composite Score 42836.0
+    Val  Label Accuracy [0.6389807882059318, 0.7455675379272528, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.43825210322672253, 0.9912676156330978]
+
+    Test  Label Loss = 18819.933338165283
+    Test  Domain Loss = 18183.225534439087
+    Test  Regularization Loss = 1894.257628917694
+    Test  Total Loss = 38897.416501522064
+    Test  Composite Score 19570.25
+    Test  Label Accuracy [0.5718801672989009, 0.6658207559770268, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9911939819601412]
+
+  EPOCH 3
+    Train  Label Loss = 72590.99950408936
+    Train  Domain Loss = 73214.33227539062
+    Train  Regularization Loss = 5853.449472904205
+    Train  Total Loss = 151658.7812523842
+    Train  Composite Score 63894.0
+    Train  Label Accuracy [0.7189206263255268, 0.536528135011958, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.51157438743739, 0.45151392085194714]
+
+    Val  Label Loss = 30806.309560775757
+    Val  Domain Loss = 38908.38741874695
+    Val  Regularization Loss = 3410.1118183135986
+    Val  Total Loss = 73124.8087978363
+    Val  Composite Score 45206.0
+    Val  Label Accuracy [0.8294735620175285, 0.5900201060135258, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 16836.826190948486
+    Test  Domain Loss = 20043.507194519043
+    Test  Regularization Loss = 1699.009611606598
+    Test  Total Loss = 38579.34299707413
+    Test  Composite Score 21983.0
+    Test  Label Accuracy [0.8152903414064779, 0.42700681180713235, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 4
+    Train  Label Loss = 72313.16133499146
+    Train  Domain Loss = 73735.18910598755
+    Train  Regularization Loss = 5246.555727481842
+    Train  Total Loss = 151294.90616846085
+    Train  Composite Score 63873.75
+    Train  Label Accuracy [0.7234330580749966, 0.5314065249763097, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.47581336582284195, 0.4729930959794233]
+
+    Val  Label Loss = 31789.547792434692
+    Val  Domain Loss = 38999.95137214661
+    Val  Regularization Loss = 3346.1356716156006
+    Val  Total Loss = 74135.6348361969
+    Val  Composite Score 43847.75
+    Val  Label Accuracy [0.7030587962156829, 0.7063151160665326, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.12910439813993113, 0.9472152213268965]
+
+    Test  Label Loss = 17959.909496307373
+    Test  Domain Loss = 17570.468334197998
+    Test  Regularization Loss = 1667.1349711418152
+    Test  Total Loss = 37197.512801647186
+    Test  Composite Score 20499.5
+    Test  Label Accuracy [0.6654508316311643, 0.5743288366501936, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9537951442119149]
+
+  EPOCH 5
+    Train  Label Loss = 71854.88859176636
+    Train  Domain Loss = 73890.85638809204
+    Train  Regularization Loss = 4952.135464191437
+    Train  Total Loss = 150697.88044404984
+    Train  Composite Score 64194.0
+    Train  Label Accuracy [0.7272686250620459, 0.5372049997743784, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.503948377780786, 0.4276431568972519]
+
+    Val  Label Loss = 31079.817432403564
+    Val  Domain Loss = 39385.689125061035
+    Val  Regularization Loss = 3218.7225952148438
+    Val  Total Loss = 73684.22915267944
+    Val  Composite Score 44654.0
+    Val  Label Accuracy [0.750711010505543, 0.6804057759093401, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.9687267047673139, 7.099499485286287e-05]
+
+    Test  Label Loss = 17564.473125457764
+    Test  Domain Loss = 21131.669414520264
+    Test  Regularization Loss = 1603.6543426513672
+    Test  Total Loss = 40299.796882629395
+    Test  Composite Score 21269.75
+    Test  Label Accuracy [0.7250753817722011, 0.5477494323494057, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 7.130378979642769e-05]
+
+  EPOCH 6
+    Train  Label Loss = 71490.78593444824
+    Train  Domain Loss = 73670.83155822754
+    Train  Regularization Loss = 4929.237962722778
+    Train  Total Loss = 150090.85545539856
+    Train  Composite Score 64381.5
+    Train  Label Accuracy [0.7322774243039574, 0.5378367402193042, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5497946843553991, 0.4064572898334913]
+
+    Val  Label Loss = 30658.131551742554
+    Val  Domain Loss = 39176.10321235657
+    Val  Regularization Loss = 2869.4498291015625
+    Val  Total Loss = 72703.68459320068
+    Val  Composite Score 44596.25
+    Val  Label Accuracy [0.7346334668291834, 0.7022025223907878, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 17450.579559326172
+    Test  Domain Loss = 20368.172821044922
+    Test  Regularization Loss = 1429.6372375488281
+    Test  Total Loss = 39248.38961791992
+    Test  Composite Score 20992.25
+    Test  Label Accuracy [0.696430308335765, 0.5770001335648457, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 7
+    Train  Label Loss = 71278.3412437439
+    Train  Domain Loss = 73781.7625465393
+    Train  Regularization Loss = 4325.705791950226
+    Train  Total Loss = 149385.80958223343
+    Train  Composite Score 64591.5
+    Train  Label Accuracy [0.7355263751635757, 0.5409051938089436, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5710933622128965, 0.3688461712016606]
+
+    Val  Label Loss = 30868.997146606445
+    Val  Domain Loss = 38880.54843521118
+    Val  Regularization Loss = 2697.0171089172363
+    Val  Total Loss = 72446.56269073486
+    Val  Composite Score 44478.5
+    Val  Label Accuracy [0.7306576121655348, 0.7012886126850667, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.2530616591530297, 0.9678037698342267]
+
+    Test  Label Loss = 17666.901708602905
+    Test  Domain Loss = 19184.999099731445
+    Test  Regularization Loss = 1343.7266092300415
+    Test  Total Loss = 38195.62741756439
+    Test  Composite Score 20783.75
+    Test  Label Accuracy [0.6768796809648867, 0.5935621744356885, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.974508895147777]
+
+  EPOCH 8
+    Train  Label Loss = 70828.25770187378
+    Train  Domain Loss = 73905.31903457642
+    Train  Regularization Loss = 4258.63577413559
+    Train  Total Loss = 148992.21251058578
+    Train  Composite Score 64843.5
+    Train  Label Accuracy [0.7357294345923018, 0.5482830197193267, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.4967736112991291, 0.4404359009069988]
+
+    Val  Label Loss = 29482.77695274353
+    Val  Domain Loss = 39115.42824935913
+    Val  Regularization Loss = 2832.295223236084
+    Val  Total Loss = 71430.50042533875
+    Val  Composite Score 45830.0
+    Val  Label Accuracy [0.8288931452783098, 0.6289526594772437, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 16291.072324752808
+    Test  Domain Loss = 19704.049320220947
+    Test  Regularization Loss = 1411.1258115768433
+    Test  Total Loss = 37406.2474565506
+    Test  Composite Score 22256.75
+    Test  Label Accuracy [0.8273514249586617, 0.4426338987578469, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 9
+    Train  Label Loss = 70477.1690940857
+    Train  Domain Loss = 73662.79140853882
+    Train  Regularization Loss = 4402.572868347168
+    Train  Total Loss = 148542.53337097168
+    Train  Composite Score 64869.0
+    Train  Label Accuracy [0.7384143314832363, 0.5463652362258021, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5142592843283246, 0.4280041514372095]
+
+    Val  Label Loss = 29757.059648513794
+    Val  Domain Loss = 39103.46590423584
+    Val  Regularization Loss = 2603.819704055786
+    Val  Total Loss = 71464.34525680542
+    Val  Composite Score 45228.5
+    Val  Label Accuracy [0.7784259098032388, 0.671769329190276, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 16738.617446899414
+    Test  Domain Loss = 19650.174293518066
+    Test  Regularization Loss = 1297.2931504249573
+    Test  Total Loss = 37686.08489084244
+    Test  Composite Score 21601.25
+    Test  Label Accuracy [0.7498784164964497, 0.5386670228395887, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 10
+    Train  Label Loss = 70059.64323043823
+    Train  Domain Loss = 73906.45444107056
+    Train  Regularization Loss = 4046.677849292755
+    Train  Total Loss = 148012.77552080154
+    Train  Composite Score 65285.25
+    Train  Label Accuracy [0.7440323090113262, 0.5532692568024908, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5524118947700916, 0.38211272054510176]
+
+    Val  Label Loss = 30829.35648918152
+    Val  Domain Loss = 39093.68454360962
+    Val  Regularization Loss = 2510.0534992218018
+    Val  Total Loss = 72433.09453201294
+    Val  Composite Score 44249.0
+    Val  Label Accuracy [0.7033490045852923, 0.7303052458417109, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 17756.605876922607
+    Test  Domain Loss = 19196.7191696167
+    Test  Regularization Loss = 1250.5763001441956
+    Test  Total Loss = 38203.9013466835
+    Test  Composite Score 20690.0
+    Test  Label Accuracy [0.6654021982297442, 0.6083878723120075, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 11
+    Train  Label Loss = 70036.14825820923
+    Train  Domain Loss = 73805.67097473145
+    Train  Regularization Loss = 3878.15452337265
+    Train  Total Loss = 147719.97375631332
+    Train  Composite Score 65215.5
+    Train  Label Accuracy [0.7457470330761248, 0.5494562519741889, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.48292044582825683, 0.45710933622128963]
+
+    Val  Label Loss = 29578.166481018066
+    Val  Domain Loss = 39084.481340408325
+    Val  Regularization Loss = 2415.943593978882
+    Val  Total Loss = 71078.59141540527
+    Val  Composite Score 45338.75
+    Val  Label Accuracy [0.7819664519124732, 0.6729117163224273, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 1.0]
+
+    Test  Label Loss = 16837.407161712646
+    Test  Domain Loss = 19228.752361297607
+    Test  Regularization Loss = 1203.6882090568542
+    Test  Total Loss = 37269.84773206711
+    Test  Composite Score 21510.5
+    Test  Label Accuracy [0.7421457056706546, 0.5437424869774276, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 1.0]
+
+  EPOCH 12
+    Train  Label Loss = 69348.86114501953
+    Train  Domain Loss = 73776.47477340698
+    Train  Regularization Loss = 4034.7854075431824
+    Train  Total Loss = 147160.1213259697
+    Train  Composite Score 65643.0
+    Train  Label Accuracy [0.7481160597445964, 0.5599476557917061, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5009250485086413, 0.439736473985831]
+
+    Val  Label Loss = 30388.980182647705
+    Val  Domain Loss = 38996.56856918335
+    Val  Regularization Loss = 2520.3292808532715
+    Val  Total Loss = 71905.87803268433
+    Val  Composite Score 44795.0
+    Val  Label Accuracy [0.7386093214928319, 0.7080515445074027, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.09346491072379397, 0.9630826026765114]
+
+    Test  Label Loss = 17426.976482391357
+    Test  Domain Loss = 19275.213787078857
+    Test  Regularization Loss = 1255.6959714889526
+    Test  Total Loss = 37957.88624095917
+    Test  Composite Score 21002.75
+    Test  Label Accuracy [0.6938527380605, 0.5859489782289301, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9699454526008058]
+
+  EPOCH 13
+    Train  Label Loss = 69498.26472091675
+    Train  Domain Loss = 73707.31742095947
+    Train  Regularization Loss = 4068.780257701874
+    Train  Total Loss = 147274.3623995781
+    Train  Composite Score 65402.25
+    Train  Label Accuracy [0.7431072605026849, 0.5577140020757186, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5255178015432517, 0.4189567257795226]
+
+    Val  Label Loss = 30782.07329750061
+    Val  Domain Loss = 38146.09417915344
+    Val  Regularization Loss = 2543.3816814422607
+    Val  Total Loss = 71471.54915809631
+    Val  Composite Score 44438.75
+    Val  Label Accuracy [0.7119681931626908, 0.7282946444891245, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.47634091796528344, 0.9274431152603742]
+
+    Test  Label Loss = 17800.0108795166
+    Test  Domain Loss = 19077.266723632812
+    Test  Regularization Loss = 1267.1812987327576
+    Test  Total Loss = 38144.45890188217
+    Test  Composite Score 20507.75
+    Test  Label Accuracy [0.6416204649353175, 0.6412448243622278, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9360048486577062]
+
+  EPOCH 14
+    Train  Label Loss = 68975.84915161133
+    Train  Domain Loss = 73876.19319915771
+    Train  Regularization Loss = 3800.8365836143494
+    Train  Total Loss = 146652.8789343834
+    Train  Composite Score 65924.25
+    Train  Label Accuracy [0.7535309778439601, 0.5629935472225983, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5270069040205767, 0.41397048869635844]
+
+    Val  Label Loss = 29021.272968292236
+    Val  Domain Loss = 39085.541900634766
+    Val  Regularization Loss = 2355.3286113739014
+    Val  Total Loss = 70462.1434803009
+    Val  Composite Score 45713.0
+    Val  Label Accuracy [0.7936328283707702, 0.6773441783951746, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.9999290050051471, 0.0]
+
+    Test  Label Loss = 16409.199096679688
+    Test  Domain Loss = 20142.713802337646
+    Test  Regularization Loss = 1173.488191127777
+    Test  Total Loss = 37725.40109014511
+    Test  Composite Score 21766.25
+    Test  Label Accuracy [0.7643711701196382, 0.5282489648724455, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 15
+    Train  Label Loss = 68580.18854141235
+    Train  Domain Loss = 73839.24263000488
+    Train  Regularization Loss = 3730.031349658966
+    Train  Total Loss = 146149.4625210762
+    Train  Composite Score 66018.0
+    Train  Label Accuracy [0.7552231397500113, 0.5641216551599657, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.48416136455936104, 0.4527548395830513]
+
+    Val  Label Loss = 29415.76361465454
+    Val  Domain Loss = 38895.84673690796
+    Val  Regularization Loss = 2358.479467391968
+    Val  Total Loss = 70670.08981895447
+    Val  Composite Score 45379.25
+    Val  Label Accuracy [0.7698357420628011, 0.6944799853774447, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.3004863157147421, 0.8464378261332576]
+
+    Test  Label Loss = 16809.337564468384
+    Test  Domain Loss = 19599.84978866577
+    Test  Regularization Loss = 1175.0580325126648
+    Test  Total Loss = 37584.24538564682
+    Test  Composite Score 21449.75
+    Test  Label Accuracy [0.7324676587880556, 0.5595031387738747, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.8555028699775393]
+
+  EPOCH 16
+    Train  Label Loss = 68324.36351013184
+    Train  Domain Loss = 73938.40461730957
+    Train  Regularization Loss = 3733.8938875198364
+    Train  Total Loss = 145996.66201496124
+    Train  Composite Score 66078.0
+    Train  Label Accuracy [0.7535761021614548, 0.5675736654483101, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5185460944903209, 0.4119173322503497]
+
+    Val  Label Loss = 28796.9985370636
+    Val  Domain Loss = 39060.89273071289
+    Val  Regularization Loss = 2288.1432495117188
+    Val  Total Loss = 70146.03451728821
+    Val  Composite Score 45710.75
+    Val  Label Accuracy [0.8037901213070985, 0.6612136720891976, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 16315.630199432373
+    Test  Domain Loss = 19459.949420928955
+    Test  Regularization Loss = 1140.014633178711
+    Test  Total Loss = 36915.59425354004
+    Test  Composite Score 21802.25
+    Test  Label Accuracy [0.7623285672599942, 0.5402698009883798, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 17
+    Train  Label Loss = 68638.8288269043
+    Train  Domain Loss = 73798.9259109497
+    Train  Regularization Loss = 3703.000057697296
+    Train  Total Loss = 146140.7547955513
+    Train  Composite Score 65913.0
+    Train  Label Accuracy [0.754433464193854, 0.5617526284914941, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.49435946031316275, 0.4543567528541131]
+
+    Val  Label Loss = 28917.86483192444
+    Val  Domain Loss = 39069.1773109436
+    Val  Regularization Loss = 2348.312873840332
+    Val  Total Loss = 70335.35501670837
+    Val  Composite Score 45748.25
+    Val  Label Accuracy [0.7958093911428405, 0.6760647048071651, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.18433850413545844, 0.8585424727556707]
+
+    Test  Label Loss = 16341.933612823486
+    Test  Domain Loss = 19145.821186065674
+    Test  Regularization Loss = 1169.9927616119385
+    Test  Total Loss = 36657.7475605011
+    Test  Composite Score 21653.75
+    Test  Label Accuracy [0.7543526894270985, 0.5357285962334714, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.8656993119184284]
+
+  EPOCH 18
+    Train  Label Loss = 68619.61897659302
+    Train  Domain Loss = 73691.33322143555
+    Train  Regularization Loss = 3674.262912273407
+    Train  Total Loss = 145985.21511030197
+    Train  Composite Score 65999.25
+    Train  Label Accuracy [0.7521095618428771, 0.5666711790984161, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.46241144352691665, 0.4979242813952439]
+
+    Val  Label Loss = 29486.607206344604
+    Val  Domain Loss = 39061.205490112305
+    Val  Regularization Loss = 2304.1522121429443
+    Val  Total Loss = 70851.96490859985
+    Val  Composite Score 45363.5
+    Val  Label Accuracy [0.7691392419757386, 0.6946170718333029, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.0, 0.99950303503603]
+
+    Test  Label Loss = 16949.4639377594
+    Test  Domain Loss = 19276.578273773193
+    Test  Regularization Loss = 1147.9907298088074
+    Test  Total Loss = 37374.0329413414
+    Test  Composite Score 21435.5
+    Test  Label Accuracy [0.7247835813636806, 0.5780686523307066, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9996078291561197]
+
+  EPOCH 19
+    Train  Label Loss = 68270.78394317627
+    Train  Domain Loss = 73824.53750991821
+    Train  Regularization Loss = 3568.19237613678
+    Train  Total Loss = 145663.51382923126
+    Train  Composite Score 66110.25
+    Train  Label Accuracy [0.7576598528947249, 0.5644600875411759, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.48517666170299173, 0.4620278868282117]
+
+    Val  Label Loss = 28652.218101501465
+    Val  Domain Loss = 39083.97625923157
+    Val  Regularization Loss = 2221.682536125183
+    Val  Total Loss = 69957.87689685822
+    Val  Composite Score 45767.0
+    Val  Label Accuracy [0.808230309362122, 0.6576494242368854, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 16350.445125579834
+    Test  Domain Loss = 19858.77188873291
+    Test  Regularization Loss = 1106.9021146297455
+    Test  Total Loss = 37316.11912894249
+    Test  Composite Score 21819.5
+    Test  Label Accuracy [0.7672891742048439, 0.5297181781755043, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 20
+    Train  Label Loss = 67627.91532897949
+    Train  Domain Loss = 73804.0556564331
+    Train  Regularization Loss = 3563.916296482086
+    Train  Total Loss = 144995.88728189468
+    Train  Composite Score 66527.25
+    Train  Label Accuracy [0.7628942737241099, 0.571770226975317, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.5467036686070124, 0.3914308921077569]
+
+    Val  Label Loss = 28601.19974899292
+    Val  Domain Loss = 39042.987937927246
+    Val  Regularization Loss = 2229.645601272583
+    Val  Total Loss = 69873.83328819275
+    Val  Composite Score 45816.5
+    Val  Label Accuracy [0.7986824540019735, 0.6756991409248766, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 1.0, 0.0]
+
+    Test  Label Loss = 16292.525695800781
+    Test  Domain Loss = 19710.30754852295
+    Test  Regularization Loss = 1110.8695282936096
+    Test  Total Loss = 37113.70277261734
+    Test  Composite Score 21829.25
+    Test  Label Accuracy [0.7697208442758486, 0.5247762788833978, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]
+
+  EPOCH 21
+    Train  Label Loss = 67889.29066085815
+    Train  Domain Loss = 73882.53074264526
+    Train  Regularization Loss = 3566.4415826797485
+    Train  Total Loss = 145338.26298618317
+    Train  Composite Score 66531.0
+    Train  Label Accuracy [0.761089301024322, 0.5736880104688417, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.45428906637787103, 0.4957131898380037]
+
+    Val  Label Loss = 29074.10705757141
+    Val  Domain Loss = 38966.90263557434
+    Val  Regularization Loss = 2215.800633430481
+    Val  Total Loss = 70256.81032657623
+    Val  Composite Score 45435.5
+    Val  Label Accuracy [0.774101805096059, 0.6911899104368489, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.647935820524653, 0.6206027475063008]
+
+    Test  Label Loss = 16722.253551483154
+    Test  Domain Loss = 19557.633087158203
+    Test  Regularization Loss = 1103.9715921878815
+    Test  Total Loss = 37383.85823082924
+    Test  Composite Score 21407.0
+    Test  Label Accuracy [0.7210874428557533, 0.5831441164685455, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.6184890726942137]
+
+  EPOCH 22
+    Train  Label Loss = 67785.83538246155
+    Train  Domain Loss = 73835.21925354004
+    Train  Regularization Loss = 3499.160026073456
+    Train  Total Loss = 145120.21466207504
+    Train  Composite Score 66436.5
+    Train  Label Accuracy [0.7592166418482921, 0.5727178376427057, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.4991426379676007, 0.4482424078335815]
+
+    Val  Label Loss = 27955.644828796387
+    Val  Domain Loss = 39181.42046356201
+    Val  Regularization Loss = 2225.3393955230713
+    Val  Total Loss = 69362.40468788147
+    Val  Composite Score 46235.0
+    Val  Label Accuracy [0.8249172906146613, 0.6598885030159021, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.039863689609882506, 0.8842071633949806]
+
+    Test  Label Loss = 15666.420175552368
+    Test  Domain Loss = 18772.17395401001
+    Test  Regularization Loss = 1108.724060535431
+    Test  Total Loss = 35547.31819009781
+    Test  Composite Score 22103.0
+    Test  Label Accuracy [0.7977336834938236, 0.49659409643381863, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.8910834610859567]
+
+  EPOCH 23
+    Train  Label Loss = 67547.76549339294
+    Train  Domain Loss = 73831.22026443481
+    Train  Regularization Loss = 3513.1091799736023
+    Train  Total Loss = 144892.09493780136
+    Train  Composite Score 66548.25
+    Train  Label Accuracy [0.7637065114390145, 0.5715897297053382, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.46227607057443254, 0.49763097333152834]
+
+    Val  Label Loss = 29176.688457489014
+    Val  Domain Loss = 38919.399183273315
+    Val  Regularization Loss = 2197.423150062561
+    Val  Total Loss = 70293.51079082489
+    Val  Composite Score 45332.75
+    Val  Label Accuracy [0.76330605374659, 0.7019283494790715, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.7956054098186078, 0.47886124028256005]
+
+    Test  Label Loss = 16825.399215698242
+    Test  Domain Loss = 19593.30487060547
+    Test  Regularization Loss = 1094.8154346942902
+    Test  Total Loss = 37513.519520998
+    Test  Composite Score 21329.0
+    Test  Label Accuracy [0.7153000680867619, 0.5851475891545346, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.47103283539520124]
+
+  EPOCH 24
+    Train  Label Loss = 67361.13723373413
+    Train  Domain Loss = 73959.32431411743
+    Train  Regularization Loss = 3451.33535528183
+    Train  Total Loss = 144771.7969031334
+    Train  Composite Score 66657.75
+    Train  Label Accuracy [0.7630747709940887, 0.5755155453273769, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.46166689228825414, 0.494697892694373]
+
+    Val  Label Loss = 28990.69276046753
+    Val  Domain Loss = 38766.87395858765
+    Val  Regularization Loss = 2172.8336448669434
+    Val  Total Loss = 69930.40036392212
+    Val  Composite Score 45316.25
+    Val  Label Accuracy [0.7599686574960822, 0.7061780296106744, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.9898122182386142, 0.10024493273224237]
+
+    Test  Label Loss = 16754.590126037598
+    Test  Domain Loss = 19890.212379455566
+    Test  Regularization Loss = 1082.5642805099487
+    Test  Total Loss = 37727.36678600311
+    Test  Composite Score 21236.75
+    Test  Label Accuracy [0.7038225853516195, 0.6002404167223186, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0961175086455845]
+
+  EPOCH 25
+    Train  Label Loss = 67127.61513519287
+    Train  Domain Loss = 73772.02339553833
+    Train  Regularization Loss = 3447.8943622112274
+    Train  Total Loss = 144347.53289294243
+    Train  Composite Score 66868.5
+    Train  Label Accuracy [0.7680835702360002, 0.5768467126934705, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.4641036054329678, 0.4936374712332476]
+
+    Val  Label Loss = 28579.36386680603
+    Val  Domain Loss = 38962.63070678711
+    Val  Regularization Loss = 2171.673857688904
+    Val  Total Loss = 69713.66843128204
+    Val  Composite Score 45658.25
+    Val  Label Accuracy [0.7727668465958558, 0.7068634618899653, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.6906393099286501, 0.6350857264562848]
+
+    Test  Label Loss = 16357.979843139648
+    Test  Domain Loss = 19473.463634490967
+    Test  Regularization Loss = 1081.9864432811737
+    Test  Total Loss = 36913.42992091179
+    Test  Composite Score 21520.25
+    Test  Label Accuracy [0.7348506954576403, 0.5655135568318419, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.6276159577881565]
+
+  EPOCH 26
+    Train  Label Loss = 66650.82400131226
+    Train  Domain Loss = 73916.21580505371
+    Train  Regularization Loss = 3448.194800376892
+    Train  Total Loss = 144015.23460674286
+    Train  Composite Score 67015.5
+    Train  Label Accuracy [0.7682415053472316, 0.5811109606967194, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.4908623257073237, 0.4667208158476603]
+
+    Val  Label Loss = 28522.126403808594
+    Val  Domain Loss = 38829.08536148071
+    Val  Regularization Loss = 2201.1210222244263
+    Val  Total Loss = 69552.33278751373
+    Val  Composite Score 45786.5
+    Val  Label Accuracy [0.7893667653375124, 0.6885395722902578, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.37854531255546486, 0.844165986297966]
+
+    Test  Label Loss = 16276.40079498291
+    Test  Domain Loss = 19126.544876098633
+    Test  Regularization Loss = 1096.6578142642975
+    Test  Total Loss = 36499.60348534584
+    Test  Composite Score 21737.75
+    Test  Label Accuracy [0.7538663554128976, 0.5520235074128489, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.8485864023672858]
+
+  EPOCH 27
+    Train  Label Loss = 66786.96478652954
+    Train  Domain Loss = 73844.22212219238
+    Train  Regularization Loss = 3441.1279678344727
+    Train  Total Loss = 144072.3148765564
+    Train  Composite Score 66926.25
+    Train  Label Accuracy [0.7688055593159153, 0.5778620098371012, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.45855331438111996, 0.4969315464103605]
+
+    Val  Label Loss = 28059.77547264099
+    Val  Domain Loss = 38905.76411437988
+    Val  Regularization Loss = 2151.769892692566
+    Val  Total Loss = 69117.30947971344
+    Val  Composite Score 46185.5
+    Val  Label Accuracy [0.8199837483313018, 0.6646408334856516, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.4323240211565085, 0.7849916580881048]
+
+    Test  Label Loss = 15804.928791046143
+    Test  Domain Loss = 19279.560874938965
+    Test  Regularization Loss = 1072.0697515010834
+    Test  Total Loss = 36156.55941748619
+    Test  Composite Score 22034.75
+    Test  Label Accuracy [0.79082774049217, 0.5034059035661814, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.7856608078719384]
+
+  EPOCH 28
+    Train  Label Loss = 66651.63000297546
+    Train  Domain Loss = 73921.85670471191
+    Train  Regularization Loss = 3411.752788543701
+    Train  Total Loss = 143985.23949623108
+    Train  Composite Score 66827.25
+    Train  Label Accuracy [0.765421235503813, 0.5782681286945535, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.4798519922386174, 0.47380533369432787]
+
+    Val  Label Loss = 28293.666303634644
+    Val  Domain Loss = 39007.880672454834
+    Val  Regularization Loss = 2202.818950653076
+    Val  Total Loss = 69504.36592674255
+    Val  Composite Score 45822.5
+    Val  Label Accuracy [0.7931975158163561, 0.6847011515262292, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.05189734123744276, 0.9193851833445742]
+
+    Test  Label Loss = 16130.903898239136
+    Test  Domain Loss = 18949.1577835083
+    Test  Regularization Loss = 1097.5037679672241
+    Test  Total Loss = 36177.56544971466
+    Test  Composite Score 21671.75
+    Test  Label Accuracy [0.7491489154751483, 0.5532255910244424, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.9307283682127705]
+
+  EPOCH 29
+    Train  Label Loss = 66706.41229820251
+    Train  Domain Loss = 73770.91687011719
+    Train  Regularization Loss = 3406.3160123825073
+    Train  Total Loss = 143883.6451807022
+    Train  Composite Score 67140.75
+    Train  Label Accuracy [0.769166553855873, 0.5839537926988855, 0.0, 0.0]
+    Train  Domain Accuracy [0.0, 0.4876359370064528, 0.4715716799783403]
+
+    Val  Label Loss = 28431.087364196777
+    Val  Domain Loss = 39293.94898223877
+    Val  Regularization Loss = 2165.6531839370728
+    Val  Total Loss = 69890.68953037262
+    Val  Composite Score 45833.0
+    Val  Label Accuracy [0.794155203436067, 0.6838329373057942, 0.0, 0.0]
+    Val  Domain Accuracy [0.0, 0.9998225125128678, 0.0]
+
+    Test  Label Loss = 16262.724868774414
+    Test  Domain Loss = 20626.622051239014
+    Test  Regularization Loss = 1078.9867813587189
+    Test  Total Loss = 37968.33370137215
+    Test  Composite Score 21639.5
+    Test  Label Accuracy [0.745404143565801, 0.5577667957793508, 0.0, 0.0]
+    Test  Domain Accuracy [0.0, 0.0, 0.0]

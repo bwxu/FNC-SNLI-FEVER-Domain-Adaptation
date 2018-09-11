@@ -76,21 +76,21 @@ EXTRA_SAMPLES_PER_EPOCH = 1
 RATIO_LOSS = 0.5
 
 # CNN feature paramters
-EMBEDDING_PATH = "GoogleNews-vectors-negative300.bin"
+EMBEDDING_PATH = "data/GoogleNews-vectors-negative300.bin"
 EMBEDDING_DIM = 300
 
 # File paths
-FNC_TRAIN_STANCES = "fnc_data/train_stances.csv"
-FNC_TRAIN_BODIES = "fnc_data/train_bodies.csv"
-FNC_TEST_STANCES = "fnc_data/competition_test_stances.csv"
-FNC_TEST_BODIES = "fnc_data/competition_test_bodies.csv"
+FNC_TRAIN_STANCES = "data/fnc_data/train_stances.csv"
+FNC_TRAIN_BODIES = "data/fnc_data/train_bodies.csv"
+FNC_TEST_STANCES = "data/fnc_data/competition_test_stances.csv"
+FNC_TEST_BODIES = "data/fnc_data/competition_test_bodies.csv"
 
-SNLI_TRAIN = 'snli_data/snli_1.0_train.jsonl' 
-SNLI_VAL = 'snli_data/snli_1.0_dev.jsonl'
-SNLI_TEST = 'snli_data/snli_1.0_test.jsonl'
+SNLI_TRAIN = 'data/snli_data/snli_1.0_train.jsonl' 
+SNLI_VAL = 'data/snli_data/snli_1.0_dev.jsonl'
+SNLI_TEST = 'data/snli_data/snli_1.0_test.jsonl'
 
-FEVER_TRAIN = "fever_data/train.jsonl"
-FEVER_WIKI = "fever_data/wiki-pages"
+FEVER_TRAIN = "data/fever_data/train.jsonl"
+FEVER_WIKI = "data/fever_data/wiki-pages"
 
 # Model parameters
 rand0 = random.Random(0)
