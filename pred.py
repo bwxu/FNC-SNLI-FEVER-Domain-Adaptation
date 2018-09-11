@@ -1,17 +1,3 @@
-
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-
 import math
 import random
 import tensorflow as tf
@@ -27,12 +13,12 @@ from util import get_fnc_data, get_snli_data, get_fever_data, get_vectorizers, g
 from util import get_relational_feature_vectors, remove_stop_words, get_average_embeddings, print_model_results, remove_data_with_label
 
 # Data Processing Params
-PICKLE_SAVE_FOLDER = "pickle_data/2_label_only_fever_a_d/"
+PICKLE_SAVE_FOLDER = "pickle_data/test/"
 PICKLE_LOG_FILE = PICKLE_SAVE_FOLDER + "log.txt"
 
 # Saving Parameters
-MODEL_NAME = "fever_tf_2"
-SAVE_FOLDER = "models/apr_25/" + MODEL_NAME + "/"
+MODEL_NAME = "test_all_data"
+SAVE_FOLDER = "models/test/" + MODEL_NAME + "/"
 PREDICTION_FILE = SAVE_FOLDER + MODEL_NAME + ".csv"
 SAVE_MODEL_PATH = SAVE_FOLDER + MODEL_NAME + ".ckpt"
 TRAINING_LOG_FILE = SAVE_FOLDER + "training.txt"
@@ -47,8 +33,8 @@ USE_UNRELATED_LABEL = False
 USE_DISCUSS_LABEL = False
 
 # Select train and val datasets
-USE_FNC_DATA = False
-USE_SNLI_DATA = False
+USE_FNC_DATA = True
+USE_SNLI_DATA = True
 USE_FEVER_DATA = True
 
 # Select test dataset
@@ -125,19 +111,18 @@ LR_FACTOR = 0.01
 # CNN parameters
 FILTER_SIZES = [2, 3, 4]
 NUM_FILTERS = 128
-#CNN_INPUT_LENGTH = 300
 CNN_HEADLINE_LENGTH = 50
 CNN_BODY_LENGTH = 500
 
 def process_data():
    with open(PICKLE_LOG_FILE, 'w') as f:
         # Save parameters to log file
-        vals = [USE_TF_VECTORS, ADD_FEATURES_TO_LABEL_PRED, USE_RELATIONAL_FEATURE_VECTORS, USE_AVG_EMBEDDINGS, USE_CNN_VECTORS \
+        vals = [USE_TF_VECTORS, ADD_FEATURES_TO_LABEL_PRED, USE_RELATIONAL_FEATURE_VECTORS, USE_AVG_EMBEDDINGS, USE_CNN_FEATURES, \
                 USE_FNC_DATA, USE_SNLI_DATA, USE_FEVER_DATA, USE_UNRELATED_LABEL, USE_DISCUSS_LABEL, TEST_DATASET]
-        print("USE_TF_VECTORS, ADD_FEATURES_TO_LABEL_PRED, USE_RELATIONAL_FEATURE_VECTORS, USE_AVG_EMBEDDINGS, USE_CNN_VECTORS \
+        print("USE_TF_VECTORS, ADD_FEATURES_TO_LABEL_PRED, USE_RELATIONAL_FEATURE_VECTORS, USE_AVG_EMBEDDINGS, USE_CNN_FEATURES \
                USE_FNC_DATA, USE_SNLI_DATA, USE_FEVER_DATA, USE_UNRELATED_LABEL, USE_DISCUSS_LABEL, TEST_DATASET")
         print(vals)
-        f.write("USE_TF_VECTORS, ADD_FEATURES_TO_LABEL_PRED, USE_RELATIONAL_FEATURE_VECTORS, USE_AVG_EMBEDDINGS, USE_CNN_VECTORS \
+        f.write("USE_TF_VECTORS, ADD_FEATURES_TO_LABEL_PRED, USE_RELATIONAL_FEATURE_VECTORS, USE_AVG_EMBEDDINGS, USE_CNN_FEATURES \
                  USE_FNC_DATA, USE_SNLI_DATA, USE_FEVER_DATA, USE_UNRELATED_LABEL, USE_DISCUSS_LABEL, TEST_DATASET\n")
         f.write(', '.join(str(val) for val in vals) + "\n")
 
@@ -1033,7 +1018,7 @@ def train_model():
                 #save_predictions(test_l_pred, test_labels, PREDICTION_FILE)
 
 if __name__ == "__main__":
-    #process_data()
+    process_data()
     train_model()
 
 
