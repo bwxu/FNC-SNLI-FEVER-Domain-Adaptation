@@ -219,7 +219,6 @@ def get_relevant_articles(wikidata_path, article_list):
 
     wiki_files = [os.path.join(wikidata_path, f)
                   for f in os.listdir(wikidata_path)]
-    print(wiki_files[:10])
 
     total_num_files = 0
     for file in wiki_files:
