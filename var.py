@@ -1,15 +1,15 @@
-# Data Processing Params
+# Data processing save parameters
 PICKLE_SAVE_FOLDER = "pickle_data/test/"
 PICKLE_LOG_FILE = PICKLE_SAVE_FOLDER + "log.txt"
 
-# Saving Parameters
+# Model save parameters
 MODEL_NAME = "test_all_data"
 SAVE_FOLDER = "models/test/" + MODEL_NAME + "/"
 PREDICTION_FILE = SAVE_FOLDER + MODEL_NAME + ".csv"
 SAVE_MODEL_PATH = SAVE_FOLDER + MODEL_NAME + ".ckpt"
 TRAINING_LOG_FILE = SAVE_FOLDER + "training.txt"
 
-#PRETRAINED_MODEL_PATH = "models/snli_pretrain/snli_pretrain.ckpt"
+# Path to the ckpt of a saved model to load
 PRETRAINED_MODEL_PATH = None
 
 # Model options
@@ -32,10 +32,13 @@ if TEST_DATASET == "SNLI" and not USE_SNLI_DATA:
 if TEST_DATASET == "FEVER" and not USE_FEVER_DATA:
     raise Exception("Must use dataset to use test data")
 
+# Only train TF vectorizer with FNC data
 ONLY_VECT_FNC = True
 
+# Use equal numbers of agree and disagree data
 BALANCE_LABELS = True
 
+# Use Domain Adaptation
 USE_DOMAINS = True
 
 # One of these must be selected as the primary input for training
@@ -110,4 +113,20 @@ FNC_LABELS_REV = {0: 'agree', 1: 'disagree', 2: 'discuss', 3: 'unrelated'}
 SNLI_LABELS = {'entailment': 0, 'contradiction': 1, 'neutral': 2}
 FEVER_LABELS = {'SUPPORTS': 0, 'REFUTES': 1}
 DOMAIN_MAPPING = {'FNC': 0, 'SNLI': 1, 'FEVER': 2}
+# CNN feature paramters
+EMBEDDING_PATH = "data/GoogleNews-vectors-negative300.bin"
+EMBEDDING_DIM = 300
+
+# File paths
+FNC_TRAIN_STANCES = "data/fnc_data/train_stances.csv"
+FNC_TRAIN_BODIES = "data/fnc_data/train_bodies.csv"
+FNC_TEST_STANCES = "data/fnc_data/competition_test_stances.csv"
+FNC_TEST_BODIES = "data/fnc_data/competition_test_bodies.csv"
+
+SNLI_TRAIN = 'data/snli_data/snli_1.0_train.jsonl' 
+SNLI_VAL = 'data/snli_data/snli_1.0_dev.jsonl'
+SNLI_TEST = 'data/snli_data/snli_1.0_test.jsonl'
+
+FEVER_TRAIN = "data/fever_data/train.jsonl"
+FEVER_WIKI = "data/fever_data/wiki-pages"
 
