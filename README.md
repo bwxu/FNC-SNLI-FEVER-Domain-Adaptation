@@ -129,12 +129,12 @@ urllib3==1.22
 Werkzeug==0.14.1  
 
 ## File and Folder Descriptions
-**data**: Folder containing original FNC, SNLI, FEVER, and Word2Vec data
-**flip_gradient.py**: File defining the gradient reversal layer used by domain adaptation
-**models**: Folder used to save trained models
-**pickle_data**: Folder used to save pickled data from process_data.py
-**process_data.py**: Used to process raw training data into usable pickle files
-**train_model.py**: Trains models for task prediction from pickled data
-**util.py**: Provides functions for process_data.py and train_model.py
-**var.py**: Contians parameters used to run process_data.py and train_model.py
+**data**: Folder containing original FNC, SNLI, FEVER, and Word2Vec data  
+**flip_gradient.py**: File defining the gradient reversal layer used by domain adaptation  
+**models**: Folder used to save trained models  
+**pickle_data**: Folder used to save pickled data from process_data.py  
+**process_data.py**: Used to process raw training data into usable pickle files  
+**train_model.py**: Trains models for task prediction from pickled data  
+**util.py**: Provides functions for process_data.py and train_model.py  
+**var.py**: Contians parameters used to run process_data.py and train_model.py  
 
