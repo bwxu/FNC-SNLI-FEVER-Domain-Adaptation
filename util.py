@@ -16,12 +16,13 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 STOP_WORDS = set(nltk.corpus.stopwords.words('english'))
 
+
 def open_csv(path):
     '''
     HELPER FUNCTION
 
     Opens a CSV and returns a list of rows representing the CSV.
-    
+
     Inputs:
       path: path to the csv file
     Outputs:
@@ -36,7 +37,7 @@ def get_fnc_data(stances_path, bodies_path):
     '''
     Parses the FNC data and returns the information in a usable
     format.
-    
+
     Inputs:
       stances_path: path to FNC stances CSV
       bodies_path: path to FNC bodies CSV
@@ -89,7 +90,7 @@ def get_snli_examples(jsonl_path, skip_no_majority=True,
       skip_no_majority: boolean indicating whether to skip data
         point if there's no majority label agreement
       limit: limit on amount of data to extract from SNLI
-      use_neutral: boolean indicating whether to get data with 
+      use_neutral: boolean indicating whether to get data with
         neutral labels or not.
     Outputs:
       examples: list of tuples where each tuple contains the
@@ -152,7 +153,7 @@ def extract_fever_jsonl_data(path):
 
     Extracts lists of headlines, labels, articles, and a set of
     all distinct claims from a given FEVER jsonl file.
-    
+
     Inputs:
       path: path to FEVER jsonl file
     Outputs:
@@ -179,7 +180,7 @@ def extract_fever_jsonl_data(path):
                 evidence_articles = set()
                 for evidence in data["all_evidence"]:
                     article_name = unicodedata.normalize('NFC', evidence[2])
-                    
+
                     # Ignore evidence if the same article has
                     # already been used before as we are using
                     # the entire article and not the specified
@@ -242,7 +243,7 @@ def get_relevant_articles(wikidata_path, article_list):
 
 def get_fever_data(jsonl_path, wikidata_path):
     '''
-    Extracts claims, article text, corresponding labels, and 
+    Extracts claims, article text, corresponding labels, and
     a set of unique claims from the input FEVER jsonl data and
     provided wiki dump.
 
@@ -296,8 +297,8 @@ def get_vectorizers(train_data, MAX_FEATURES):
 def get_feature_vectors(headlines, bodies, bow_vectorizer,
                         tfreq_vectorizer, tfidf_vectorizer):
     '''
-    Convert data into feature vectors where the first 
-    NUM_FEATURES elements is the TF vector for the first 
+    Convert data into feature vectors where the first
+    NUM_FEATURES elements is the TF vector for the first
     document and the next NUM_FEATURES elements is the TF
     vector for the second document. The cosine distance
     between the TFIDF values of the vectors are then appended
@@ -417,14 +418,14 @@ def get_composite_score(pred, labels):
     '''
     Calculates FNC composite score given predictions and labels.
     The scoring is as follows:
-      0.25 points for a correct related/unrelated label where 
+      0.25 points for a correct related/unrelated label where
         related means agree, disagree, or discuss
       0.75 additional points for every correct related label
 
     Inputs:
-      pred: list of predictions (see FNC_LABELS in var.py for 
+      pred: list of predictions (see FNC_LABELS in var.py for
         mapping)
-      labels: list of expected predictions (see FNC_LABELS in 
+      labels: list of expected predictions (see FNC_LABELS in
         var.py for mapping)
     '''
     score = 0
@@ -441,21 +442,19 @@ def get_composite_score(pred, labels):
     return score
 
 
-def get_prediction_accuracies(pred, labels):
+def get_prediction_accuracies(pred, labels, num_labels):
     '''
-    Calculates the accuracy of the predictions for each label. 
-    Uses FNC_LABELS in var.py as the possible labels to 
+    Calculates the accuracy of the predictions for each label.
+    Uses FNC_LABELS in var.py as the possible labels to
     consider.
 
     Inputs:
       pred: model predictions
       labels: expected labels
     Outputs:
-      len(var.FNC_LABELS) sized list with accuracies for each 
+      len(var.FNC_LABELS) sized list with accuracies for each
       label.
     '''
-    num_labels = len(var.FNC_LABELS)
-
     correct = [0 for _ in range(num_labels)]
     total = [0 for _ in range(num_labels)]
 
@@ -479,7 +478,7 @@ def remove_stop_words(sentences):
     Inputs:
       sentences: list of sentences to tokenize
     Outputs:
-      sentences: list of list of tokens corresponding to each 
+      sentences: list of list of tokens corresponding to each
         original sentence
     '''
     sentences = [[word for word in nltk.word_tokenize(
@@ -498,7 +497,7 @@ def get_average_embeddings(sentences, embeddings, embedding_size=300):
       embeddings: word2vec embeddings
       embedding_size: size of embeddings for each word
     Outputs:
-      avg_embeddings: list of embedding_size vectors where each 
+      avg_embeddings: list of embedding_size vectors where each
         vector corresponds to an original sentence.
     '''
     sentences = [nltk.word_tokenize(sentence.lower())
@@ -566,7 +565,8 @@ def print_model_results(f, set_name, pred, labels, d_pred,
         str(composite_score) +
         "\n")
 
-    pred_accuracies = get_prediction_accuracies(pred, labels)
+    pred_accuracies = get_prediction_accuracies(
+        pred, labels, len(var.FNC_LABELS))
     print("    " + set_name + "  Label Accuracy", pred_accuracies)
     f.write(
         "    " +
@@ -577,7 +577,8 @@ def print_model_results(f, set_name, pred, labels, d_pred,
         "]\n")
 
     if use_domains:
-        domain_accuracies = get_prediction_accuracies(d_pred, d_labels, 3)
+        domain_accuracies = get_prediction_accuracies(
+            d_pred, d_labels, len(var.DOMAIN_MAPPING))
         print("    " + set_name + "  Domain Accuracy", domain_accuracies)
         f.write(
             "    " +
@@ -650,7 +651,7 @@ def select_best_body_sentences(headlines, bodies, tfidf_vectorizer):
       tfidf_vectorizer: trained tfidf vectorizer
     Outputs:
       best_sents: list of sentences with each sentence
-        being the best sentence for each of the given 
+        being the best sentence for each of the given
         headlines
     '''
     best_sents = []
@@ -680,5 +681,3 @@ def select_best_body_sentences(headlines, bodies, tfidf_vectorizer):
         best_sents.append(best_sent)
 
     return best_sents
-
-
