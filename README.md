@@ -5,15 +5,19 @@ This code creates models to apply domain adaptation between the FNC, SNLI,
 and FEVER datasets. In particular, we believe that the following labels are 
 similar and we can use the datasets to help solve each other's tasks.
 
+<pre>
 FNC     agree       disagree       discuss   
 SNLI    entailment  contradiction  neutral   
 FEVER   SUPPORTS    REFUTES    
+</pre>
 
 To correlate the datasets, we assumed the following were similar
 
+<pre>
 FNC     headline    article  
 SNLI    sentence1   sentence2  
 FEVER   claim       wikipedia article  
+</pre>
 
 In particular, this code applies the domain adaptation model specified in
 this paper https://arxiv.org/abs/1409.7495. The paper is specifically 
