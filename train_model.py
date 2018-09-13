@@ -20,11 +20,10 @@ def train_model():
         raise Exception("Specified SAVE_FOLDER doesn't exist")
 
     with open(var.TRAINING_LOG_FILE, 'w') as f:
-        # SAVE PARAMS
         copyfile('var.py', os.path.join(var.SAVE_FOLDER, 'var.py'))
 
-        # Take last VALIDATION_SET_SIZE PROPORTION of train set as validation
-        # set
+        ### LOAD DATA ###
+
         print("Loading train vectors...")
         f.write("Loading train vectors...\n")
         train_sizes = np.load(var.PICKLE_SAVE_FOLDER + "train_sizes.npy")
@@ -125,9 +124,7 @@ def train_model():
         print("SIZE_TEST = ", SIZE_TEST)
         f.write("SIZE_TEST = " + str(SIZE_TEST) + "\n")
 
-        ################
-        # DEFINE MODEL #
-        ################
+        ### DEFINE MODEL ###
 
         best_loss = float('Inf')
 
@@ -154,19 +151,24 @@ def train_model():
             gr_pl = tf.placeholder(tf.float32, [], name="gr_pl")
             lr_pl = tf.placeholder(tf.float32, [], name="lr_pl")
 
+            # If the model uses tf vectors, relational vectors, or average
+            # embeddings feed the features to a hidden layer 
             if var.USE_TF_VECTORS or var.USE_RELATIONAL_FEATURE_VECTORS or var.USE_AVG_EMBEDDINGS:
                 features_pl = tf.placeholder(
                     tf.float32, [
                         None, FEATURE_VECTOR_SIZE], name="features_pl")
                 batch_size = tf.shape(features_pl)[0]
 
-            if var.ADD_FEATURES_TO_LABEL_PRED:
-                p_features_pl = tf.placeholder(
-                    tf.float32, [
-                        None, len(
-                            train_tf_vectors[0])], name="p_features_pl")
+                hidden_layer = tf.nn.dropout(
+                    tf.nn.relu(
+                        tf.layers.dense(
+                            features_pl,
+                            var.HIDDEN_SIZE)),
+                    keep_prob=keep_prob_pl)
 
-            if var.USE_CNN_FEATURES:
+            # If inputs for a CNN model are given, create a CNN model that
+            # convolves the headline and body inputs
+            elif var.USE_CNN_FEATURES:
                 embedding_matrix_pl = tf.placeholder(
                     tf.float32, [len(word_index) + 1, var.EMBEDDING_DIM])
                 W = tf.Variable(
@@ -183,17 +185,14 @@ def train_model():
                     tf.int64, [None, len(x_train_bodies[0])])
                 batch_size = tf.shape(headline_words_pl)[0]
 
-            ### Feature Extraction ###
-
-            # TF and TFIDF features fully connected hidden layer of HIDDEN_SIZE
-            if var.USE_CNN_FEATURES:
                 pooled_outputs = []
 
                 headline_embeddings = tf.nn.embedding_lookup(
                     embedding_init, headline_words_pl)
                 body_embeddings = tf.nn.embedding_lookup(
                     embedding_init, body_words_pl)
-
+                
+                # Convolve headline
                 for filter_size in var.FILTER_SIZES:
                     b_head = tf.Variable(tf.constant(
                         0.1, shape=[var.NUM_FILTERS]))
@@ -204,6 +203,7 @@ def train_model():
                         relu_head, var.CNN_HEADLINE_LENGTH - filter_size + 1, 1)
                     pooled_outputs.append(pool_head)
 
+                # Convolve Body
                 for filter_size in var.FILTER_SIZES:
                     b_body = tf.Variable(tf.constant(
                         0.1, shape=[var.NUM_FILTERS]))
@@ -219,24 +219,20 @@ def train_model():
                 cnn_out_vector = tf.nn.dropout(cnn_out_vector, keep_prob_pl)
                 hidden_layer = tf.layers.dense(cnn_out_vector, var.HIDDEN_SIZE)
 
-            else:
-                hidden_layer = tf.nn.dropout(
-                    tf.nn.relu(
-                        tf.layers.dense(
-                            features_pl,
-                            var.HIDDEN_SIZE)),
-                    keep_prob=keep_prob_pl)
-
-            ### Label Prediction ###
-
-            # Fully connected hidden layer with size based on LABEL_HIDDEN_SIZE
-            # with original features concated
+            # If addiitonal features are to be added to the hidden layer,
+            # declare the placeholder
             if var.ADD_FEATURES_TO_LABEL_PRED:
+                p_features_pl = tf.placeholder(
+                    tf.float32, [
+                        None, len(
+                            train_tf_vectors[0])], name="p_features_pl")
+
                 hidden_layer_p = tf.concat(
                     [p_features_pl, tf.identity(hidden_layer)], axis=1)
             else:
                 hidden_layer_p = hidden_layer
 
+            # Add additional hidden layer if specified
             if var.LABEL_HIDDEN_SIZE is not None:
                 hidden_layer_p = tf.nn.dropout(
                     tf.nn.relu(
@@ -245,6 +241,7 @@ def train_model():
                             var.LABEL_HIDDEN_SIZE)),
                     keep_prob=keep_prob_pl)
 
+            # Feed into a final hidden layer to get logits
             logits_flat = tf.nn.dropout(
                 tf.contrib.layers.linear(
                     hidden_layer_p,
@@ -259,13 +256,13 @@ def train_model():
             softmaxed_logits = tf.nn.softmax(logits)
             predict = tf.argmax(softmaxed_logits, axis=1)
 
-            ### Domain Prediction ###
-
+            # If domain adaptation is to be used, attach it after features
+            # are extracted
             if var.USE_DOMAINS:
                 # Gradient reversal layer
                 hidden_layer_d = flip_gradient(hidden_layer, gr_pl)
 
-                # Hidden layer size based on DOMAIN_HIDDEN_SIZE
+                # Add a hidden layer to domain component if specified
                 if var.DOMAIN_HIDDEN_SIZE is None:
                     domain_layer = hidden_layer_d
                 else:
@@ -273,9 +270,10 @@ def train_model():
                         tf.nn.relu(
                             tf.contrib.layers.linear(
                                 hidden_layer_d,
-                                DOMAIN_HIDDEN_SIZE)),
+                                var.DOMAIN_HIDDEN_SIZE)),
                         keep_prob=keep_prob_pl)
 
+                # Last hidden layer to determine logits for domain pred
                 d_logits_flat = tf.nn.dropout(
                     tf.contrib.layers.linear(
                         domain_layer,
@@ -292,26 +290,27 @@ def train_model():
                 softmaxed_d_logits = tf.nn.softmax(d_logits)
                 d_predict = tf.argmax(softmaxed_d_logits, axis=1)
 
+            # If domain adaptation is not used, set d_loss and d_predict
+            # to 0 to indicate this.
             else:
                 d_loss = tf.constant(0.0)
                 d_predict = tf.constant(0.0)
 
-            ### Regularization ###
-            # L2 loss
+            # Add L2 loss regularization to the model
             tf_vars = tf.trainable_variables()
             l2_loss = tf.add_n([tf.nn.l2_loss(v)
                                 for v in tf_vars if 'bias' not in v.name]) * var.L2_ALPHA
 
-            # Define optimiser
+            # Define what optimizer to use to train the model
             opt_func = tf.train.AdamOptimizer(lr_pl)
             grads, _ = tf.clip_by_global_norm(tf.gradients(
                 var.RATIO_LOSS * p_loss + (1 - var.RATIO_LOSS) * d_loss + l2_loss, tf_vars), var.CLIP_RATIO)
             opt_op = opt_func.apply_gradients(zip(grads, tf_vars))
 
-            # Intialize saver to save model
+            # Intialize saver to save model checkpoints
             saver = tf.train.Saver()
 
-            ### Training Model ###
+            ### Model Training ###
 
             print("Training Model...")
             f.write("Training Model...\n")
@@ -332,8 +331,15 @@ def train_model():
                     f.write("\n  EPOCH " + str(epoch))
 
                     # Adaption Parameter and Learning Rate
+                    # https://arxiv.org/pdf/1409.7495.pdf
                     p = float(epoch) / var.TOTAL_EPOCHS
+
+                    # Define gradient reversal to steadily increase
+                    # influence of gr to allow classifier to train
+                    # reasonably before application
                     gr = 2. / (1. + np.exp(-10. * p)) - 1
+                    # Define learning rate to decay over time to 
+                    # promote convergence
                     lr = var.LR_FACTOR / (1. + 10 * p)**0.75
 
                     train_loss, train_p_loss, train_d_loss, train_l2_loss = 0, 0, 0, 0
@@ -368,7 +374,8 @@ def train_model():
                         for i in snli_indices:
                             assert train_domains[i] == 1
 
-                    # Use equal numbers of FNC and other data per epoch
+                    # Fix the ratio of FNC to data from other sources to be 
+                    # var.EXTRA_SAMPLES_PER_EPOCH
                     if var.EXTRA_SAMPLES_PER_EPOCH is not None:
 
                         # Use equal numbers of agree/disagree labels per epoch
@@ -515,87 +522,87 @@ def train_model():
                         var.USE_DOMAINS)
 
                     # Record loss and accuracy for val
-                    if var.VALIDATION_SET_SIZE is not None and var.VALIDATION_SET_SIZE > 0:
-                        val_indices = list(range(SIZE_VAL))
-                        val_loss, val_p_loss, val_d_loss, val_l2_loss = 0, 0, 0, 0
-                        val_l_pred, val_d_pred = [], []
+                    val_indices = list(range(SIZE_VAL))
+                    val_loss, val_p_loss, val_d_loss, val_l2_loss = 0, 0, 0, 0
+                    val_l_pred, val_d_pred = [], []
 
-                        for i in range(int(SIZE_VAL) // var.BATCH_SIZE + 1):
-                            batch_indices = val_indices[i *
-                                                        var.BATCH_SIZE: (i + 1) * var.BATCH_SIZE]
-                            if len(batch_indices) == 0:
-                                break
-                            batch_stances = [val_labels[i]
-                                             for i in batch_indices]
-                            batch_domains = [val_domains[i]
-                                             for i in batch_indices]
+                    for i in range(int(SIZE_VAL) // var.BATCH_SIZE + 1):
+                        batch_indices = val_indices[i *
+                                                    var.BATCH_SIZE: (i + 1) * var.BATCH_SIZE]
+                        if len(batch_indices) == 0:
+                            break
+                        batch_stances = [val_labels[i]
+                                         for i in batch_indices]
+                        batch_domains = [val_domains[i]
+                                         for i in batch_indices]
 
-                            batch_feed_dict = {stances_pl: batch_stances,
-                                               keep_prob_pl: 1.0}
+                        batch_feed_dict = {stances_pl: batch_stances,
+                                           keep_prob_pl: 1.0}
 
-                            if var.USE_DOMAINS:
-                                batch_feed_dict[gr_pl] = 1.0
-                                batch_feed_dict[domains_pl] = batch_domains
+                        if var.USE_DOMAINS:
+                            batch_feed_dict[gr_pl] = 1.0
+                            batch_feed_dict[domains_pl] = batch_domains
 
-                            if var.USE_TF_VECTORS or var.ADD_FEATURES_TO_LABEL_PRED:
-                                batch_features = [val_tf_vectors[i]
-                                                  for i in batch_indices]
-                                if var.USE_TF_VECTORS:
-                                    batch_feed_dict[features_pl] = batch_features
-                                if var.ADD_FEATURES_TO_LABEL_PRED:
-                                    batch_feed_dict[p_features_pl] = batch_features
+                        if var.USE_TF_VECTORS or var.ADD_FEATURES_TO_LABEL_PRED:
+                            batch_features = [val_tf_vectors[i]
+                                              for i in batch_indices]
+                            if var.USE_TF_VECTORS:
+                                batch_feed_dict[features_pl] = batch_features
+                            if var.ADD_FEATURES_TO_LABEL_PRED:
+                                batch_feed_dict[p_features_pl] = batch_features
 
-                            if var.USE_RELATIONAL_FEATURE_VECTORS:
-                                batch_relation_vectors = [
-                                    val_relation_vectors[i] for i in batch_indices]
-                                batch_feed_dict[features_pl] = batch_relation_vectors
+                        if var.USE_RELATIONAL_FEATURE_VECTORS:
+                            batch_relation_vectors = [
+                                val_relation_vectors[i] for i in batch_indices]
+                            batch_feed_dict[features_pl] = batch_relation_vectors
 
-                            if var.USE_AVG_EMBEDDINGS:
-                                batch_avg_embed_vectors = [
-                                    val_avg_embed_vectors[i] for i in batch_indices]
-                                batch_feed_dict[features_pl] = batch_avg_embed_vectors
+                        if var.USE_AVG_EMBEDDINGS:
+                            batch_avg_embed_vectors = [
+                                val_avg_embed_vectors[i] for i in batch_indices]
+                            batch_feed_dict[features_pl] = batch_avg_embed_vectors
 
-                            if var.USE_CNN_FEATURES:
-                                batch_x_headlines = [
-                                    x_val_headlines[i] for i in batch_indices]
-                                batch_x_bodies = [x_val_bodies[i]
-                                                  for i in batch_indices]
-                                batch_feed_dict[headline_words_pl] = batch_x_headlines
-                                batch_feed_dict[body_words_pl] = batch_x_bodies
-                                batch_feed_dict[embedding_matrix_pl] = embedding_matrix
+                        if var.USE_CNN_FEATURES:
+                            batch_x_headlines = [
+                                x_val_headlines[i] for i in batch_indices]
+                            batch_x_bodies = [x_val_bodies[i]
+                                              for i in batch_indices]
+                            batch_feed_dict[headline_words_pl] = batch_x_headlines
+                            batch_feed_dict[body_words_pl] = batch_x_bodies
+                            batch_feed_dict[embedding_matrix_pl] = embedding_matrix
 
-                            # Record loss and accuracy information for test
-                            lpred, dpred, ploss, dloss, l2loss = sess.run(
-                                [predict, d_predict, p_loss, d_loss, l2_loss], feed_dict=batch_feed_dict)
+                        # Record loss and accuracy information for test
+                        lpred, dpred, ploss, dloss, l2loss = sess.run(
+                            [predict, d_predict, p_loss, d_loss, l2_loss], feed_dict=batch_feed_dict)
 
-                            # Total loss for current epoch
-                            val_p_loss += ploss
-                            val_d_loss += dloss
-                            val_l2_loss += l2loss
-                            val_loss += ploss + dloss + l2loss
-                            val_l_pred.extend(lpred)
-                            if var.USE_DOMAINS:
-                                val_d_pred.extend(dpred)
+                        # Total loss for current epoch
+                        val_p_loss += ploss
+                        val_d_loss += dloss
+                        val_l2_loss += l2loss
+                        val_loss += ploss + dloss + l2loss
+                        val_l_pred.extend(lpred)
+                        if var.USE_DOMAINS:
+                            val_d_pred.extend(dpred)
 
-                        print_model_results(
-                            f,
-                            "Val",
-                            val_l_pred,
-                            val_labels,
-                            val_d_pred,
-                            val_domains,
-                            val_p_loss,
-                            val_d_loss,
-                            val_l2_loss,
-                            var.USE_DOMAINS)
+                    print_model_results(
+                        f,
+                        "Val",
+                        val_l_pred,
+                        val_labels,
+                        val_d_pred,
+                        val_domains,
+                        val_p_loss,
+                        val_d_loss,
+                        val_l2_loss,
+                        var.USE_DOMAINS)
 
-                        # Save best test label loss model
-                        if val_p_loss < best_loss:
-                            best_loss = val_p_loss
-                            saver.save(sess, var.SAVE_MODEL_PATH)
-                            print("\n    New Best Val Loss")
-                            f.write("\n    New Best Val Loss\n")
+                    # Save best test label loss model
+                    if val_p_loss < best_loss:
+                        best_loss = val_p_loss
+                        saver.save(sess, var.SAVE_MODEL_PATH)
+                        print("\n    New Best Val Loss")
+                        f.write("\n    New Best Val Loss\n")
 
+                    # Record loss and accuracies for test
                     test_indices = list(range(SIZE_TEST))
                     test_loss, test_p_loss, test_d_loss, test_l2_loss = 0, 0, 0, 0
                     test_l_pred, test_d_pred = [], []
@@ -670,10 +677,6 @@ def train_model():
                         test_d_loss,
                         test_l2_loss,
                         var.USE_DOMAINS)
-
-                #saver.restore(sess, SAVE_MODEL_PATH)
-                #test_l_pred = sess.run([predict], feed_dict = test_feed_dict)
-                #save_predictions(test_l_pred, test_labels, PREDICTION_FILE)
 
 
 if __name__ == "__main__":
