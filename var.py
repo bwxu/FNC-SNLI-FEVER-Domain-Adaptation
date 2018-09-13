@@ -36,9 +36,10 @@ ONLY_VECT_FNC = True
 
 BALANCE_LABELS = True
 
-USE_DOMAINS = False
+USE_DOMAINS = True
 
-# One of these must be selected as the primary input
+# One of these must be selected as the primary input for training
+# but multiple may be selected when processing data
 USE_TF_VECTORS = True
 USE_RELATIONAL_FEATURE_VECTORS = False
 USE_AVG_EMBEDDINGS = False
