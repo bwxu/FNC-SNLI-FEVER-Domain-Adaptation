@@ -17,7 +17,7 @@ def process_data():
     data and save them into pickle files to be used by train_model.py. The
     pickle data will be saved into PICKLE_SAVE_FOLDER.
 
-    In order to extract data, the following must be stored in the data 
+    In order to extract data, the following must be stored in the data
     folder with the appropriate path set in var.py
       - trained Word2Vec embeddings
       - fnc data
@@ -266,7 +266,7 @@ def process_data():
             if VAL_SIZE_CAP is None:
                 VAL_SIZE_CAP = len(val_headlines)
 
-        # Get and filter test data
+        # Select what test data to use
         if var.TEST_DATASET == 'FNC':
             test_headlines = fnc_headlines_test
             test_bodies = fnc_bodies_test
@@ -326,15 +326,13 @@ def process_data():
             np.asarray(test_domains))
         del test_domains
 
-        # GET FEATURE VECTORS
-
         if var.USE_TF_VECTORS or var.ADD_FEATURES_TO_LABEL_PRED:
             print("Creating Vectorizers...")
             f.write("Creating Vectorizers...\n")
 
             vec_train_data = train_headlines + train_bodies
 
-            # Only train vectorizers with FNC data
+            # Only train TF & TFIDF vectorizers with FNC data
             if var.ONLY_VECT_FNC and var.USE_FNC_DATA:
                 vec_train_data = train_headlines[:train_sizes['fnc']
                                                  ] + fnc_bodies_train[:train_sizes['fnc']]
@@ -440,7 +438,6 @@ def process_data():
 
             print("  Removing Stop Words...")
             f.write("  Removing Stop Words...\n")
-            # Remove stopwords from training and test data
             train_headlines = remove_stop_words(train_headlines)
             train_bodies = remove_stop_words(train_bodies)
 
@@ -600,6 +597,7 @@ def process_data():
                 var.PICKLE_SAVE_FOLDER +
                 "embedding_matrix.npy",
                 embedding_matrix)
+
 
 if __name__ == "__main__":
     process_data()
