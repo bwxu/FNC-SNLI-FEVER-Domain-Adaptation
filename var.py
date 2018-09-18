@@ -1,13 +1,14 @@
 # Data processing save parameters
-PICKLE_SAVE_FOLDER = "pickle_data/test/"
+PICKLE_SAVE_FOLDER = "pickle_data/fever/"
 PICKLE_LOG_FILE = PICKLE_SAVE_FOLDER + "log.txt"
 
 # Model save parameters
-MODEL_NAME = "test_all_data"
-SAVE_FOLDER = "models/test/" + MODEL_NAME + "/"
-PREDICTION_FILE = SAVE_FOLDER + MODEL_NAME + ".csv"
-SAVE_MODEL_PATH = SAVE_FOLDER + MODEL_NAME + ".ckpt"
+MODEL_NAME = "fever_cnn"
+DATE_CREATED = "sept_18"
+SAVE_FOLDER = "models/" + DATE_CREATED + "/" + MODEL_NAME + "/"
+SAVE_MODEL_PATH = SAVE_FOLDER + MODEL_NAME
 TRAINING_LOG_FILE = SAVE_FOLDER + "training.txt"
+TEST_RESULTS_FILE = SAVE_FOLDER + "test_results.txt"
 
 # Path to the ckpt of a saved model to load
 PRETRAINED_MODEL_PATH = None
@@ -17,8 +18,8 @@ USE_UNRELATED_LABEL = False
 USE_DISCUSS_LABEL = False
 
 # Select train and val datasets
-USE_FNC_DATA = True
-USE_SNLI_DATA = True
+USE_FNC_DATA = False
+USE_SNLI_DATA = False
 USE_FEVER_DATA = True
 
 # Select test dataset
@@ -36,20 +37,20 @@ if TEST_DATASET == "FEVER" and not USE_FEVER_DATA:
 ONLY_VECT_FNC = True
 
 # Use equal numbers of agree and disagree data
-BALANCE_LABELS = True
+BALANCE_LABELS = False
 
 # Use Domain Adaptation
-USE_DOMAINS = True
+USE_DOMAINS = False
 
 # One of these must be selected as the primary input for training
 # but multiple may be selected when processing data
-USE_TF_VECTORS = True
+USE_TF_VECTORS = False
 USE_RELATIONAL_FEATURE_VECTORS = False
 USE_AVG_EMBEDDINGS = False
-USE_CNN_FEATURES = False
+USE_CNN_FEATURES = True
 
 # Adds TF vectors to features before label prediction
-ADD_FEATURES_TO_LABEL_PRED = True
+ADD_FEATURES_TO_LABEL_PRED = False
 
 # Training params
 EPOCHS = 30
@@ -65,23 +66,6 @@ if not USE_FNC_DATA and not USE_SNLI_DATA and not USE_FEVER_DATA:
 EXTRA_SAMPLES_PER_EPOCH = 1
 
 RATIO_LOSS = 0.5
-
-# CNN feature paramters
-EMBEDDING_PATH = "data/GoogleNews-vectors-negative300.bin"
-EMBEDDING_DIM = 300
-
-# File paths
-FNC_TRAIN_STANCES = "data/fnc_data/train_stances.csv"
-FNC_TRAIN_BODIES = "data/fnc_data/train_bodies.csv"
-FNC_TEST_STANCES = "data/fnc_data/competition_test_stances.csv"
-FNC_TEST_BODIES = "data/fnc_data/competition_test_bodies.csv"
-
-SNLI_TRAIN = 'data/snli_data/snli_1.0_train.jsonl' 
-SNLI_VAL = 'data/snli_data/snli_1.0_dev.jsonl'
-SNLI_TEST = 'data/snli_data/snli_1.0_test.jsonl'
-
-FEVER_TRAIN = "data/fever_data/train.jsonl"
-FEVER_WIKI = "data/fever_data/wiki-pages"
 
 import random
 
@@ -113,6 +97,7 @@ FNC_LABELS_REV = {0: 'agree', 1: 'disagree', 2: 'discuss', 3: 'unrelated'}
 SNLI_LABELS = {'entailment': 0, 'contradiction': 1, 'neutral': 2}
 FEVER_LABELS = {'SUPPORTS': 0, 'REFUTES': 1}
 DOMAIN_MAPPING = {'FNC': 0, 'SNLI': 1, 'FEVER': 2}
+
 # CNN feature paramters
 EMBEDDING_PATH = "data/GoogleNews-vectors-negative300.bin"
 EMBEDDING_DIM = 300

@@ -63,6 +63,7 @@ def process_data():
         # and test data
         if var.USE_FNC_DATA:
             print("EXTRACTING FNC DATA")
+            f.write("EXTRACTING FNC DATA\n")
             fnc_headlines_train, fnc_bodies_train, fnc_labels_train, fnc_body_ids_train = get_fnc_data(
                 var.FNC_TRAIN_STANCES, var.FNC_TRAIN_BODIES)
             fnc_headlines_test, fnc_bodies_test, fnc_labels_test, _ = get_fnc_data(
@@ -131,6 +132,7 @@ def process_data():
         # and test data
         if var.USE_FEVER_DATA:
             print("EXTRACTING FEVER DATA")
+            f.write("EXTRACTING FEVER DATA\n")
             fever_headlines, fever_bodies, fever_labels, fever_claim_set = \
                 get_fever_data(var.FEVER_TRAIN, var.FEVER_WIKI)
             fever_domains = [2 for _ in range(len(fever_headlines))]
@@ -200,6 +202,7 @@ def process_data():
         # and test data
         if var.USE_SNLI_DATA:
             print("EXTRACTING SNLI DATA")
+            f.write("EXTRACTING SNLI DATA\n")
             snli_s1_train, snli_s2_train, snli_labels_train = get_snli_data(
                 var.SNLI_TRAIN)
             snli_domains = [1 for _ in range(len(snli_s1_train))]

@@ -444,16 +444,16 @@ def get_composite_score(pred, labels):
 
 def get_prediction_accuracies(pred, labels, num_labels):
     '''
-    Calculates the accuracy of the predictions for each label.
+    Calculates the recalls of the predictions for each label.
     Uses FNC_LABELS in var.py as the possible labels to
     consider.
 
     Inputs:
       pred: model predictions
       labels: expected labels
+      num_labels: number of possible distinct labels
     Outputs:
-      len(var.FNC_LABELS) sized list with accuracies for each
-      label.
+      num_labels sized list with recalls for each label.
     '''
     correct = [0 for _ in range(num_labels)]
     total = [0 for _ in range(num_labels)]
@@ -469,6 +469,58 @@ def get_prediction_accuracies(pred, labels, num_labels):
             total[label] += 1
 
     return [correct[i] / total[i] for i in range(len(total))]
+
+
+def get_precision_values(pred, labels, num_labels):
+    '''
+    Calculates the precision of the predictions for each label.
+    Uses FNC_LABELS in var.py as the possible labels to
+    consider.
+
+    Inputs:
+      pred: model predictions
+      labels: expected labels
+      num_labels: number of possible distinct labels
+    Outputs:
+      num_labels sized list with precisions for each label.
+    '''
+    correct = [0 for _ in range(num_labels)]
+    total = [0 for _ in range(num_labels)]
+    
+    for i in range(len(pred)):
+        total[pred[i]] += 1
+        if pred[i] == labels[i]:
+            correct[labels[i]] += 1
+
+    for label in range(len(total)):
+        if total[label] == 0:
+            total[label] += 1
+
+    return [correct[i] / total[i] for i in range(len(total))]
+
+
+def get_f1_scores(pred, labels, num_labels):
+    '''
+    Calculates the f1 scores of the predictions for each label.
+    Uses FNC_LABELS in var.py as the possible labels to
+    consider.
+
+    Inputs:
+      pred: model predictions
+      labels: expected labels
+      num_labels: number of possible distinct labels
+    Outputs:
+      num_labels sized list with f1 scores for each label.
+    '''
+    recalls = get_prediction_accuracies(pred, labels, num_labels)
+    precisions = get_precision_values(pred, labels, num_labels)
+    f1 = [0 for _ in range(num_labels)]
+    for i in range(num_labels):
+        if recalls[i] == 0 or precisions[i] == 0:
+            continue
+        else:
+            f1[i] = 2./(1./recalls[i] + 1./precisions[i])
+    return f1
 
 
 def remove_stop_words(sentences):
@@ -574,6 +626,17 @@ def print_model_results(f, set_name, pred, labels, d_pred,
         "  Label Accuracy [" +
         ', '.join(
             str(acc) for acc in pred_accuracies) +
+        "]\n")
+
+    pred_f1 = get_f1_scores(
+        pred, labels, len(var.FNC_LABELS))
+    print("    " + set_name + "  Label F1", pred_f1)
+    f.write(
+        "    " +
+        set_name +
+        "  Label F1 [" +
+        ', '.join(
+            str(acc) for acc in pred_f1) +
         "]\n")
 
     if use_domains:

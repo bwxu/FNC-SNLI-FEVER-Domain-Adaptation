@@ -252,9 +252,9 @@ def train_model():
             # Label loss and prediction
             p_loss = tf.reduce_sum(
                 tf.nn.sparse_softmax_cross_entropy_with_logits(
-                    logits=logits, labels=stances_pl))
+                    logits=logits, labels=stances_pl), name="p_loss")
             softmaxed_logits = tf.nn.softmax(logits)
-            predict = tf.argmax(softmaxed_logits, axis=1)
+            predict = tf.argmax(softmaxed_logits, axis=1, name="p_predict")
 
             # If domain adaptation is to be used, attach it after features
             # are extracted
@@ -286,20 +286,20 @@ def train_model():
                 # Domain loss and prediction
                 d_loss = tf.reduce_sum(
                     tf.nn.sparse_softmax_cross_entropy_with_logits(
-                        logits=d_logits, labels=domains_pl))
+                        logits=d_logits, labels=domains_pl), name="d_loss")
                 softmaxed_d_logits = tf.nn.softmax(d_logits)
-                d_predict = tf.argmax(softmaxed_d_logits, axis=1)
+                d_predict = tf.argmax(softmaxed_d_logits, axis=1, name="d_predict")
 
             # If domain adaptation is not used, set d_loss and d_predict
             # to 0 to indicate this.
             else:
-                d_loss = tf.constant(0.0)
-                d_predict = tf.constant(0.0)
+                d_loss = tf.constant(0.0, name="d_loss")
+                d_predict = tf.constant(0.0, name="d_predict")
 
             # Add L2 loss regularization to the model
             tf_vars = tf.trainable_variables()
-            l2_loss = tf.add_n([tf.nn.l2_loss(v)
-                                for v in tf_vars if 'bias' not in v.name]) * var.L2_ALPHA
+            l2_loss = tf.multiply(tf.add_n([tf.nn.l2_loss(v)
+                                for v in tf_vars if 'bias' not in v.name]), var.L2_ALPHA, name="l2_loss")
 
             # Define what optimizer to use to train the model
             opt_func = tf.train.AdamOptimizer(lr_pl)
