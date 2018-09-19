@@ -1,5 +1,5 @@
 # Data processing save parameters
-PICKLE_SAVE_FOLDER = "pickle_data/test_fnc/"
+PICKLE_SAVE_FOLDER = "pickle_data/fnc_snli_3_d/"
 PICKLE_LOG_FILE = PICKLE_SAVE_FOLDER + "log.txt"
 
 # Model save parameters
@@ -14,12 +14,12 @@ TEST_RESULTS_FILE = SAVE_FOLDER + "test_results.txt"
 PRETRAINED_MODEL_PATH = None
 
 # Model options
-USE_UNRELATED_LABEL = True
+USE_UNRELATED_LABEL = False
 USE_DISCUSS_LABEL = True
 
 # Select train and val datasets
 USE_FNC_DATA = True
-USE_SNLI_DATA = False
+USE_SNLI_DATA = True
 USE_FEVER_DATA = False
 
 # Select test dataset
@@ -45,9 +45,9 @@ USE_DOMAINS = False
 # One of these must be selected as the primary input for training
 # but multiple may be selected when processing data
 USE_TF_VECTORS = True
-USE_RELATIONAL_FEATURE_VECTORS = False
-USE_AVG_EMBEDDINGS = False
-USE_CNN_FEATURES = False
+USE_RELATIONAL_FEATURE_VECTORS = True
+USE_AVG_EMBEDDINGS = True
+USE_CNN_FEATURES = True
 
 # Adds TF vectors to features before label prediction
 ADD_FEATURES_TO_LABEL_PRED = False
