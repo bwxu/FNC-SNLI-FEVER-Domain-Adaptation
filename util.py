@@ -264,7 +264,7 @@ def get_fever_data(jsonl_path, wikidata_path):
     return claims, bodies, labels, claim_set
 
 
-def get_vectorizers(train_data, MAX_FEATURES):
+def get_vectorizers(train_data, test_data, MAX_FEATURES):
     '''
     Given training data, create bag of words, tf, and tfidf
     vectorizers.
@@ -289,7 +289,7 @@ def get_vectorizers(train_data, MAX_FEATURES):
 
     tfidf_vectorizer = TfidfVectorizer(
         max_features=MAX_FEATURES,
-        stop_words=STOP_WORDS).fit(train_data)
+        stop_words=STOP_WORDS).fit(train_data + test_data)
 
     return bow_vectorizer, tfreq_vectorizer, tfidf_vectorizer
 

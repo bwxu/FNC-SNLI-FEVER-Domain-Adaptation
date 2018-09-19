@@ -1,9 +1,9 @@
 # Data processing save parameters
-PICKLE_SAVE_FOLDER = "pickle_data/fever/"
+PICKLE_SAVE_FOLDER = "pickle_data/test_fnc/"
 PICKLE_LOG_FILE = PICKLE_SAVE_FOLDER + "log.txt"
 
 # Model save parameters
-MODEL_NAME = "fever_cnn"
+MODEL_NAME = "fnc_tf"
 DATE_CREATED = "sept_18"
 SAVE_FOLDER = "models/" + DATE_CREATED + "/" + MODEL_NAME + "/"
 SAVE_MODEL_PATH = SAVE_FOLDER + MODEL_NAME
@@ -14,16 +14,16 @@ TEST_RESULTS_FILE = SAVE_FOLDER + "test_results.txt"
 PRETRAINED_MODEL_PATH = None
 
 # Model options
-USE_UNRELATED_LABEL = False
-USE_DISCUSS_LABEL = False
+USE_UNRELATED_LABEL = True
+USE_DISCUSS_LABEL = True
 
 # Select train and val datasets
-USE_FNC_DATA = False
+USE_FNC_DATA = True
 USE_SNLI_DATA = False
-USE_FEVER_DATA = True
+USE_FEVER_DATA = False
 
 # Select test dataset
-TEST_DATASET = "FEVER"
+TEST_DATASET = "FNC"
 if TEST_DATASET not in ["FNC", "FEVER", "SNLI"]:
     raise Exception("TEST_DATASET must be FNC, FEVER, or SNLI")
 if TEST_DATASET == "FNC" and not USE_FNC_DATA:
@@ -44,10 +44,10 @@ USE_DOMAINS = False
 
 # One of these must be selected as the primary input for training
 # but multiple may be selected when processing data
-USE_TF_VECTORS = False
+USE_TF_VECTORS = True
 USE_RELATIONAL_FEATURE_VECTORS = False
 USE_AVG_EMBEDDINGS = False
-USE_CNN_FEATURES = True
+USE_CNN_FEATURES = False
 
 # Adds TF vectors to features before label prediction
 ADD_FEATURES_TO_LABEL_PRED = False

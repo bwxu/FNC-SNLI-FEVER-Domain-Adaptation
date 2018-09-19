@@ -334,15 +334,17 @@ def process_data():
             f.write("Creating Vectorizers...\n")
 
             vec_train_data = train_headlines + train_bodies
+            vec_test_data = val_headlines + val_bodies + test_headlines + test_bodies
 
             # Only train TF & TFIDF vectorizers with FNC data
             if var.ONLY_VECT_FNC and var.USE_FNC_DATA:
-                vec_train_data = train_headlines[:train_sizes['fnc']
-                                                 ] + fnc_bodies_train[:train_sizes['fnc']]
+                vec_train_data = fnc_headlines_train + fnc_bodies_train
+                vec_test_data = fnc_headlines_test + fnc_bodies_test 
 
             bow_vectorizer, tfreq_vectorizer, tfidf_vectorizer = get_vectorizers(
-                vec_train_data, var.MAX_FEATURES)
+                vec_train_data, vec_test_data, var.MAX_FEATURES)
             del vec_train_data
+            del vec_test_data
 
             print("Getting Feature Vectors...")
             f.write("Getting Feature Vectors...\n")
