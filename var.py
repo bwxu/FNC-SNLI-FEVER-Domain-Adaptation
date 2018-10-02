@@ -1,31 +1,43 @@
 # Data processing save parameters
-PICKLE_SAVE_FOLDER = "pickle_data/fnc_snli_3_d/"
+PICKLE_FOLDER_NAME = "fnc_fever_3"
+PICKLE_SAVE_FOLDER = "pickle_data/" + PICKLE_FOLDER_NAME + "/"
 PICKLE_LOG_FILE = PICKLE_SAVE_FOLDER + "log.txt"
 
 # Model save parameters
-MODEL_NAME = "fnc_tf"
-DATE_CREATED = "sept_18"
+MODEL_NAME = "fnc_fever_cnn_tf_dann_3"
+DATE_CREATED = "oct_2"
 SAVE_FOLDER = "models/" + DATE_CREATED + "/" + MODEL_NAME + "/"
 SAVE_MODEL_PATH = SAVE_FOLDER + MODEL_NAME
 TRAINING_LOG_FILE = SAVE_FOLDER + "training.txt"
 TEST_RESULTS_FILE = SAVE_FOLDER + "test_results.txt"
 
+# Checkpoints for 4 label fnc testing
+RELATED_UNRELATED_MODEL_DATE = "oct_2"
+RELATED_UNRELATED_MODEL_NAME = "fnc_related_unrelated_tf"
+RELATED_UNRELATED_MODEL_FOLDER = "models/" + RELATED_UNRELATED_MODEL_DATE + "/" + RELATED_UNRELATED_MODEL_NAME + "/"
+RELATED_UNRELATED_MODEL_PATH = RELATED_UNRELATED_MODEL_FOLDER + RELATED_UNRELATED_MODEL_NAME
+
+THREE_LABEL_MODEL_DATE = "oct_2"
+THREE_LABEL_MODEL_NAME = "fnc_fever_cnn_tf_dann_3"
+THREE_LABEL_MODEL_FOLDER = "models/" + THREE_LABEL_MODEL_DATE + "/" + THREE_LABEL_MODEL_NAME + "/"
+THREE_LABEL_MODEL_PATH = THREE_LABEL_MODEL_FOLDER + THREE_LABEL_MODEL_NAME
+
 # Path to the ckpt of a saved model to load
 PRETRAINED_MODEL_PATH = None
 
-# Model options
+# Train/Val label options
 USE_UNRELATED_LABEL = False
 USE_DISCUSS_LABEL = True
 
 # Select train and val datasets
 USE_FNC_DATA = True
-USE_SNLI_DATA = True
-USE_FEVER_DATA = False
+USE_SNLI_DATA = False
+USE_FEVER_DATA = True
 
 # Select test dataset
 TEST_DATASET = "FNC"
-if TEST_DATASET not in ["FNC", "FEVER", "SNLI"]:
-    raise Exception("TEST_DATASET must be FNC, FEVER, or SNLI")
+if TEST_DATASET not in ["FNC", "FEVER"]:
+    raise Exception("TEST_DATASET must be FNC, FEVER")
 if TEST_DATASET == "FNC" and not USE_FNC_DATA:
     raise Exception("Must use dataset to use test data")
 if TEST_DATASET == "SNLI" and not USE_SNLI_DATA:
@@ -37,10 +49,11 @@ if TEST_DATASET == "FEVER" and not USE_FEVER_DATA:
 ONLY_VECT_FNC = True
 
 # Use equal numbers of agree and disagree data
+# ????
 BALANCE_LABELS = False
 
 # Use Domain Adaptation
-USE_DOMAINS = False
+USE_DOMAINS = True
 
 # One of these must be selected as the primary input for training
 # but multiple may be selected when processing data
@@ -50,14 +63,14 @@ USE_AVG_EMBEDDINGS = True
 USE_CNN_FEATURES = True
 
 # Adds TF vectors to features before label prediction
-ADD_FEATURES_TO_LABEL_PRED = False
+ADD_FEATURES_TO_LABEL_PRED = True
 
 # Training params
-EPOCHS = 30
+EPOCHS = 20
 TOTAL_EPOCHS = 30
 EPOCH_START = 0
 VALIDATION_SET_SIZE = 0.2 # Proportion of training data to use as validation set
-NUM_MODELS_TO_TRAIN = 5
+NUM_MODELS_TO_TRAIN = 3
 
 if not USE_FNC_DATA and not USE_SNLI_DATA and not USE_FEVER_DATA:
     raise Exception("Must choose data to use")

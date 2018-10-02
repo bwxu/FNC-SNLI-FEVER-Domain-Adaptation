@@ -744,3 +744,23 @@ def select_best_body_sentences(headlines, bodies, tfidf_vectorizer):
         best_sents.append(best_sent)
 
     return best_sents
+
+def get_label_freq(labels):
+    '''
+    Given a np array of labels, returns a frequency dictionary
+    mapping labels to their frequency.
+
+    Inputs:
+      labels: np array of labels
+    Outputs:
+      freq: mapping of labels to their frequency
+    '''
+    freq = {}
+    for label in labels.tolist():
+        if label not in freq:
+            freq[label] = 0
+        freq[label] += 1
+    
+    return freq
+
+

@@ -5,7 +5,7 @@ import var
 
 from shutil import copyfile
 from flip_gradient import flip_gradient
-from util import save_predictions, print_model_results
+from util import save_predictions, print_model_results, get_label_freq
 
 
 def train_model():
@@ -124,11 +124,17 @@ def train_model():
         print("SIZE_TEST = ", SIZE_TEST)
         f.write("SIZE_TEST = " + str(SIZE_TEST) + "\n")
 
+        freq_dict = get_label_freq(test_labels)
+        print("TEST LABEL FREQ = ", freq_dict)
+        f.write("TEST LABEL FREQ = [ ")
+        for label in freq_dict:
+            f.write("%d: %d, " % (label, freq_dict[label]))
+        f.write("]\n")
+
         ### DEFINE MODEL ###
 
-        best_loss = float('Inf')
-
         for model_num in range(var.NUM_MODELS_TO_TRAIN):
+            
             print("Training model " + str(model_num))
             f.write("Training model " + str(model_num) + "\n")
             tf.reset_default_graph()
@@ -170,7 +176,7 @@ def train_model():
             # convolves the headline and body inputs
             elif var.USE_CNN_FEATURES:
                 embedding_matrix_pl = tf.placeholder(
-                    tf.float32, [len(word_index) + 1, var.EMBEDDING_DIM])
+                    tf.float32, [len(word_index) + 1, var.EMBEDDING_DIM], name="embedding_matrix_pl")
                 W = tf.Variable(
                     tf.constant(
                         0.0,
@@ -180,9 +186,9 @@ def train_model():
                     trainable=False)
                 embedding_init = W.assign(embedding_matrix_pl)
                 headline_words_pl = tf.placeholder(
-                    tf.int64, [None, len(x_train_headlines[0])])
+                    tf.int64, [None, len(x_train_headlines[0])], name="headline_words_pl")
                 body_words_pl = tf.placeholder(
-                    tf.int64, [None, len(x_train_bodies[0])])
+                    tf.int64, [None, len(x_train_bodies[0])], name="body_words_pl")
                 batch_size = tf.shape(headline_words_pl)[0]
 
                 pooled_outputs = []
@@ -325,6 +331,10 @@ def train_model():
                 else:
                     sess.run(tf.global_variables_initializer())
 
+                # record best val loss for current model to determine which models
+                # to save.
+                best_loss = float('Inf')
+                
                 for epoch in range(var.EPOCH_START,
                                    var.EPOCH_START + var.EPOCHS):
                     print("\n  EPOCH", epoch)
@@ -598,7 +608,7 @@ def train_model():
                     # Save best test label loss model
                     if val_p_loss < best_loss:
                         best_loss = val_p_loss
-                        saver.save(sess, var.SAVE_MODEL_PATH)
+                        saver.save(sess, var.SAVE_MODEL_PATH + str(model_num))
                         print("\n    New Best Val Loss")
                         f.write("\n    New Best Val Loss\n")
 
