@@ -82,14 +82,6 @@ def process_data():
                     fnc_domains_train,
                     additional=fnc_body_ids_train)
 
-            fnc_headlines_test, fnc_bodies_test, fnc_labels_test, fnc_domains_test = \
-                remove_data_with_label(
-                    LABELS_TO_IGNORE,
-                    fnc_headlines_test,
-                    fnc_bodies_test,
-                    fnc_labels_test,
-                    fnc_domains_test)
-
             # Seperate the train in to train and validation sets such that
             # no body article is in both the train and val sets.
             unique_body_ids = list(set(fnc_body_ids_train))
@@ -136,16 +128,6 @@ def process_data():
             fever_headlines, fever_bodies, fever_labels, fever_claim_set = \
                 get_fever_data(var.FEVER_TRAIN, var.FEVER_WIKI)
             fever_domains = [2 for _ in range(len(fever_headlines))]
-
-            # Remove unwanted labels determined by USE_UNRELATED_LABEL and
-            # USE_DISCUSS_LABEL
-            fever_headlines, fever_bodies, fever_labels, fever_domains = \
-                remove_data_with_label(
-                    LABELS_TO_IGNORE,
-                    fever_headlines,
-                    fever_bodies,
-                    fever_labels,
-                    fever_domains)
 
             # Seperate into training, validation, and test sets based on
             # the claims
@@ -198,8 +180,7 @@ def process_data():
             if VAL_SIZE_CAP is None:
                 VAL_SIZE_CAP = len(val_headlines)
 
-        # If SNLI data is used, extract the relevant training, validation,
-        # and test data
+        # If SNLI data is used, extract the relevant training, validation data
         if var.USE_SNLI_DATA:
             print("EXTRACTING SNLI DATA")
             f.write("EXTRACTING SNLI DATA\n")
@@ -217,20 +198,16 @@ def process_data():
                     snli_labels_train,
                     snli_domains)
 
-            # Seperate into training, val, and test data based on the
-            # sentences
+            # Seperate into training, val data based on the sentences
             s2_list = list(set(snli_s2_train))
             s2_indices = list(range(len(s2_list)))
             var.RAND1.shuffle(s2_indices)
 
             SNLI_VAL_SIZE = int(len(s2_indices) * var.VALIDATION_SET_SIZE)
-            SNLI_TRAIN_END = len(s2_indices) - 2 * SNLI_VAL_SIZE
-            SNLI_VAL_END = len(s2_indices) - SNLI_VAL_SIZE
+            SNLI_TRAIN_END = len(s2_indices) - SNLI_VAL_SIZE
 
             train_s2 = set(s2_list[i] for i in s2_indices[:SNLI_TRAIN_END])
-            val_s2 = set(s2_list[i]
-                         for i in s2_indices[SNLI_TRAIN_END:SNLI_VAL_END])
-            test_s2 = set(s2_list[i] for i in s2_indices[SNLI_VAL_END:])
+            val_s2 = set(s2_list[i] for i in s2_indices[SNLI_TRAIN_END:])
 
             train_indices = [
                 i for i in range(
@@ -238,9 +215,6 @@ def process_data():
             val_indices = [
                 i for i in range(
                     len(snli_s2_train)) if snli_s2_train[i] in val_s2]
-            test_indices = [
-                i for i in range(
-                    len(snli_s2_train)) if snli_s2_train[i] in test_s2]
 
             # Add the train and val data to the overall train and val
             # lists
@@ -257,11 +231,6 @@ def process_data():
                            for i in val_indices][:VAL_SIZE_CAP]
             val_domains += [snli_domains[i]
                             for i in val_indices][:VAL_SIZE_CAP]
-
-            snli_headlines_test = [snli_s1_train[i] for i in test_indices]
-            snli_bodies_test = [snli_s2_train[i] for i in test_indices]
-            snli_labels_test = [snli_labels_train[i] for i in test_indices]
-            snli_domains_test = [snli_domains[i] for i in train_indices]
 
             train_sizes['snli'] = len(train_indices)
             val_sizes['snli'] = len(val_indices)
@@ -281,20 +250,6 @@ def process_data():
             test_bodies = fever_bodies_test
             test_labels = fever_labels_test
             test_domains = fever_domains_test
-
-        elif var.TEST_DATASET == 'FEVER':
-            test_headlines = fever_headlines_test
-            test_bodies = fever_bodies_test
-            test_labels = fever_labels_test
-            test_domains = fever_domains_test
-
-        test_headlines, test_bodies, test_labels, test_domains = \
-            remove_data_with_label(
-                LABELS_TO_IGNORE,
-                test_headlines,
-                test_bodies,
-                test_labels,
-                test_domains)
 
         np.save(var.PICKLE_SAVE_FOLDER + "train_sizes.npy", train_sizes)
         np.save(var.PICKLE_SAVE_FOLDER + "val_sizes.npy", val_sizes)
