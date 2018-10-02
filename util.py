@@ -459,6 +459,11 @@ def get_prediction_accuracies(pred, labels, num_labels):
     total = [0 for _ in range(num_labels)]
 
     for i in range(len(pred)):
+        if labels[i] == var.FNC_LABELS["unrelated"] and not var.USE_UNRELATED_LABEL:
+            continue
+        if labels[i] == var.FNC_LABELS["discuss"] and not var.USE_DISCUSS_LABEL:
+            continue
+
         total[labels[i]] += 1
         if pred[i] == labels[i]:
             correct[labels[i]] += 1
@@ -486,8 +491,13 @@ def get_precision_values(pred, labels, num_labels):
     '''
     correct = [0 for _ in range(num_labels)]
     total = [0 for _ in range(num_labels)]
-    
+
     for i in range(len(pred)):
+        if labels[i] == var.FNC_LABELS["unrelated"] and not var.USE_UNRELATED_LABEL:
+            continue
+        if labels[i] == var.FNC_LABELS["discuss"] and not var.USE_DISCUSS_LABEL:
+            continue
+        
         total[pred[i]] += 1
         if pred[i] == labels[i]:
             correct[labels[i]] += 1

@@ -57,9 +57,9 @@ USE_DOMAINS = True
 
 # One of these must be selected as the primary input for training
 # but multiple may be selected when processing data
-USE_TF_VECTORS = True
-USE_RELATIONAL_FEATURE_VECTORS = True
-USE_AVG_EMBEDDINGS = True
+USE_TF_VECTORS = False
+USE_RELATIONAL_FEATURE_VECTORS = False
+USE_AVG_EMBEDDINGS = False
 USE_CNN_FEATURES = True
 
 # Adds TF vectors to features before label prediction
