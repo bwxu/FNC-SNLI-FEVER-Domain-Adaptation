@@ -132,6 +132,9 @@ def train_model():
         f.write("]\n")
 
         ### DEFINE MODEL ###
+        # record best val loss for current model to determine which models
+        # to save.
+        best_loss = float('Inf')
 
         for model_num in range(var.NUM_MODELS_TO_TRAIN):
             
@@ -331,10 +334,7 @@ def train_model():
                 else:
                     sess.run(tf.global_variables_initializer())
 
-                # record best val loss for current model to determine which models
-                # to save.
-                best_loss = float('Inf')
-                
+                                
                 for epoch in range(var.EPOCH_START,
                                    var.EPOCH_START + var.EPOCHS):
                     print("\n  EPOCH", epoch)
@@ -608,7 +608,7 @@ def train_model():
                     # Save best test label loss model
                     if val_p_loss < best_loss:
                         best_loss = val_p_loss
-                        saver.save(sess, var.SAVE_MODEL_PATH + str(model_num))
+                        saver.save(sess, var.SAVE_MODEL_PATH)
                         print("\n    New Best Val Loss")
                         f.write("\n    New Best Val Loss\n")
 
