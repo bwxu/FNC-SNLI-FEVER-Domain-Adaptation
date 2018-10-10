@@ -1,8 +1,9 @@
 import numpy as np
 import tensorflow as tf
 import var
+from csv import DictReader, DictWriter
 
-from util import print_model_results
+from util import print_model_results, save_predictions
 
 def test_model():
 
@@ -251,7 +252,8 @@ def test_model():
                 test_l2_loss,
                 var.USE_DOMAINS)
             print()
-
+        
+        save_predictions(test_l_pred, var.TEST_RESULTS_CSV)
 
 if __name__ == "__main__":
     test_model()

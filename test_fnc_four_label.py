@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 import var
 
-from util import print_model_results, get_prediction_accuracies, get_composite_score
+from util import print_model_results, get_prediction_accuracies, get_composite_score, get_f1_scores, save_predictions
 
 def test_model():
 
@@ -264,6 +264,8 @@ def test_model():
     print("label accuracies: ", get_prediction_accuracies(predictions, test_labels, 4))
     print("f1 scores: ", get_f1_scores(predictions, test_labels, 4))
     print()
+
+    save_predictions(predictions, var.TEST_RESULTS_CSV)
 
 
 if __name__ == "__main__":

@@ -4,21 +4,23 @@ PICKLE_SAVE_FOLDER = "pickle_data/" + PICKLE_FOLDER_NAME + "/"
 PICKLE_LOG_FILE = PICKLE_SAVE_FOLDER + "log.txt"
 
 # Model save parameters
-MODEL_NAME = "fnc_fever_cnn_tf_dann_3"
-DATE_CREATED = "oct_2"
+MODEL_NAME = "fnc_fever_cnn_tf_dann_3_no_4"
+DATE_CREATED = "oct_3"
 SAVE_FOLDER = "models/" + DATE_CREATED + "/" + MODEL_NAME + "/"
 SAVE_MODEL_PATH = SAVE_FOLDER + MODEL_NAME
 TRAINING_LOG_FILE = SAVE_FOLDER + "training.txt"
 TEST_RESULTS_FILE = SAVE_FOLDER + "test_results.txt"
+TEST_RESULTS_CSV = SAVE_FOLDER + "test_predictions.csv"
+UNLABELED_CSV = "competition_test_stances_unlabeled.csv"
 
 # Checkpoints for 4 label fnc testing
-RELATED_UNRELATED_MODEL_DATE = "oct_2"
+RELATED_UNRELATED_MODEL_DATE = "oct_3"
 RELATED_UNRELATED_MODEL_NAME = "fnc_related_unrelated_tf"
 RELATED_UNRELATED_MODEL_FOLDER = "models/" + RELATED_UNRELATED_MODEL_DATE + "/" + RELATED_UNRELATED_MODEL_NAME + "/"
 RELATED_UNRELATED_MODEL_PATH = RELATED_UNRELATED_MODEL_FOLDER + RELATED_UNRELATED_MODEL_NAME
 
-THREE_LABEL_MODEL_DATE = "oct_2"
-THREE_LABEL_MODEL_NAME = "fnc_fever_cnn_tf_dann_3"
+THREE_LABEL_MODEL_DATE = "oct_3"
+THREE_LABEL_MODEL_NAME = "fnc_fever_cnn_tf_dann_3_no_4"
 THREE_LABEL_MODEL_FOLDER = "models/" + THREE_LABEL_MODEL_DATE + "/" + THREE_LABEL_MODEL_NAME + "/"
 THREE_LABEL_MODEL_PATH = THREE_LABEL_MODEL_FOLDER + THREE_LABEL_MODEL_NAME
 
@@ -52,6 +54,9 @@ ONLY_VECT_FNC = True
 # ????
 BALANCE_LABELS = False
 
+# Only use fnc data for validation
+ONLY_FNC_VAL = False
+
 # Use Domain Adaptation
 USE_DOMAINS = True
 
@@ -68,9 +73,10 @@ ADD_FEATURES_TO_LABEL_PRED = True
 # Training params
 EPOCHS = 20
 TOTAL_EPOCHS = 30
+SAVE_EPOCH = 10
 EPOCH_START = 0
 VALIDATION_SET_SIZE = 0.2 # Proportion of training data to use as validation set
-NUM_MODELS_TO_TRAIN = 3
+NUM_MODELS_TO_TRAIN = 1
 
 if not USE_FNC_DATA and not USE_SNLI_DATA and not USE_FEVER_DATA:
     raise Exception("Must choose data to use")

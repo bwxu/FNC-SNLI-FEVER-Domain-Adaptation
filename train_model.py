@@ -38,6 +38,12 @@ def train_model():
         val_labels = np.load(var.PICKLE_SAVE_FOLDER + "val_labels.npy")
         val_domains = np.load(var.PICKLE_SAVE_FOLDER + "val_domains.npy")
 
+        if var.ONLY_FNC_VAL:
+            if "fnc" not in val_sizes:
+                raise Exception("Only FNC val specified, but no fnc val data exists")
+            val_labels = val_labels[:val_sizes["fnc"]]
+            val_domains = val_domains[:val_sizes["fnc"]]
+
         print("Loading test vectors...")
         f.write("Loading test vectors...\n")
         test_labels = np.load(var.PICKLE_SAVE_FOLDER + "test_labels.npy")
@@ -54,6 +60,9 @@ def train_model():
             test_tf_vectors = np.load(
                 var.PICKLE_SAVE_FOLDER + "test_tf_vectors.npy")
 
+            if var.ONLY_FNC_VAL:
+                val_tf_vectors = val_tf_vectors[:val_sizes["fnc"]]
+
             SIZE_TRAIN = len(train_tf_vectors)
             SIZE_VAL = len(val_tf_vectors)
             SIZE_TEST = len(test_tf_vectors)
@@ -69,6 +78,9 @@ def train_model():
             test_relation_vectors = np.load(
                 var.PICKLE_SAVE_FOLDER + "test_relation_vectors.npy")
 
+            if var.ONLY_FNC_VAL:
+                val_relation_vectors = val_relation_vectors[:val_sizes["fnc"]]
+
             SIZE_TRAIN = len(train_relation_vectors)
             SIZE_VAL = len(val_relation_vectors)
             SIZE_TEST = len(test_relation_vectors)
@@ -83,6 +95,9 @@ def train_model():
                 var.PICKLE_SAVE_FOLDER + "val_avg_embed_vectors.npy")
             test_avg_embed_vectors = np.load(
                 var.PICKLE_SAVE_FOLDER + "test_avg_embed_vectors.npy")
+
+            if var.ONLY_FNC_VAL:
+                val_avg_embed_vectors = val_avg_embed_vectors[:val_sizes["fnc"]]
 
             SIZE_TRAIN = len(train_avg_embed_vectors)
             SIZE_VAL = len(val_avg_embed_vectors)
@@ -104,6 +119,10 @@ def train_model():
                 var.PICKLE_SAVE_FOLDER + "x_test_headlines.npy")
             x_test_bodies = np.load(
                 var.PICKLE_SAVE_FOLDER + "x_test_bodies.npy")
+
+            if var.ONLY_FNC_VAL:
+                x_val_headlines = x_val_headlines[:val_sizes["fnc"]]
+                x_val_bodies = x_val_bodies[:val_sizes["fnc"]]
 
             SIZE_TRAIN = len(x_train_headlines)
             SIZE_VAL = len(x_val_headlines)
@@ -333,8 +352,7 @@ def train_model():
 
                 else:
                     sess.run(tf.global_variables_initializer())
-
-                                
+                                                
                 for epoch in range(var.EPOCH_START,
                                    var.EPOCH_START + var.EPOCHS):
                     print("\n  EPOCH", epoch)
@@ -606,7 +624,7 @@ def train_model():
                         var.USE_DOMAINS)
 
                     # Save best test label loss model
-                    if val_p_loss < best_loss:
+                    if val_p_loss < best_loss and epoch >= var.SAVE_EPOCH:
                         best_loss = val_p_loss
                         saver.save(sess, var.SAVE_MODEL_PATH)
                         print("\n    New Best Val Loss")

@@ -773,4 +773,16 @@ def get_label_freq(labels):
     
     return freq
 
+def save_predictions(labels, save_location):
+    with open(var.UNLABELED_CSV, "r") as f_old:
+        with open(save_location, "w") as f_new:
+            fieldnames = ["Headline", "Body ID", "Stance"]
+            writer = DictWriter(f_new, fieldnames=fieldnames)
+            writer.writeheader()
+            
+            row_num = 0
+            for row in DictReader(f_old):
+                row["Stance"] = var.FNC_LABELS_REV[labels[row_num]]
+                writer.writerow(row)
+                row_num += 1
 
