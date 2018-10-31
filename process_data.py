@@ -126,7 +126,7 @@ def process_data():
             print("EXTRACTING FEVER DATA")
             f.write("EXTRACTING FEVER DATA\n")
             fever_headlines, fever_bodies, fever_labels, fever_claim_set = \
-                get_fever_data(var.FEVER_TRAIN, var.FEVER_WIKI)
+                get_fever_data(var.FEVER_TRAIN, var.FEVER_WIKI, use_sent=var.USE_FEVER_SENT)
             fever_domains = [2 for _ in range(len(fever_headlines))]
 
             # Seperate into training, validation, and test sets based on

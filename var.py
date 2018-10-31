@@ -1,11 +1,11 @@
 # Data processing save parameters
-PICKLE_FOLDER_NAME = "fnc_fever_3"
+PICKLE_FOLDER_NAME = "fever_older"
 PICKLE_SAVE_FOLDER = "pickle_data/" + PICKLE_FOLDER_NAME + "/"
 PICKLE_LOG_FILE = PICKLE_SAVE_FOLDER + "log.txt"
 
 # Model save parameters
-MODEL_NAME = "fnc_fever_cnn_tf_dann_3_no_4"
-DATE_CREATED = "oct_3"
+MODEL_NAME = "fever_tf_cnn_old"
+DATE_CREATED = "oct_30_b"
 SAVE_FOLDER = "models/" + DATE_CREATED + "/" + MODEL_NAME + "/"
 SAVE_MODEL_PATH = SAVE_FOLDER + MODEL_NAME
 TRAINING_LOG_FILE = SAVE_FOLDER + "training.txt"
@@ -29,15 +29,16 @@ PRETRAINED_MODEL_PATH = None
 
 # Train/Val label options
 USE_UNRELATED_LABEL = False
-USE_DISCUSS_LABEL = True
+USE_DISCUSS_LABEL = False
 
 # Select train and val datasets
-USE_FNC_DATA = True
+USE_FNC_DATA = False
 USE_SNLI_DATA = False
 USE_FEVER_DATA = True
+USE_FEVER_SENT = False
 
 # Select test dataset
-TEST_DATASET = "FNC"
+TEST_DATASET = "FEVER"
 if TEST_DATASET not in ["FNC", "FEVER"]:
     raise Exception("TEST_DATASET must be FNC, FEVER")
 if TEST_DATASET == "FNC" and not USE_FNC_DATA:
@@ -51,14 +52,13 @@ if TEST_DATASET == "FEVER" and not USE_FEVER_DATA:
 ONLY_VECT_FNC = True
 
 # Use equal numbers of agree and disagree data
-# ????
-BALANCE_LABELS = False
+BALANCE_LABELS = True
 
 # Only use fnc data for validation
 ONLY_FNC_VAL = False
 
 # Use Domain Adaptation
-USE_DOMAINS = True
+USE_DOMAINS = False
 
 # One of these must be selected as the primary input for training
 # but multiple may be selected when processing data
@@ -73,7 +73,7 @@ ADD_FEATURES_TO_LABEL_PRED = True
 # Training params
 EPOCHS = 20
 TOTAL_EPOCHS = 30
-SAVE_EPOCH = 10
+SAVE_EPOCH = 0
 EPOCH_START = 0
 VALIDATION_SET_SIZE = 0.2 # Proportion of training data to use as validation set
 NUM_MODELS_TO_TRAIN = 1

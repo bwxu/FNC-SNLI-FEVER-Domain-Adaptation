@@ -147,7 +147,7 @@ def get_snli_data(jsonl_path, limit=None, use_neutral=True):
     return left, right, labels
 
 
-def extract_fever_jsonl_data(path):
+def extract_fever_jsonl_data(path, use_sent):
     '''
     HELPER FUNCTION
 
@@ -188,7 +188,10 @@ def extract_fever_jsonl_data(path):
                     if article_name in evidence_articles:
                         continue
                     else:
-                        article_list.append(article_name)
+                        if use_sent:
+                            article_list.append((evidence[3], article_name))
+                        else:
+                            article_list.append(article_name)
                         evidence_articles.add(article_name)
                         claims.append(data["claim"])
                         labels.append(var.FEVER_LABELS[data["label"]])
@@ -202,7 +205,7 @@ def extract_fever_jsonl_data(path):
     return claims, labels, article_list, claim_set
 
 
-def get_relevant_articles(wikidata_path, article_list):
+def get_relevant_articles(wikidata_path, article_list, use_sent):
     '''
     HELPER FUNCTION
 
@@ -235,13 +238,37 @@ def get_relevant_articles(wikidata_path, article_list):
     print("Total Num Wiki Articles", total_num_files)
 
     bodies = []
-    for article in article_list:
-        bodies.append(article_dict[article])
+    if use_sent:
+        for sent_num, article in article_list:
+            bodies.append(get_sentence(sent_num, article_dict[article]))
+    else:        
+        for article in article_list:
+            bodies.append(article_dict[article])
 
     return bodies
 
 
-def get_fever_data(jsonl_path, wikidata_path):
+def get_sentence(sent_num, text):
+    """
+    HELPER FUNCTION
+
+    Given some text and a sentence number n, returns the nth 
+    sentence in that text.
+
+    Inputs:
+      sent_num: what number sentence to return
+      text: body of text to get sentence from
+    Outputs:
+      sent_numth sentence from text.
+    """
+    tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
+    sentences = tokenizer.tokenize(text)
+    print(sentences)
+    print("sent num", sent_num)
+    return sentences[sent_num]
+
+
+def get_fever_data(jsonl_path, wikidata_path, use_sent=False):
     '''
     Extracts claims, article text, corresponding labels, and
     a set of unique claims from the input FEVER jsonl data and
@@ -258,9 +285,9 @@ def get_fever_data(jsonl_path, wikidata_path):
       claim_set: set of unique claims
     '''
     claims, labels, article_list, claim_set = extract_fever_jsonl_data(
-        jsonl_path)
+        jsonl_path, use_sent)
     print(claims[:20], article_list[:20])
-    bodies = get_relevant_articles(wikidata_path, article_list)
+    bodies = get_relevant_articles(wikidata_path, article_list, use_sent)
     return claims, bodies, labels, claim_set
 
 
@@ -459,10 +486,11 @@ def get_prediction_accuracies(pred, labels, num_labels):
     total = [0 for _ in range(num_labels)]
 
     for i in range(len(pred)):
-        if labels[i] == var.FNC_LABELS["unrelated"] and not var.USE_UNRELATED_LABEL:
-            continue
-        if labels[i] == var.FNC_LABELS["discuss"] and not var.USE_DISCUSS_LABEL:
-            continue
+        if var.USE_FNC_DATA:
+            if labels[i] == var.FNC_LABELS["unrelated"] and not var.USE_UNRELATED_LABEL:
+                continue
+            if labels[i] == var.FNC_LABELS["discuss"] and not var.USE_DISCUSS_LABEL:
+                continue
 
         total[labels[i]] += 1
         if pred[i] == labels[i]:
