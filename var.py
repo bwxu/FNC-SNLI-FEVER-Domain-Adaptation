@@ -1,5 +1,5 @@
 # Data processing save parameters
-PICKLE_FOLDER_NAME = "fever_older"
+PICKLE_FOLDER_NAME = "fever_sent"
 PICKLE_SAVE_FOLDER = "pickle_data/" + PICKLE_FOLDER_NAME + "/"
 PICKLE_LOG_FILE = PICKLE_SAVE_FOLDER + "log.txt"
 
@@ -35,7 +35,7 @@ USE_DISCUSS_LABEL = False
 USE_FNC_DATA = False
 USE_SNLI_DATA = False
 USE_FEVER_DATA = True
-USE_FEVER_SENT = False
+USE_FEVER_SENT = True
 
 # Select test dataset
 TEST_DATASET = "FEVER"
@@ -62,9 +62,9 @@ USE_DOMAINS = False
 
 # One of these must be selected as the primary input for training
 # but multiple may be selected when processing data
-USE_TF_VECTORS = False
-USE_RELATIONAL_FEATURE_VECTORS = False
-USE_AVG_EMBEDDINGS = False
+USE_TF_VECTORS = True
+USE_RELATIONAL_FEATURE_VECTORS = True
+USE_AVG_EMBEDDINGS = True
 USE_CNN_FEATURES = True
 
 # Adds TF vectors to features before label prediction

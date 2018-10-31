@@ -128,7 +128,7 @@ def process_data():
             fever_headlines, fever_bodies, fever_labels, fever_claim_set = \
                 get_fever_data(var.FEVER_TRAIN, var.FEVER_WIKI, use_sent=var.USE_FEVER_SENT)
             fever_domains = [2 for _ in range(len(fever_headlines))]
-            fever_headlines_test, fever_bodies_test, fever_labels_test = get_fever_data(var.FEVER_DEV, var.FEVER_WIKI, use_sent=var.USE_FEVER_SENT)
+            fever_headlines_test, fever_bodies_test, fever_labels_test, _ = get_fever_data(var.FEVER_DEV, var.FEVER_WIKI, use_sent=var.USE_FEVER_SENT)
             fever_domains_test = [2 for _ in range(len(fever_headlines))]
 
             # Seperate into training, validation, and test sets based on

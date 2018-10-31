@@ -164,9 +164,6 @@ def extract_fever_jsonl_data(path, use_sent):
         each claim
       claim_set: set of distinct claim
     '''
-    num_train = 0
-    total_ev = 0
-
     claims = []
     labels = []
     article_list = []
@@ -178,29 +175,30 @@ def extract_fever_jsonl_data(path, use_sent):
             claim_set.add(data["claim"])
             if data["verifiable"] == "VERIFIABLE":
                 evidence_articles = set()
-                for evidence in data["all_evidence"]:
-                    article_name = unicodedata.normalize('NFC', evidence[2])
+                for evidence in data["evidence"]:
+                    for evidence_piece in evidence:
+                        article_name = unicodedata.normalize('NFC', evidence_piece[2])
+                        sent_num = evidence_piece[3]
 
-                    # Ignore evidence if the same article has
-                    # already been used before as we are using
-                    # the entire article and not the specified
-                    # sentence.
-                    if article_name in evidence_articles:
-                        continue
-                    else:
-                        if use_sent:
-                            article_list.append((evidence[3], article_name))
+                        # Ignore evidence if the same article has
+                        # already been used before as we are using
+                        # the entire article and not the specified
+                        # sentence.
+                        if article_name in evidence_articles and not use_sent:
+                            continue
+                        elif (sent_num, article_name) in evidence_articles and use_sent:
+                            continue
                         else:
-                            article_list.append(article_name)
-                        evidence_articles.add(article_name)
-                        claims.append(data["claim"])
-                        labels.append(var.FEVER_LABELS[data["label"]])
+                            if use_sent:
+                                article_list.append((sent_num, article_name))
+                            else:
+                                article_list.append(article_name)
+                            evidence_articles.add(article_name)
+                            claims.append(data["claim"])
+                            labels.append(var.FEVER_LABELS[data["label"]])
 
-                    total_ev += 1
-                num_train += 1
-
-    print("Num Distinct Claims", num_train)
-    print("Num Data Points", total_ev)
+    print("Num Data Points: ", len(claims))
+    print("Num Distinct Claims: ", len(set(claims)))
 
     return claims, labels, article_list, claim_set
 
@@ -219,7 +217,10 @@ def get_relevant_articles(wikidata_path, article_list, use_sent):
       bodies: list of full text articles corresponding to the
         original article_list
     '''
-    article_dict = {article: None for article in article_list}
+    if use_sent:
+        article_dict = {article: None for sent_num, article in article_list}
+    else:
+        article_dict = {article: None for article in article_list}
 
     wiki_files = [os.path.join(wikidata_path, f)
                   for f in os.listdir(wikidata_path)]
@@ -238,14 +239,22 @@ def get_relevant_articles(wikidata_path, article_list, use_sent):
     print("Total Num Wiki Articles", total_num_files)
 
     bodies = []
+    counter = 0
+    bad_sent = []
     if use_sent:
-        for sent_num, article in article_list:
-            bodies.append(get_sentence(sent_num, article_dict[article]))
+        for i, (sent_num, article) in enumerate(article_list):
+            sentence = get_sentence(sent_num, article_dict[article])
+            # remove evidence if sentence can't be found
+            if sentence is None:
+                counter += 1
+                bad_sent.append(i)
+            bodies.append(sentence)
+        print("num sentences couldn't be found: ", counter)
     else:        
         for article in article_list:
             bodies.append(article_dict[article])
 
-    return bodies
+    return bodies, bad_sent
 
 
 def get_sentence(sent_num, text):
@@ -263,8 +272,10 @@ def get_sentence(sent_num, text):
     """
     tokenizer = nltk.data.load('tokenizers/punkt/english.pickle')
     sentences = tokenizer.tokenize(text)
-    print(sentences)
-    print("sent num", sent_num)
+
+    # use entire text if sentence can't be found
+    if sent_num > len(sentences) - 1:
+        return None
     return sentences[sent_num]
 
 
@@ -287,7 +298,16 @@ def get_fever_data(jsonl_path, wikidata_path, use_sent=False):
     claims, labels, article_list, claim_set = extract_fever_jsonl_data(
         jsonl_path, use_sent)
     print(claims[:20], article_list[:20])
-    bodies = get_relevant_articles(wikidata_path, article_list, use_sent)
+    bodies, bad_data = get_relevant_articles(wikidata_path, article_list, use_sent)
+
+    # remove bad data if they exist
+    for i in sorted(bad_data, reverse=True):
+        del claims[i]
+        del bodies[i]
+        del labels[i]
+
+    assert len(claims) == len(bodies) == len(labels)
+
     return claims, bodies, labels, claim_set
 
 
