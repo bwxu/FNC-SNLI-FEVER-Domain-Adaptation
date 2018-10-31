@@ -133,4 +133,5 @@ SNLI_TEST = 'data/snli_data/snli_1.0_test.jsonl'
 
 FEVER_TRAIN = "data/fever_data/train.jsonl"
 FEVER_WIKI = "data/fever_data/wiki-pages"
+FEVER_DEV = "data/fever_data/shared_task_dev.jsonl"
 

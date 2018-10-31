@@ -128,6 +128,8 @@ def process_data():
             fever_headlines, fever_bodies, fever_labels, fever_claim_set = \
                 get_fever_data(var.FEVER_TRAIN, var.FEVER_WIKI, use_sent=var.USE_FEVER_SENT)
             fever_domains = [2 for _ in range(len(fever_headlines))]
+            fever_headlines_test, fever_bodies_test, fever_labels_test = get_fever_data(var.FEVER_DEV, var.FEVER_WIKI, use_sent=var.USE_FEVER_SENT)
+            fever_domains_test = [2 for _ in range(len(fever_headlines))]
 
             # Seperate into training, validation, and test sets based on
             # the claims
@@ -136,15 +138,12 @@ def process_data():
             var.RAND1.shuffle(claim_indices)
 
             FEVER_VAL_SIZE = int(len(claim_indices) * var.VALIDATION_SET_SIZE)
-            FEVER_TRAIN_END = len(claim_indices) - 2 * FEVER_VAL_SIZE
-            FEVER_VAL_END = len(claim_indices) - FEVER_VAL_SIZE
+            FEVER_TRAIN_END = len(claim_indices) - FEVER_VAL_SIZE
 
             train_claims = set([claim_list[i]
                                 for i in claim_indices[:FEVER_TRAIN_END]])
             val_claims = set([claim_list[i]
-                              for i in claim_indices[FEVER_TRAIN_END:FEVER_VAL_END]])
-            test_claims = set([claim_list[i]
-                               for i in claim_indices[FEVER_VAL_END:]])
+                              for i in claim_indices[FEVER_TRAIN_END:]])
 
             train_indices = [
                 i for i in range(
@@ -152,9 +151,6 @@ def process_data():
             val_indices = [
                 i for i in range(
                     len(fever_headlines)) if fever_headlines[i] in val_claims]
-            test_indices = [
-                i for i in range(
-                    len(fever_headlines)) if fever_headlines[i] in test_claims]
 
             # Add training and val data into overall training and val lists
             train_headlines += [fever_headlines[i] for i in train_indices]
@@ -168,11 +164,6 @@ def process_data():
             val_labels += [fever_labels[i] for i in val_indices][:VAL_SIZE_CAP]
             val_domains += [fever_domains[i]
                             for i in val_indices][:VAL_SIZE_CAP]
-
-            fever_headlines_test = [fever_headlines[i] for i in test_indices]
-            fever_bodies_test = [fever_bodies[i] for i in test_indices]
-            fever_labels_test = [fever_labels[i] for i in test_indices]
-            fever_domains_test = [fever_domains[i] for i in test_indices]
 
             train_sizes['fever'] = len(train_indices)
             val_sizes['fever'] = len(val_indices)
