@@ -1,6 +1,7 @@
 import numpy as np
 import os
 import var
+import pickle
 
 from shutil import copyfile
 from gensim.models.keyedvectors import KeyedVectors
@@ -289,6 +290,17 @@ def process_data():
 
             bow_vectorizer, tfreq_vectorizer, tfidf_vectorizer = get_vectorizers(
                 vec_train_data, vec_test_data, var.MAX_FEATURES)
+
+            pickle.dump(
+                bow_vectorizer,
+                open(var.PICKLE_SAVE_FOLDER + "bow_vectorizer.pickle", "wb"))
+            pickle.dump(
+                tfreq_vectorizer,
+                open(var.PICKLE_SAVE_FOLDER + "tfreq_vectorizer.pickle", "wb"))
+            pickle.dump(
+                tfidf_vectorizer,
+                open(var.PICKLE_SAVE_FOLDER + "tfidf_vectorizer.pickle", "wb"))
+            
             del vec_train_data
             del vec_test_data
 

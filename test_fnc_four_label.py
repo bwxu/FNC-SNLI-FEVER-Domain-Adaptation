@@ -96,8 +96,18 @@ def test_model():
         ru_test_loss, ru_test_p_loss, ru_test_d_loss, ru_test_l2_loss = 0, 0, 0, 0
         ru_test_l_pred, ru_test_d_pred = [], []
 
+        freq = [0, 0, 0, 0]
+        for label in test_labels:
+            freq[label] += 1
+        print(freq)
+
         # change to 0, 3 test labels for ru
         ru_test_labels = [0 if label in [0, 1, 2] else 3 for label in test_labels]
+
+        freq = [0, 0, 0, 0]
+        for label in ru_test_labels:
+            freq[label] += 1
+        print(freq)
 
         for i in range(SIZE_TEST // var.BATCH_SIZE + 1):
 

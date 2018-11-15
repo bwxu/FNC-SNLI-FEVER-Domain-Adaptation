@@ -1,11 +1,11 @@
 # Data processing save parameters
-PICKLE_FOLDER_NAME = "fever_fnc_new"
+PICKLE_FOLDER_NAME = "fnc_fever_3"
 PICKLE_SAVE_FOLDER = "pickle_data/" + PICKLE_FOLDER_NAME + "/"
 PICKLE_LOG_FILE = PICKLE_SAVE_FOLDER + "log.txt"
 
 # Model save parameters
-MODEL_NAME = "fever_fnc_tf_cnn_dann_b"
-DATE_CREATED = "oct_31"
+MODEL_NAME = "test"
+DATE_CREATED = "nov_14"
 SAVE_FOLDER = "models/" + DATE_CREATED + "/" + MODEL_NAME + "/"
 SAVE_MODEL_PATH = SAVE_FOLDER + MODEL_NAME
 TRAINING_LOG_FILE = SAVE_FOLDER + "training.txt"
@@ -19,8 +19,8 @@ RELATED_UNRELATED_MODEL_NAME = "fnc_related_unrelated_tf"
 RELATED_UNRELATED_MODEL_FOLDER = "models/" + RELATED_UNRELATED_MODEL_DATE + "/" + RELATED_UNRELATED_MODEL_NAME + "/"
 RELATED_UNRELATED_MODEL_PATH = RELATED_UNRELATED_MODEL_FOLDER + RELATED_UNRELATED_MODEL_NAME
 
-THREE_LABEL_MODEL_DATE = "oct_3"
-THREE_LABEL_MODEL_NAME = "fnc_fever_cnn_tf_dann_3_no_4"
+THREE_LABEL_MODEL_DATE = "oct_11"
+THREE_LABEL_MODEL_NAME = "fnc_fever_cnn_tf_dann_3_no_2"
 THREE_LABEL_MODEL_FOLDER = "models/" + THREE_LABEL_MODEL_DATE + "/" + THREE_LABEL_MODEL_NAME + "/"
 THREE_LABEL_MODEL_PATH = THREE_LABEL_MODEL_FOLDER + THREE_LABEL_MODEL_NAME
 
@@ -29,7 +29,7 @@ PRETRAINED_MODEL_PATH = None
 
 # Train/Val label options
 USE_UNRELATED_LABEL = False
-USE_DISCUSS_LABEL = False
+USE_DISCUSS_LABEL = True
 
 # Select train and val datasets
 USE_FNC_DATA = True
@@ -38,7 +38,7 @@ USE_FEVER_DATA = True
 USE_FEVER_SENT = False
 
 # Select test dataset
-TEST_DATASET = "FEVER"
+TEST_DATASET = "FNC"
 if TEST_DATASET not in ["FNC", "FEVER"]:
     raise Exception("TEST_DATASET must be FNC, FEVER")
 if TEST_DATASET == "FNC" and not USE_FNC_DATA:
