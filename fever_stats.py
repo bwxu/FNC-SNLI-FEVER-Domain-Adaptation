@@ -1,6 +1,8 @@
 import var
 from util import get_fever_data
 
+# Extracts statistics about the FEVER dataset
+
 fever_headlines, fever_bodies, fever_labels, fever_claim_set = get_fever_data(var.FEVER_TRAIN, var.FEVER_WIKI)
 fever_domains = [2 for _ in range(len(fever_headlines))]
 

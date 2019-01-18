@@ -4,8 +4,8 @@ PICKLE_SAVE_FOLDER = "pickle_data/" + PICKLE_FOLDER_NAME + "/"
 PICKLE_LOG_FILE = PICKLE_SAVE_FOLDER + "log.txt"
 
 # Model save parameters
-MODEL_NAME = "test"
-DATE_CREATED = "nov_14"
+MODEL_NAME = "fnc_tf_cnn_3"
+DATE_CREATED = "nov_15"
 SAVE_FOLDER = "models/" + DATE_CREATED + "/" + MODEL_NAME + "/"
 SAVE_MODEL_PATH = SAVE_FOLDER + MODEL_NAME
 TRAINING_LOG_FILE = SAVE_FOLDER + "training.txt"
@@ -34,7 +34,7 @@ USE_DISCUSS_LABEL = True
 # Select train and val datasets
 USE_FNC_DATA = True
 USE_SNLI_DATA = False
-USE_FEVER_DATA = True
+USE_FEVER_DATA = False
 USE_FEVER_SENT = False
 
 # Select test dataset
@@ -67,13 +67,15 @@ USE_RELATIONAL_FEATURE_VECTORS = False
 USE_AVG_EMBEDDINGS = False
 USE_CNN_FEATURES = True
 
+REMOVE_STOPWORDS = False
+
 # Adds TF vectors to features before label prediction
 ADD_FEATURES_TO_LABEL_PRED = True
 
 # Training params
 EPOCHS = 20
 TOTAL_EPOCHS = 30
-SAVE_EPOCH = 10
+SAVE_EPOCH = 0
 EPOCH_START = 0
 VALIDATION_SET_SIZE = 0.2 # Proportion of training data to use as validation set
 NUM_MODELS_TO_TRAIN = 1

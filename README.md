@@ -82,6 +82,11 @@ the model, training will begin and the validation/test results for each model
 is printed and saved. Checkpoints for the lowest validation loss models as
 well as a copy of var.py is also saved in var.SAVE_FOLDER.
 
+To test the model, you can use test_model.py with the correct parameters in var.py.
+If training a hierarchy model for the FNC dataset, one can use test_fnc_four_label.py
+in order to test on the FNC dataset. To run a pretrained model on arbitrary input,
+use the code in run_saved_model.py.
+
 ## Requirements
 The following is a superset of the required libraries via pip freeze. The 
 code is written for Python 3.
@@ -140,5 +145,12 @@ Werkzeug==0.14.1
 **process_data.py**: Used to process raw training data into usable pickle files  
 **train_model.py**: Trains models for task prediction from pickled data  
 **util.py**: Provides functions for process_data.py and train_model.py  
-**var.py**: Contians parameters used to run process_data.py and train_model.py  
+**var.py**: Contains parameters used to run process_data.py and train_model.py
+**scorer.py**: Contains official scorer used for the FNC task.
+**fever_stats.py**: Python script to calculate statistics on the FEVER dataset
+**snli_stats.py**: Python script to calculate statistics on the SNLI dataset
+**fnc_stats.py**: Python script to calculate statistics on the FNC dataset
+**test_model.py**: Contains code used to test a pretrained model on the desired test data
+**test_fnc_four_label.py**: Contains code used to test a pretrained hierarchy model on FNC test data.
+**run_saved_model.py**: Contains code used to run pretrained model on arbitrary input.
 

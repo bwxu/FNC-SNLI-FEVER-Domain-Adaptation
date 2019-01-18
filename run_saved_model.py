@@ -2,78 +2,59 @@ import numpy as np
 import tensorflow as tf
 import var
 import pickle
+from keras.preprocessing.sequence import pad_sequences
+from keras.preprocessing.text import Tokenizer
 
-from util import print_model_results, get_prediction_accuracies, get_composite_score, get_f1_scores, save_predictions
+from util import print_model_results, get_prediction_accuracies, get_composite_score, \
+        get_f1_scores, save_predictions, get_feature_vectors, remove_stop_words, \
+        get_body_sentences
 
-claim = "I like to eat food"
-document = "I like to eat food"
-
-# fully_connected/MatMul
-# fully_connected/BiasAdd
-# Reshape
-# Reshape_1
-# SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits
-# SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits
+claim = "There are 305 breeds of domestic rabbit in the world"
+document = ["Rabbits are small mammals in the family Leporidae of the order Lagomorpha (along with the hare and the pika). Oryctolagus cuniculus includes the European rabbit species and its descendants, the world's 305 breeds of domestic rabbit. Sylvilagus includes thirteen wild rabbit species, among them the seven types of cottontail. The European rabbit, which has been introduced on every continent except Antarctica, is familiar throughout the world as a wild prey animal and as a domesticated form of livestock and pet. With its widespread effect on ecologies and cultures, the rabbit (or bunny) is, in many areas of the world, a part of daily life—as food, clothing, and companion, and as a source of artistic inspiration."]
 
 bow_vectorizer = pickle.load(open(var.PICKLE_SAVE_FOLDER + "bow_vectorizer.pickle", "rb")) 
-tfreq_vectorizer = pickle.load(open(var.PICKLE_SAVE_FOLDER + "bow_vectorizer.pickle", "rb"))
-tfidf_vectorizer = pickle.load(open(var.PICKLE_SAVE_FOLDER + "bow_vectorizer.pickle", "rb"))
+tfreq_vectorizer = pickle.load(open(var.PICKLE_SAVE_FOLDER + "tfreq_vectorizer.pickle", "rb"))
+tfidf_vectorizer = pickle.load(open(var.PICKLE_SAVE_FOLDER + "tfidf_vectorizer.pickle", "rb"))
 
-print("Loading val vectors...")
-val_labels = np.load(var.PICKLE_SAVE_FOLDER + "val_labels.npy")
-val_domains = np.load(var.PICKLE_SAVE_FOLDER + "val_domains.npy")
+document_sentences = get_body_sentences(document)[0]
+print(document_sentences)
 
-print("Loading test vectors...")
-test_labels = np.load(var.PICKLE_SAVE_FOLDER + "test_labels.npy")
-test_domains = np.load(var.PICKLE_SAVE_FOLDER + "test_domains.npy")
+claims = [claim for _ in range(len(document_sentences) + 1)]
+documents = document + document_sentences
 
-# TF vectors always need to be loaded for related, unrelated model
-print("Loading TF vectors...")
-val_tf_vectors = np.load(
-    var.PICKLE_SAVE_FOLDER + "val_tf_vectors.npy")
-test_tf_vectors = np.load(
-    var.PICKLE_SAVE_FOLDER + "test_tf_vectors.npy")
+claim_doc_feat_vectors = get_feature_vectors(claims, documents, bow_vectorizer, tfreq_vectorizer, tfidf_vectorizer)
 
-SIZE_VAL = len(val_tf_vectors)
-SIZE_TEST = len(test_tf_vectors)
+word_index = np.load(var.PICKLE_SAVE_FOLDER + "word_index.npy").item()
 
-if var.USE_RELATIONAL_FEATURE_VECTORS:
-    print("Loading relation vectors...")
+# initialize tokenizer from word_index
+words = [(word, word_index[word]) for word in word_index]
+sorted(words, key=lambda x: x[1])
+sentence = " ".join([word[0] for word in words])
 
-    val_relation_vectors = np.load(
-        var.PICKLE_SAVE_FOLDER + "val_relation_vectors.npy")
-    test_relation_vectors = np.load(
-        var.PICKLE_SAVE_FOLDER + "test_relation_vectors.npy")
+tokenizer = Tokenizer()
+tokenizer.fit_on_texts([sentence])
 
-    SIZE_VAL = len(val_relation_vectors)
-    SIZE_TEST = len(test_relation_vectors)
+miss = 0
+for key in word_index:
+    if word_index[key] != tokenizer.word_index[key]:
+        miss += 1
 
-if var.USE_AVG_EMBEDDINGS:
-    print("Loading avg embedding vectors...")
+assert miss == 0
 
-    val_avg_embed_vectors = np.load(
-        var.PICKLE_SAVE_FOLDER + "val_avg_embed_vectors.npy")
-    test_avg_embed_vectors = np.load(
-        var.PICKLE_SAVE_FOLDER + "test_avg_embed_vectors.npy")
+claims = remove_stop_words(claims)
+documents = remove_stop_words(documents)
 
-    SIZE_VAL = len(val_avg_embed_vectors)
-    SIZE_TEST = len(test_avg_embed_vectors)
+claim_seqs = tokenizer.texts_to_sequences(claims)
+document_seqs = tokenizer.texts_to_sequences(documents)
+
+claim_seqs_padded = pad_sequences(claim_seqs, maxlen=var.CNN_HEADLINE_LENGTH)
+document_seqs_padded = pad_sequences(document_seqs, maxlen=var.CNN_BODY_LENGTH)
+
+stances = [0 for _ in range(len(documents))]
+domains = [0 for _ in range(len(documents))]
+indicies = [i for i in range(len(documents))]
 
 if var.USE_CNN_FEATURES:
-    print("Loading CNN vectors...")
-
-    x_val_headlines = np.load(
-        var.PICKLE_SAVE_FOLDER + "x_val_headlines.npy")
-    x_val_bodies = np.load(
-        var.PICKLE_SAVE_FOLDER + "x_val_bodies.npy")
-    x_test_headlines = np.load(
-        var.PICKLE_SAVE_FOLDER + "x_test_headlines.npy")
-    x_test_bodies = np.load(
-        var.PICKLE_SAVE_FOLDER + "x_test_bodies.npy")
-
-    SIZE_VAL = len(x_val_headlines)
-    SIZE_TEST = len(x_test_headlines)
-
     embedding_matrix = np.load(
         var.PICKLE_SAVE_FOLDER + "embedding_matrix.npy")
     word_index = np.load(
@@ -83,7 +64,10 @@ if var.USE_CNN_FEATURES:
 graph1 = tf.Graph()
 graph2 = tf.Graph()
 
-var.USE_UNRELATED_LABEL = True
+related_unrelated_preds = []
+related_unrelated_logits = []
+three_label_preds = []
+three_label_logits = []
 
 with tf.Session(graph=graph2) as sess:
     saver = tf.train.import_meta_graph(var.RELATED_UNRELATED_MODEL_PATH + ".meta")
@@ -100,67 +84,37 @@ with tf.Session(graph=graph2) as sess:
     
     p_loss = graph.get_tensor_by_name("p_loss:0")
     p_predict = graph.get_tensor_by_name("p_predict:0")
-    p_logits = graph.get_tensor_by_name("SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits:0")
+    p_logits = graph.get_tensor_by_name("Softmax:0")
     d_loss = graph.get_tensor_by_name("d_loss:0")
     d_predict = graph.get_tensor_by_name("d_predict:0")
     l2_loss = graph.get_tensor_by_name("l2_loss:0")
 
-    # Record loss and accuracies for ru, assumed to be the original Tf model
-    test_indices = list(range(SIZE_TEST))
-    ru_test_loss, ru_test_p_loss, ru_test_d_loss, ru_test_l2_loss = 0, 0, 0, 0
-    ru_test_l_pred, ru_test_d_pred = [], []
+    for i in range(len(documents) // var.BATCH_SIZE + 1):
+        batch_indices = indicies[i * var.BATCH_SIZE: (i + 1) * var.BATCH_SIZE]
+        batch_stances = [stances[i] for i in batch_indices]
+        batch_features = [claim_doc_feat_vectors[i] for i in batch_indices]
+        
+        batch_feed_dict = {
+            stances_pl: batch_stances,
+            features_pl: batch_features,
+            keep_prob_pl: 1.0
+        }
 
-    # change to 0, 3 test labels for ru
-    ru_test_labels = [0 if label in [0, 1, 2] else 3 for label in test_labels]
-
-    for i in range(SIZE_TEST // var.BATCH_SIZE + 1):
-
-        batch_indices = test_indices[i * var.BATCH_SIZE: (i + 1) * var.BATCH_SIZE]
-        if len(batch_indices) == 0:
-            break
-        batch_stances = [ru_test_labels[i] for i in batch_indices]
-        batch_domains = [test_domains[i]
-                         for i in batch_indices]
-
-        batch_feed_dict = {stances_pl: batch_stances,
-                           keep_prob_pl: 1.0}
-   
-        batch_features = [test_tf_vectors[i]
-                          for i in batch_indices]
-        batch_feed_dict[features_pl] = batch_features
-           
         # Record loss and accuracy information for test
         lpred, dpred, ploss, plogits, dloss, l2loss = \
             sess.run([p_predict, d_predict, p_loss, p_logits, d_loss,
                       l2_loss], feed_dict=batch_feed_dict)
 
-        if i == 0:
-            print(plogits)
+        related_unrelated_preds.extend(lpred)
+        related_unrelated_logits.extend(plogits)
 
-        # Total loss for current epoch
-        ru_test_p_loss += ploss
-        ru_test_d_loss += dloss
-        ru_test_l2_loss += l2loss
-        ru_test_loss += ploss + dloss + l2loss
-        ru_test_l_pred.extend(lpred)
+    var.FNC_LABELS_REV[0] = "related"
+    for i in range(len(related_unrelated_preds)):
+        print("", documents[i][:60] + " ...")
+        print("    label: ", var.FNC_LABELS_REV[related_unrelated_preds[i]])
+        print("    logits: ", related_unrelated_logits[i][0], related_unrelated_logits[i][3])
+    var.FNC_LABELS_REV[0] = "agree"
 
-    # Print and Write test results
-    with open(var.TEST_RESULTS_FILE, 'a') as f:
-        print_model_results(
-            f,
-            "Test Related Unrelated",
-            ru_test_l_pred,
-            ru_test_labels,
-            ru_test_d_pred,
-            test_domains,
-            ru_test_p_loss,
-            ru_test_d_loss,
-            ru_test_l2_loss,
-            False)
-        print()
-
-var.USE_UNRELATED_LABEL = False
-var.USE_DISCUSS_LABEL = True
 
 with tf.Session(graph=graph1) as sess:
     # Load 3 label model
@@ -168,6 +122,8 @@ with tf.Session(graph=graph1) as sess:
     print(var.THREE_LABEL_MODEL_FOLDER)
     saver = tf.train.import_meta_graph(var.THREE_LABEL_MODEL_PATH + ".meta")
     saver.restore(sess, tf.train.latest_checkpoint(var.THREE_LABEL_MODEL_FOLDER))
+
+    graph = tf.get_default_graph()
     
     if var.USE_TF_VECTORS or var.USE_RELATIONAL_FEATURE_VECTORS or var.USE_AVG_EMBEDDINGS:
         features_pl = graph.get_tensor_by_name("features_pl:0")
@@ -188,24 +144,17 @@ with tf.Session(graph=graph1) as sess:
     
     p_loss = graph.get_tensor_by_name("p_loss:0")
     p_predict = graph.get_tensor_by_name("p_predict:0")
-    p_logits = graph.get_tensor_by_name("SparseSoftmaxCrossEntropyWithLogits/SparseSoftmaxCrossEntropyWithLogits:0")
+    p_logits = graph.get_tensor_by_name("Softmax:0")
     d_loss = graph.get_tensor_by_name("d_loss:0")
     d_predict = graph.get_tensor_by_name("d_predict:0")
     l2_loss = graph.get_tensor_by_name("l2_loss:0")
 
-    test_indices = list(range(SIZE_TEST))
-    three_test_loss, three_test_p_loss, three_test_d_loss, three_test_l2_loss = 0, 0, 0, 0
-    three_test_l_pred, three_test_d_pred = [], []
-
-    for i in range(SIZE_TEST // var.BATCH_SIZE + 1):
-
-        batch_indices = test_indices[i * var.BATCH_SIZE: (i + 1) * var.BATCH_SIZE]
-        if len(batch_indices) == 0:
-            break
-        batch_stances = [test_labels[i] for i in batch_indices]
-        batch_domains = [test_domains[i]
-                         for i in batch_indices]
-
+    for i in range(len(documents) // var.BATCH_SIZE + 1):
+        batch_indices = indicies[i * var.BATCH_SIZE: (i + 1) * var.BATCH_SIZE]
+        batch_stances = [stances[i] for i in batch_indices]
+        batch_domains = [domains[i] for i in batch_indices]
+        batch_features = [claim_doc_feat_vectors[i] for i in batch_indices]
+        
         batch_feed_dict = {stances_pl: batch_stances,
                            keep_prob_pl: 1.0}
 
@@ -214,28 +163,14 @@ with tf.Session(graph=graph1) as sess:
             batch_feed_dict[domains_pl] = batch_domains
 
         if var.USE_TF_VECTORS or var.ADD_FEATURES_TO_LABEL_PRED:
-            batch_features = [test_tf_vectors[i]
-                              for i in batch_indices]
             if var.USE_TF_VECTORS:
                 batch_feed_dict[features_pl] = batch_features
             if var.ADD_FEATURES_TO_LABEL_PRED:
                 batch_feed_dict[p_features_pl] = batch_features
 
-        if var.USE_RELATIONAL_FEATURE_VECTORS:
-            batch_relation_vectors = [
-                test_relation_vectors[i] for i in batch_indices]
-            batch_feed_dict[features_pl] = batch_relation_vectors
-
-        if var.USE_AVG_EMBEDDINGS:
-            batch_avg_embed_vectors = [
-                test_avg_embed_vectors[i] for i in batch_indices]
-            batch_feed_dict[features_pl] = batch_avg_embed_vectors
-
         if var.USE_CNN_FEATURES:
-            batch_x_headlines = [
-                x_test_headlines[i] for i in batch_indices]
-            batch_x_bodies = [x_test_bodies[i]
-                              for i in batch_indices]
+            batch_x_headlines = [claim_seqs_padded[i] for i in batch_indices]
+            batch_x_bodies = [document_seqs_padded[i] for i in batch_indices]
             batch_feed_dict[headline_words_pl] = batch_x_headlines
             batch_feed_dict[body_words_pl] = batch_x_bodies
             batch_feed_dict[embedding_matrix_pl] = embedding_matrix
@@ -245,44 +180,13 @@ with tf.Session(graph=graph1) as sess:
             sess.run([p_predict, d_predict, p_loss, p_logits, d_loss,
                       l2_loss], feed_dict=batch_feed_dict)
 
-        if i == 0:
-            print(plogits)
+        three_label_preds.extend(lpred)
+        three_label_logits.extend(plogits)
+    
+    for i in range(len(three_label_preds)):
+        print("", documents[i][:60] + " ...")
+        print("    label:", var.FNC_LABELS_REV[three_label_preds[i]])
+        print("    logits: ", three_label_logits[i][0], three_label_logits[i][1], three_label_logits[i][2])
 
-        # Total loss for current epoch
-        three_test_p_loss += ploss
-        three_test_d_loss += dloss
-        three_test_l2_loss += l2loss
-        three_test_loss += ploss + dloss + l2loss
-        three_test_l_pred.extend(lpred)
-        if var.USE_DOMAINS:
-            three_test_d_pred.extend(dpred)
 
-    # Print and Write test results
-    with open(var.TEST_RESULTS_FILE, 'a') as f:
-        print_model_results(
-            f,
-            "Test 3 Label",
-            three_test_l_pred,
-            test_labels,
-            three_test_d_pred,
-            test_domains,
-            three_test_p_loss,
-            three_test_d_loss,
-            three_test_l2_loss,
-            var.USE_DOMAINS)
-        print()
-
-var.USE_UNRELATED_LABEL = True
-var.USE_DISCUSS_LABEL = True
-
-predictions = list(ru_test_l_pred)
-for i in range(len(predictions)):
-    if predictions[i] == 0:
-        predictions[i] = three_test_l_pred[i]
-print("composite score: ", get_composite_score(predictions, test_labels))
-print("label accuracies: ", get_prediction_accuracies(predictions, test_labels, 4))
-print("f1 scores: ", get_f1_scores(predictions, test_labels, 4))
-print()
-
-save_predictions(predictions, var.TEST_RESULTS_CSV)
 

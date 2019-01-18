@@ -364,7 +364,7 @@ def get_feature_vectors(headlines, bodies, bow_vectorizer,
     feature_vectors = []
 
     for i in range(len(headlines)):
-        if i % 5000 == 0:
+        if i % 5000 == 0 and i > 0:
             print("    Processed", i, "out of", len(headlines))
 
         headline = headlines[i]

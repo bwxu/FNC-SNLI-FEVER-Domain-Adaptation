@@ -6,6 +6,9 @@ from csv import DictReader, DictWriter
 from util import print_model_results, save_predictions
 
 def test_model():
+    '''
+    Loads a single trained model and tests the model on the chosen test data.
+    '''
 
     print("Loading val vectors...")
     val_labels = np.load(var.PICKLE_SAVE_FOLDER + "val_labels.npy")

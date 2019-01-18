@@ -399,16 +399,17 @@ def process_data():
             embeddings = KeyedVectors.load_word2vec_format(
                 var.EMBEDDING_PATH, binary=True)
 
-            print("  Removing Stop Words...")
-            f.write("  Removing Stop Words...\n")
-            train_headlines = remove_stop_words(train_headlines)
-            train_bodies = remove_stop_words(train_bodies)
+            if var.REMOVE_STOPWORDS:
+                print("  Removing Stop Words...")
+                f.write("  Removing Stop Words...\n")
+                train_headlines = remove_stop_words(train_headlines)
+                train_bodies = remove_stop_words(train_bodies)
 
-            val_headlines = remove_stop_words(val_headlines)
-            val_bodies = remove_stop_words(val_bodies)
+                val_headlines = remove_stop_words(val_headlines)
+                val_bodies = remove_stop_words(val_bodies)
 
-            test_headlines = remove_stop_words(test_headlines)
-            test_bodies = remove_stop_words(test_bodies)
+                test_headlines = remove_stop_words(test_headlines)
+                test_bodies = remove_stop_words(test_bodies)
 
         if var.USE_AVG_EMBEDDINGS:
             print("Getting Average Embedding Vectors...")

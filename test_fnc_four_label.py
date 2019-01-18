@@ -5,6 +5,10 @@ import var
 from util import print_model_results, get_prediction_accuracies, get_composite_score, get_f1_scores, save_predictions
 
 def test_model():
+    '''
+    Tests the hierarchy model for the Fake News Challenge, where the inputs are first classified as
+    related, unrelated before being classified as agree, disagree, and discuss if necessary.
+    '''
 
     print("Loading val vectors...")
     val_labels = np.load(var.PICKLE_SAVE_FOLDER + "val_labels.npy")
