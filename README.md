@@ -145,12 +145,12 @@ Werkzeug==0.14.1
 **process_data.py**: Used to process raw training data into usable pickle files  
 **train_model.py**: Trains models for task prediction from pickled data  
 **util.py**: Provides functions for process_data.py and train_model.py  
-**var.py**: Contains parameters used to run process_data.py and train_model.py\\
-**scorer.py**: Contains official scorer used for the FNC task.\\
-**fever_stats.py**: Python script to calculate statistics on the FEVER dataset\\
-**snli_stats.py**: Python script to calculate statistics on the SNLI dataset\\
-**fnc_stats.py**: Python script to calculate statistics on the FNC dataset\\
-**test_model.py**: Contains code used to test a pretrained model on the desired test data\\
-**test_fnc_four_label.py**: Contains code used to test a pretrained hierarchy model on FNC test data.\\
-**run_saved_model.py**: Contains code used to run pretrained model on arbitrary input.\\
+**var.py**: Contains parameters used to run process_data.py and train_model.py  
+**scorer.py**: Contains official scorer used for the FNC task.  
+**fever_stats.py**: Python script to calculate statistics on the FEVER dataset  
+**snli_stats.py**: Python script to calculate statistics on the SNLI dataset  
+**fnc_stats.py**: Python script to calculate statistics on the FNC dataset  
+**test_model.py**: Contains code used to test a pretrained model on the desired test data  
+**test_fnc_four_label.py**: Contains code used to test a pretrained hierarchy model on FNC test data.  
+**run_saved_model.py**: Contains code used to run pretrained model on arbitrary input.  
 
